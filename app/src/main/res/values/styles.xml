@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="text_style">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textAlignment">viewStart</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:typeface">normal</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+    </style>
+
+    <style name="edit_text_style">
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingTop">8dp</item>
+    </style>
+</resources>
