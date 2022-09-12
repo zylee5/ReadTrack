@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/homeFragment"
+        android:title="@string/home"
+        android:icon="@drawable/mdi_home" />
+
+    <item
+        android:id="@+id/addBookFragment"
+        android:title="@string/add_book"
+        android:icon="@drawable/mdi_plus_circle" />
+
+    <item
+        android:id="@+id/readFragment"
+        android:title="@string/books_read"
+        android:icon="@drawable/mdi_check_circle" />
+</menu>

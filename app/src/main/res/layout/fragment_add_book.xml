@@ -4,9 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="16dp"
-    tools:context=".AddBookFragment">
-
+    android:layout_margin="16dp" >
 
     <TextView
         android:id="@+id/bookNameText"
@@ -80,7 +78,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:inputType="textPersonName"
-        android:text="@string/name"
+        android:hint="@string/name"
         app:layout_constraintBaseline_toBaselineOf="@+id/bookNameText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/bookNameText" />
@@ -91,7 +89,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="@string/author"
+        android:hint="@string/author"
         app:layout_constraintBaseline_toBaselineOf="@+id/bookAuthorText"
         app:layout_constraintEnd_toEndOf="@+id/bookNameTextInput"
         app:layout_constraintStart_toEndOf="@+id/bookAuthorText" />
@@ -102,7 +100,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="@string/genre"
+        android:hint="@string/genre"
         app:layout_constraintBaseline_toBaselineOf="@+id/bookGenreText"
         app:layout_constraintEnd_toEndOf="@+id/bookAuthorTextInput"
         app:layout_constraintStart_toEndOf="@+id/bookGenreText" />
@@ -113,7 +111,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:inputType="date"
-        android:text="@string/start_date"
+        android:hint="@string/start_date"
         app:layout_constraintBaseline_toBaselineOf="@+id/startDateText"
         app:layout_constraintEnd_toEndOf="@+id/bookGenreTextInput"
         app:layout_constraintStart_toEndOf="@+id/startDateText" />
@@ -124,7 +122,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:inputType="date"
-        android:text="@string/finish_date"
+        android:hint="@string/finish_date"
         app:layout_constraintBaseline_toBaselineOf="@+id/finishingDateText"
         app:layout_constraintEnd_toEndOf="@+id/startDateInput"
         app:layout_constraintStart_toEndOf="@+id/finishingDateText" />
@@ -134,7 +132,7 @@
         style="@style/edit_text_style"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/temp_rating_stars"
+        android:hint="@string/temp_rating_stars"
         app:layout_constraintBaseline_toBaselineOf="@+id/ratingText"
         app:layout_constraintEnd_toEndOf="@+id/finishingDateTextInput"
         app:layout_constraintStart_toEndOf="@+id/ratingText" />

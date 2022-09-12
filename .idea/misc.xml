@@ -3,7 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Documents/ReadTrack/app/src/main/res/drawable/mdi_home.xml" value="0.2335" />
+        <entry key="..\:/Documents/ReadTrack/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Documents/ReadTrack/app/src/main/res/layout/fragment_add_book.xml" value="0.4" />
+        <entry key="..\:/Documents/ReadTrack/app/src/main/res/layout/fragment_home.xml" value="0.20863616930312098" />
+        <entry key="..\:/Documents/ReadTrack/app/src/main/res/layout/fragment_read.xml" value="0.19709277469003847" />
+        <entry key="..\:/Documents/ReadTrack/app/src/main/res/menu/navigation.xml" value="0.1" />
       </map>
     </option>
   </component>

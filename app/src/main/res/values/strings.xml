@@ -15,4 +15,7 @@
     <string name="start_date">Starting Date</string>
     <string name="finish_date">Finishing Date</string>
     <string name="temp_rating_stars">TempRatingStars</string>
+    <string name="home">Home</string>
+    <string name="books_read">Books Read</string>
+    <string name="add_book">Add Book</string>
 </resources>
