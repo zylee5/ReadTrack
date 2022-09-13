@@ -7,6 +7,7 @@
     android:orientation="vertical">
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/bookNameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/book_name"
@@ -19,6 +20,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/bookAuthorLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/book_author"
@@ -31,6 +33,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/bookGenreLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/book_genre"
@@ -43,6 +46,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/startingDateLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/starting_date"
@@ -55,6 +59,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/finishingDateLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/finishing_date"
@@ -67,15 +72,18 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/status"
         app:startIconDrawable="@drawable/mdi_progress_check">
 
-        <com.google.android.material.textfield.TextInputEditText
+        <AutoCompleteTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            />
+            android:inputType="none"
+            app:simpleItems="@array/status_array" />
+
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -91,184 +99,3 @@
     </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>
-
-<!--    <?xml version="1.0" encoding="utf-8"?>-->
-<!--<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
-<!--xmlns:tools="http://schemas.android.com/tools"-->
-<!--android:layout_width="match_parent"-->
-<!--android:layout_height="match_parent"-->
-<!--android:layout_margin="16dp" >-->
-
-
-<!--<com.google.android.material.textfield.TextInputLayout-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="wrap_content"-->
-<!--    app:layout_constraintTop_toBottomOf="@id/statusSpinner"-->
-<!--    app:layout_constraintStart_toStartOf="parent"-->
-<!--    android:hint="@string/name">-->
-
-<!--    <com.google.android.material.textfield.TextInputEditText-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        />-->
-
-<!--</com.google.android.material.textfield.TextInputLayout>-->
-
-<!--<com.google.android.material.textfield.TextInputLayout-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="wrap_content"-->
-<!--    app:layout_constraintTop_toBottomOf="@id/statusSpinner"-->
-<!--    app:layout_constraintStart_toStartOf="parent"-->
-<!--    android:hint="@string/name">-->
-
-<!--    <com.google.android.material.textfield.TextInputEditText-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        />-->
-
-<!--</com.google.android.material.textfield.TextInputLayout>-->
-
-
-<!--<TextView-->
-<!--    android:id="@+id/bookNameText"-->
-<!--    style="@style/text_style"-->
-<!--    android:layout_width="wrap_content"-->
-<!--    android:layout_height="wrap_content"-->
-<!--    android:layout_marginStart="8dp"-->
-<!--    android:layout_marginTop="8dp"-->
-<!--    android:fontFamily="sans-serif"-->
-<!--    android:text="@string/book_name"-->
-<!--    app:layout_constraintStart_toStartOf="parent"-->
-<!--    app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--<TextView-->
-<!--    android:id="@+id/bookAuthorText"-->
-<!--    style="@style/text_style"-->
-<!--    android:layout_width="wrap_content"-->
-<!--    android:layout_height="wrap_content"-->
-<!--    android:text="@string/book_author"-->
-<!--    app:layout_constraintStart_toStartOf="@+id/bookNameText"-->
-<!--    app:layout_constraintTop_toBottomOf="@+id/bookNameTextInput" />-->
-
-<!--<TextView-->
-<!--    android:id="@+id/bookGenreText"-->
-<!--    style="@style/text_style"-->
-<!--    android:layout_width="wrap_content"-->
-<!--    android:layout_height="wrap_content"-->
-<!--    android:text="@string/book_genre"-->
-<!--    app:layout_constraintStart_toStartOf="@+id/bookAuthorText"-->
-<!--    app:layout_constraintTop_toBottomOf="@+id/bookAuthorTextInput" />-->
-
-<!--<TextView-->
-<!--    android:id="@+id/startDateText"-->
-<!--    style="@style/text_style"-->
-<!--    android:layout_width="wrap_content"-->
-<!--    android:layout_height="wrap_content"-->
-<!--    android:text="@string/starting_date"-->
-<!--    app:layout_constraintStart_toStartOf="@+id/bookGenreText"-->
-<!--    app:layout_constraintTop_toBottomOf="@+id/bookGenreTextInput" />-->
-
-<!--<TextView-->
-<!--    android:id="@+id/finishingDateText"-->
-<!--    style="@style/text_style"-->
-<!--    android:layout_width="wrap_content"-->
-<!--    android:layout_height="wrap_content"-->
-<!--    android:text="@string/finishing_date"-->
-<!--    app:layout_constraintStart_toStartOf="@+id/startDateText"-->
-<!--    app:layout_constraintTop_toBottomOf="@+id/startDateInput" />-->
-
-<!--<TextView-->
-<!--    android:id="@+id/ratingText"-->
-<!--    style="@style/text_style"-->
-<!--    android:layout_width="wrap_content"-->
-<!--    android:layout_height="wrap_content"-->
-<!--    android:text="@string/rating"-->
-<!--    app:layout_constraintStart_toStartOf="@+id/finishingDateText"-->
-<!--    app:layout_constraintTop_toBottomOf="@+id/finishingDateTextInput" />-->
-
-<!--<TextView-->
-<!--    android:id="@+id/statusText"-->
-<!--    style="@style/text_style"-->
-<!--    android:layout_width="wrap_content"-->
-<!--    android:layout_height="wrap_content"-->
-<!--    android:text="@string/status"-->
-<!--    app:layout_constraintStart_toStartOf="@+id/ratingText"-->
-<!--    app:layout_constraintTop_toBottomOf="@+id/tempRatingStartsTextInput" />-->
-
-<!--<EditText-->
-<!--    android:id="@+id/bookNameTextInput"-->
-<!--    style="@style/edit_text_style"-->
-<!--    android:layout_width="0dp"-->
-<!--    android:layout_height="wrap_content"-->
-<!--    android:layout_marginEnd="8dp"-->
-<!--    android:inputType="textPersonName"-->
-<!--    android:hint="@string/name"-->
-<!--    app:layout_constraintBaseline_toBaselineOf="@+id/bookNameText"-->
-<!--    app:layout_constraintEnd_toEndOf="parent"-->
-<!--    app:layout_constraintStart_toEndOf="@+id/bookNameText" />-->
-
-<!--<EditText-->
-<!--    android:id="@+id/bookAuthorTextInput"-->
-<!--    style="@style/edit_text_style"-->
-<!--    android:layout_width="0dp"-->
-<!--    android:layout_height="wrap_content"-->
-<!--    android:inputType="textPersonName"-->
-<!--    android:hint="@string/author"-->
-<!--    app:layout_constraintBaseline_toBaselineOf="@+id/bookAuthorText"-->
-<!--    app:layout_constraintEnd_toEndOf="@+id/bookNameTextInput"-->
-<!--    app:layout_constraintStart_toEndOf="@+id/bookAuthorText" />-->
-
-<!--<EditText-->
-<!--    android:id="@+id/bookGenreTextInput"-->
-<!--    style="@style/edit_text_style"-->
-<!--    android:layout_width="0dp"-->
-<!--    android:layout_height="wrap_content"-->
-<!--    android:inputType="textPersonName"-->
-<!--    android:hint="@string/genre"-->
-<!--    app:layout_constraintBaseline_toBaselineOf="@+id/bookGenreText"-->
-<!--    app:layout_constraintEnd_toEndOf="@+id/bookAuthorTextInput"-->
-<!--    app:layout_constraintStart_toEndOf="@+id/bookGenreText" />-->
-
-<!--<EditText-->
-<!--    android:id="@+id/startDateInput"-->
-<!--    style="@style/edit_text_style"-->
-<!--    android:layout_width="0dp"-->
-<!--    android:layout_height="wrap_content"-->
-<!--    android:inputType="date"-->
-<!--    android:hint="@string/start_date"-->
-<!--    app:layout_constraintBaseline_toBaselineOf="@+id/startDateText"-->
-<!--    app:layout_constraintEnd_toEndOf="@+id/bookGenreTextInput"-->
-<!--    app:layout_constraintStart_toEndOf="@+id/startDateText" />-->
-
-<!--<EditText-->
-<!--    android:id="@+id/finishingDateTextInput"-->
-<!--    style="@style/edit_text_style"-->
-<!--    android:layout_width="0dp"-->
-<!--    android:layout_height="wrap_content"-->
-<!--    android:inputType="date"-->
-<!--    android:hint="@string/finish_date"-->
-<!--    app:layout_constraintBaseline_toBaselineOf="@+id/finishingDateText"-->
-<!--    app:layout_constraintEnd_toEndOf="@+id/startDateInput"-->
-<!--    app:layout_constraintStart_toEndOf="@+id/finishingDateText" />-->
-
-<!--<EditText-->
-<!--    android:id="@+id/tempRatingStartsTextInput"-->
-<!--    style="@style/edit_text_style"-->
-<!--    android:layout_width="0dp"-->
-<!--    android:layout_height="wrap_content"-->
-<!--    android:hint="@string/temp_rating_stars"-->
-<!--    app:layout_constraintBaseline_toBaselineOf="@+id/ratingText"-->
-<!--    app:layout_constraintEnd_toEndOf="@+id/finishingDateTextInput"-->
-<!--    app:layout_constraintStart_toEndOf="@+id/ratingText" />-->
-
-<!--<Spinner-->
-<!--    android:id="@+id/statusSpinner"-->
-<!--    android:layout_width="0dp"-->
-<!--    android:layout_height="wrap_content"-->
-<!--    android:entries="@array/status_array"-->
-<!--    app:layout_constraintBaseline_toBaselineOf="@+id/statusText"-->
-<!--    app:layout_constraintEnd_toEndOf="@+id/tempRatingStartsTextInput"-->
-<!--    app:layout_constraintStart_toEndOf="@+id/statusText" />-->
-
-<!--</androidx.constraintlayout.widget.ConstraintLayout>-->
