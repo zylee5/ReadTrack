@@ -12,6 +12,7 @@
 
     <item
         android:id="@+id/readFragment"
-        android:title="@string/books_read"
+        android:title="@string/read"
         android:icon="@drawable/mdi_check_circle" />
+
 </menu>
