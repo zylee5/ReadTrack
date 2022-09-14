@@ -6,17 +6,17 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.readtrack.fragment.HomeFragment"
+        android:name="com.example.readtrack.fragments.HomeFragment"
         android:label="fragment_home" />
 
     <fragment
         android:id="@+id/addBookFragment"
-        android:name="com.example.readtrack.fragment.AddBookFragment"
+        android:name="com.example.readtrack.fragments.AddBookFragment"
         android:label="fragment_add_book" />
 
     <fragment
         android:id="@+id/readFragment"
-        android:name="com.example.readtrack.fragment.ReadFragment"
+        android:name="com.example.readtrack.fragments.ReadFragment"
         android:label="fragment_read" />
 
 </navigation>
