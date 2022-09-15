@@ -1,12 +1,16 @@
 package com.example.readtrack.fragments
 
 import android.os.Bundle
+import android.system.Os.stat
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import androidx.fragment.app.activityViewModels
+import com.example.readtrack.R
 import com.example.readtrack.databinding.FragmentAddBookBinding
+import com.example.readtrack.types.Status
 import com.example.readtrack.viewmodels.AddBookViewModel
 
 class AddBookFragment : Fragment() {

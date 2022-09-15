@@ -5,7 +5,7 @@ data class Status(val state: String) {
 
     companion object {
         @JvmStatic // To create a static get method for this property
-                   // otherwise direct referencing: Status.states -> compiler complains
+                   // otherwise direct referencing: Status.states
         val states = listOf(
             Status("Read"),
             Status("Reading"),
