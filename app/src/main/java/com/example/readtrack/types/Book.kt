@@ -1,5 +1,7 @@
 package com.example.readtrack.types
 
+import android.util.Half.toFloat
+
 data class Book(
     var name: String = "",
     // TODO: Possibly a data class
@@ -8,5 +10,5 @@ data class Book(
     // Start and end date
 
     var status: String = "",
-    var rating: Int = -1,
+    var rating: Float = (-1).toFloat() // android:rating can be float
 )
