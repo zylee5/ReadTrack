@@ -10,5 +10,5 @@ data class Book(
     // Start and end date
 
     var status: String = "",
-    var rating: Float = (-1).toFloat() // android:rating can be float
+    var rating: Float = (-1).toFloat() // android:rating receives float
 )
