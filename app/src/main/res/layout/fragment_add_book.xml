@@ -58,22 +58,34 @@
                 />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
-            android:id="@+id/pickDateButton"
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Select start and end date">
+            android:layout_height="wrap_content"
+            android:hint="@string/status"
+            app:startIconDrawable="@drawable/mdi_progress_check">
 
-        </Button>
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/statusTextField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:text="@={vm.book.status}"
+                app:simpleItems="@array/status_array" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/startingDateLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/starting_date"
-            app:startIconDrawable="@drawable/mdi_calendar_month">
+            app:startIconDrawable="@drawable/mdi_calendar_start">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/startingDateTextField"
+                android:focusable="false"
+                android:longClickable="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 />
@@ -85,29 +97,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/finishing_date"
-            app:startIconDrawable="@drawable/mdi_calendar_month">
+            app:startIconDrawable="@drawable/mdi_calendar_end">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/finishingDateTextField"
+                android:focusable="false"
+                android:longClickable="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/status"
-            app:startIconDrawable="@drawable/mdi_progress_check">
-
-            <AutoCompleteTextView
-                android:id="@+id/statusTextField"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="none"
-                android:text="@={vm.book.status}"
-                app:simpleItems="@array/status_array" />
-
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
