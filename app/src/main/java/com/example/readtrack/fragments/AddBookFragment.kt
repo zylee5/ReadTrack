@@ -7,9 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.readtrack.databinding.FragmentAddBookBinding
+import com.example.readtrack.types.Status
 import com.example.readtrack.viewmodels.AddBookViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -35,6 +37,29 @@ class AddBookFragment : Fragment() {
         binding.finishingDateTextField.setOnClickListener {
             createDatePicker("Finishing Date", binding.finishingDateTextField)
         }
+
+        binding.readChip.setOnCheckedChangeListener { _, _ ->
+            binding.startingDateLayout.isVisible = true
+            binding.finishingDateLayout.isVisible = true
+            binding.ratingText.isVisible = true
+            binding.ratingBar.isVisible = true
+        }
+
+        binding.readingChip.setOnCheckedChangeListener { _, _ ->
+            binding.startingDateLayout.isVisible = true
+            binding.finishingDateLayout.visibility = View.GONE
+            binding.ratingText.isVisible = true
+            binding.ratingBar.isVisible = true
+        }
+
+        binding.wtrChip.setOnCheckedChangeListener { _, _ ->
+            binding.startingDateLayout.isVisible = false
+            binding.finishingDateLayout.isVisible = false
+            binding.ratingText.isVisible = false
+            binding.ratingBar.isVisible = false
+        }
+
+        binding.lifecycleOwner = viewLifecycleOwner
 
         return binding.root
     }

@@ -15,4 +15,6 @@
     <string name="home">Home</string>
     <string name="read">Read</string>
     <string name="add_book">Add Book</string>
+    <string name="reading">Reading</string>
+    <string name="want_to_read">Want to read</string>
 </resources>
