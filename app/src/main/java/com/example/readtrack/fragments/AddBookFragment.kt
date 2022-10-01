@@ -11,6 +11,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.readtrack.databinding.FragmentAddBookBinding
+import com.example.readtrack.types.Status
 import com.example.readtrack.viewmodels.AddBookViewModel
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
@@ -18,8 +19,11 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.*
-
 
 class AddBookFragment : Fragment() {
     private val addBookViewModel by activityViewModels<AddBookViewModel>()
@@ -44,25 +48,25 @@ class AddBookFragment : Fragment() {
 //        }
 
         binding.readChip.setOnCheckedChangeListener { _, _ ->
+            addBookViewModel.newBook.value!!.status = Status.READ.string
             binding.startedToFinishedDateLayout.visibility = View.VISIBLE
             binding.startedDateLayout.visibility = View.GONE
-//            binding.finishedDateLayout.visibility = View.GONE
             binding.ratingText.isVisible = true
             binding.ratingBar.isVisible = true
         }
 
         binding.readingChip.setOnCheckedChangeListener { _, _ ->
+            addBookViewModel.newBook.value!!.status = Status.READING.string
             binding.startedToFinishedDateLayout.visibility = View.GONE
-            binding.startedDateLayout.isVisible = true
-//            binding.finishedDateLayout.visibility = View.GONE
+            binding.startedDateLayout.visibility = View.VISIBLE
             binding.ratingText.isVisible = true
             binding.ratingBar.isVisible = true
         }
 
         binding.wtrChip.setOnCheckedChangeListener { _, _ ->
+            addBookViewModel.newBook.value!!.status = Status.WANT_TO_READ.string
             binding.startedToFinishedDateLayout.visibility = View.GONE
-            binding.startedDateLayout.isVisible = false
-//            binding.finishedDateLayout.isVisible = false
+            binding.startedDateLayout.visibility = View.GONE
             binding.ratingText.isVisible = false
             binding.ratingBar.isVisible = false
         }
@@ -93,10 +97,12 @@ class AddBookFragment : Fragment() {
         // Set the action for when save button is clicked
         picker.addOnPositiveButtonClickListener {
             // it = selected date in Long!
-            val dateFormatter = SimpleDateFormat("dd MMM yyyy")
-            val formattedDate = dateFormatter.format(Date(it))
-//                val finishingDate = dateFormatter.format(Date(it.second))
-            textField.setText("$formattedDate")
+            val dateFormatter = DateTimeFormatter.ofPattern("d MMM yyyy")
+            // DateTimeFormatter converts LocalTime and not milliseconds
+            val localDate: LocalDate = Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
+
+            val formattedDate = dateFormatter.format(localDate)
+            textField.setText(formattedDate)
         }
 
         // Set the action for when the cancel button is clicked
@@ -135,9 +141,13 @@ class AddBookFragment : Fragment() {
              * it.first = started date
              * it.second = finished date
              */
-            val dateFormatter = SimpleDateFormat("dd MMM yyyy")
-            val startedDate = dateFormatter.format(Date(it.first))
-            val finishedDate = dateFormatter.format(Date(it.second))
+            val dateFormatter = DateTimeFormatter.ofPattern("d MMM yyyy")
+            // DateTimeFormatter converts LocalTime and not milliseconds
+            val localStartedDate: LocalDate = Instant.ofEpochMilli(it.first).atZone(ZoneId.systemDefault()).toLocalDate()
+            val localFinishedDate: LocalDate = Instant.ofEpochMilli(it.second).atZone(ZoneId.systemDefault()).toLocalDate()
+
+            val startedDate = dateFormatter.format(localStartedDate)
+            val finishedDate = dateFormatter.format(localFinishedDate)
             textField.setText("$startedDate - $finishedDate")
         }
 

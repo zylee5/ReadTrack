@@ -138,7 +138,8 @@
             android:layout_height="wrap_content"
             android:hint="@string/started_date"
             android:visibility="gone"
-            app:startIconDrawable="@drawable/mdi_calendar_start">
+            app:startIconDrawable="@drawable/mdi_calendar_start"
+            tools:visibility="visible" >
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/startedDateTextField"

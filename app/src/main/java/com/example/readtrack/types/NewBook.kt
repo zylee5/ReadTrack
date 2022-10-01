@@ -1,15 +1,15 @@
 package com.example.readtrack.types
 
 import androidx.databinding.ObservableBoolean
+import java.time.LocalDate
 
 
 data class NewBook(
     var name: String = "",
-    // TODO: Possibly a data class
-    var authorName: String = "",
+    var authorName: String = "", // TODO: Possibly a data class
     var genre: String = "",
-    // Start and end date
-
+    var startedDate: LocalDate,
+    var finishedDate: LocalDate,
     var status: String = Status.READ.string,
     var rating: Float = (-1).toFloat(), // android:rating receives float
 //    var startingDateAllowed: ObservableBoolean =
