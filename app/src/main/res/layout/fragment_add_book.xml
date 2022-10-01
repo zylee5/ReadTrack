@@ -117,39 +117,56 @@
         </com.google.android.material.chip.ChipGroup>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/startingDateLayout"
+            android:id="@+id/startedToFinishedDateLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/starting_date"
-            app:startIconDrawable="@drawable/mdi_calendar_start">
+            android:hint="@string/started_date_finished_date"
+            app:startIconDrawable="@drawable/mdi_calendar_start" >
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/startingDateTextField"
-                android:focusable="false"
-                android:longClickable="false"
-
+                android:id="@+id/startedToFinishedDateTextField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                />
+                android:focusable="false"
+                android:longClickable="false" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/finishingDateLayout"
+            android:id="@+id/startedDateLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/finishing_date"
-            app:startIconDrawable="@drawable/mdi_calendar_end">
+            android:hint="@string/started_date"
+            android:visibility="gone"
+            app:startIconDrawable="@drawable/mdi_calendar_start">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/finishingDateTextField"
+                android:id="@+id/startedDateTextField"
                 android:focusable="false"
                 android:longClickable="false"
 
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 />
+
         </com.google.android.material.textfield.TextInputLayout>
+
+<!--        <com.google.android.material.textfield.TextInputLayout-->
+<!--            android:id="@+id/finishedDateLayout"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:hint="@string/finished_date"-->
+<!--            app:startIconDrawable="@drawable/mdi_calendar_end">-->
+
+<!--            <com.google.android.material.textfield.TextInputEditText-->
+<!--                android:id="@+id/finishedDateTextField"-->
+<!--                android:focusable="false"-->
+<!--                android:longClickable="false"-->
+
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                />-->
+<!--        </com.google.android.material.textfield.TextInputLayout>-->
 
         <TextView
             android:id="@+id/ratingText"

@@ -11,8 +11,9 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.readtrack.databinding.FragmentAddBookBinding
-import com.example.readtrack.types.Status
 import com.example.readtrack.viewmodels.AddBookViewModel
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
@@ -30,31 +31,38 @@ class AddBookFragment : Fragment() {
         val binding = FragmentAddBookBinding.inflate(inflater, container, false)
         binding.vm = addBookViewModel
 
-        binding.startingDateTextField.setOnClickListener {
-            createDatePicker("Starting Date", binding.startingDateTextField)
+        binding.startedToFinishedDateTextField.setOnClickListener {
+            createDateRangePicker(binding.startedToFinishedDateTextField)
         }
 
-        binding.finishingDateTextField.setOnClickListener {
-            createDatePicker("Finishing Date", binding.finishingDateTextField)
+        binding.startedDateTextField.setOnClickListener {
+            createDatePicker(binding.startedDateTextField)
         }
+
+//        binding.finishedDateTextField.setOnClickListener {
+//            createDatePicker("Finished Date", binding.finishedDateTextField)
+//        }
 
         binding.readChip.setOnCheckedChangeListener { _, _ ->
-            binding.startingDateLayout.isVisible = true
-            binding.finishingDateLayout.isVisible = true
+            binding.startedToFinishedDateLayout.visibility = View.VISIBLE
+            binding.startedDateLayout.visibility = View.GONE
+//            binding.finishedDateLayout.visibility = View.GONE
             binding.ratingText.isVisible = true
             binding.ratingBar.isVisible = true
         }
 
         binding.readingChip.setOnCheckedChangeListener { _, _ ->
-            binding.startingDateLayout.isVisible = true
-            binding.finishingDateLayout.visibility = View.GONE
+            binding.startedToFinishedDateLayout.visibility = View.GONE
+            binding.startedDateLayout.isVisible = true
+//            binding.finishedDateLayout.visibility = View.GONE
             binding.ratingText.isVisible = true
             binding.ratingBar.isVisible = true
         }
 
         binding.wtrChip.setOnCheckedChangeListener { _, _ ->
-            binding.startingDateLayout.isVisible = false
-            binding.finishingDateLayout.isVisible = false
+            binding.startedToFinishedDateLayout.visibility = View.GONE
+            binding.startedDateLayout.isVisible = false
+//            binding.finishedDateLayout.isVisible = false
             binding.ratingText.isVisible = false
             binding.ratingBar.isVisible = false
         }
@@ -64,10 +72,19 @@ class AddBookFragment : Fragment() {
         return binding.root
     }
 
-    private fun createDatePicker(title: String, textField: TextInputEditText) {
-        // Initialize date range picker from material design library
+    private fun createDatePicker(textField: TextInputEditText) {
+        val title = "Started Date"
+
+        // Only date today or before can be selected
+        val noLaterThanTodayConstraint =
+            CalendarConstraints.Builder()
+                .setValidator(DateValidatorPointBackward.now())
+
+        // Initialize date picker from material design library
         val builder = MaterialDatePicker.Builder.datePicker()
             .setTitleText(title)
+            .setCalendarConstraints(noLaterThanTodayConstraint.build())
+
         val picker = builder.build()
 
         // Inside this fragment host another child fragment
@@ -76,7 +93,7 @@ class AddBookFragment : Fragment() {
         // Set the action for when save button is clicked
         picker.addOnPositiveButtonClickListener {
             // it = selected date in Long!
-            val dateFormatter = SimpleDateFormat("dd/MM/yyyy")
+            val dateFormatter = SimpleDateFormat("dd MMM yyyy")
             val formattedDate = dateFormatter.format(Date(it))
 //                val finishingDate = dateFormatter.format(Date(it.second))
             textField.setText("$formattedDate")
@@ -90,6 +107,48 @@ class AddBookFragment : Fragment() {
         // Set the action for when the picker is canceled (back button, etc.)
         picker.addOnCancelListener {
             Toast.makeText(requireContext(), "You have not selected a date", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun createDateRangePicker(textField: TextInputEditText) {
+        val title = "Started Date - Finished Date"
+
+        // Only date today or before can be selected
+        val noLaterThanTodayConstraint =
+            CalendarConstraints.Builder()
+                .setValidator(DateValidatorPointBackward.now())
+
+        // Initialize date range picker from material design library
+        val builder = MaterialDatePicker.Builder.dateRangePicker()
+            .setTitleText(title)
+            .setCalendarConstraints(noLaterThanTodayConstraint.build())
+
+        val picker = builder.build()
+
+        // Inside this fragment host another child fragment
+        picker.show(childFragmentManager, picker.toString())
+
+        // Set the action for when save button is clicked
+        picker.addOnPositiveButtonClickListener {
+            /***
+             * it = selected date in Pair<Long!, Long!>
+             * it.first = started date
+             * it.second = finished date
+             */
+            val dateFormatter = SimpleDateFormat("dd MMM yyyy")
+            val startedDate = dateFormatter.format(Date(it.first))
+            val finishedDate = dateFormatter.format(Date(it.second))
+            textField.setText("$startedDate - $finishedDate")
+        }
+
+        // Set the action for when the cancel button is clicked
+        picker.addOnNegativeButtonClickListener {
+            Toast.makeText(requireContext(), "You have not selected a date range", Toast.LENGTH_SHORT).show()
+        }
+
+        // Set the action for when the picker is canceled (back button, etc.)
+        picker.addOnCancelListener {
+            Toast.makeText(requireContext(), "You have not selected a date range", Toast.LENGTH_SHORT).show()
         }
     }
 

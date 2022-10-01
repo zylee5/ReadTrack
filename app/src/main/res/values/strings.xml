@@ -4,8 +4,8 @@
     <string name="book_name">Book Name</string>
     <string name="book_author">Book Author</string>
     <string name="book_genre">Book Genre</string>
-    <string name="starting_date">Starting Date</string>
-    <string name="finishing_date">Finishing Date</string>
+    <string name="started_date">Started Date</string>
+    <string name="finished_date">Finished Date</string>
     <string name="rating">Rating</string>
     <string name="status">Status</string>
     <string name="name">Name</string>
@@ -17,4 +17,5 @@
     <string name="add_book">Add Book</string>
     <string name="reading">Reading</string>
     <string name="want_to_read">Want to read</string>
+    <string name="started_date_finished_date">Started Date - Finished Date</string>
 </resources>
