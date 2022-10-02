@@ -3,6 +3,7 @@ package com.example.readtrack.fragments
 import android.content.Context
 import android.os.Bundle
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +25,8 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
+
+private const val TAG = "AddBookFragment"
 
 class AddBookFragment : Fragment() {
     private val addBookViewModel by activityViewModels<AddBookViewModel>()
@@ -72,6 +75,7 @@ class AddBookFragment : Fragment() {
         }
 
         binding.lifecycleOwner = viewLifecycleOwner
+        Log.d(TAG, addBookViewModel.newBook.value.toString())
 
         return binding.root
     }
@@ -101,7 +105,7 @@ class AddBookFragment : Fragment() {
             // DateTimeFormatter converts LocalTime and not milliseconds
             val localDate: LocalDate = Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
 
-            val formattedDate = dateFormatter.format(localDate)
+            val formattedDate = localDate.format(dateFormatter)
             textField.setText(formattedDate)
         }
 
@@ -146,8 +150,8 @@ class AddBookFragment : Fragment() {
             val localStartedDate: LocalDate = Instant.ofEpochMilli(it.first).atZone(ZoneId.systemDefault()).toLocalDate()
             val localFinishedDate: LocalDate = Instant.ofEpochMilli(it.second).atZone(ZoneId.systemDefault()).toLocalDate()
 
-            val startedDate = dateFormatter.format(localStartedDate)
-            val finishedDate = dateFormatter.format(localFinishedDate)
+            val startedDate = localStartedDate.format(dateFormatter)
+            val finishedDate = localFinishedDate.format(dateFormatter)
             textField.setText("$startedDate - $finishedDate")
         }
 

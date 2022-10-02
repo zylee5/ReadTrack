@@ -15,7 +15,7 @@ package com.example.readtrack.types
 //}
 
 enum class Status(val string: String) {
-    NONE(""),
+    NONE("None"),
     READ("Read"),
     READING("Reading"),
     WANT_TO_READ("Want to read")
