@@ -11,8 +11,8 @@
         android:icon="@drawable/mdi_plus_circle" />
 
     <item
-        android:id="@+id/readFragment"
-        android:title="@string/read"
-        android:icon="@drawable/mdi_check_circle" />
+        android:id="@+id/bookShelfFragment"
+        android:title="@string/book_shelf"
+        android:icon="@drawable/mdi_bookshelf" />
 
 </menu>

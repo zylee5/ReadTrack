@@ -15,8 +15,8 @@
         android:label="fragment_add_book" />
 
     <fragment
-        android:id="@+id/readFragment"
-        android:name="com.example.readtrack.fragments.ReadFragment"
-        android:label="fragment_read" />
+        android:id="@+id/bookShelfFragment"
+        android:name="com.example.readtrack.fragments.BookShelfFragment"
+        android:label="fragment_book_shelf" />
 
 </navigation>

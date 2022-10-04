@@ -13,20 +13,30 @@
             type="com.example.readtrack.viewmodels.AddBookViewModel" />
     </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:orientation="vertical">
+        android:layout_height="match_parent" >
+
+        <LinearLayout
+            android:id="@+id/addBookFormLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" >
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/bookNameLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/book_name"
+            app:errorEnabled="true"
+            app:helperText="@string/required"
             app:startIconDrawable="@drawable/mdi_book_open_variant">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/bookNameTextField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@={vm.newBook.name}"
@@ -38,9 +48,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/book_author"
+            app:errorEnabled="true"
+            app:helperText="@string/required"
             app:startIconDrawable="@drawable/mdi_account">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/bookAuthorTextField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@={vm.newBook.authorName}"
@@ -52,31 +65,34 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/book_genre"
+            app:errorEnabled="true"
+            app:helperText="@string/required"
             app:startIconDrawable="@drawable/mdi_heart_multiple">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/bookGenreTextField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@={vm.newBook.genre}"
                 />
         </com.google.android.material.textfield.TextInputLayout>
 
-<!--        <com.google.android.material.textfield.TextInputLayout-->
-<!--            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:hint="@string/status"-->
-<!--            app:startIconDrawable="@drawable/mdi_progress_check">-->
+        <!--        <com.google.android.material.textfield.TextInputLayout-->
+        <!--            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:hint="@string/status"-->
+        <!--            app:startIconDrawable="@drawable/mdi_progress_check">-->
 
-<!--            <com.google.android.material.textfield.MaterialAutoCompleteTextView-->
-<!--                android:id="@+id/statusTextField"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:inputType="none"-->
-<!--                android:text="@={vm.book.status}"-->
-<!--                app:simpleItems="@array/status_array" />-->
+        <!--            <com.google.android.material.textfield.MaterialAutoCompleteTextView-->
+        <!--                android:id="@+id/statusTextField"-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:inputType="none"-->
+        <!--                android:text="@={vm.book.status}"-->
+        <!--                app:simpleItems="@array/status_array" />-->
 
-<!--        </com.google.android.material.textfield.TextInputLayout>-->
+        <!--        </com.google.android.material.textfield.TextInputLayout>-->
 
         <TextView
             android:layout_width="wrap_content"
@@ -84,11 +100,12 @@
             android:text="@string/status" />
 
         <com.google.android.material.chip.ChipGroup
+            android:id="@+id/statusChipGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:selectionRequired="true"
             app:singleSelection="true"
-            app:singleLine="true">
+            app:singleLine="true" >
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/readChip"
@@ -114,15 +131,27 @@
                 android:text="@string/want_to_read"
                 android:checkable="true" />
 
-
         </com.google.android.material.chip.ChipGroup>
+
+        <TextView
+            android:id="@+id/statusChipWarningText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/status_not_selected"
+            android:visibility="gone"
+            android:textColor="@color/design_default_color_error"
+            tools:visibility="visible" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/startedToFinishedDateLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/started_date_finished_date"
-            app:startIconDrawable="@drawable/mdi_calendar_range" >
+            android:visibility="gone"
+            app:errorEnabled="true"
+            app:helperText="@string/required"
+            app:startIconDrawable="@drawable/mdi_calendar_range"
+            tools:visibility="visible" >
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/startedToFinishedDateTextField"
@@ -140,6 +169,8 @@
             android:layout_height="wrap_content"
             android:hint="@string/started_date"
             android:visibility="gone"
+            app:errorEnabled="true"
+            app:helperText="@string/required"
             app:startIconDrawable="@drawable/mdi_calendar_start"
             tools:visibility="visible" >
 
@@ -153,27 +184,29 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-<!--        <com.google.android.material.textfield.TextInputLayout-->
-<!--            android:id="@+id/finishedDateLayout"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:hint="@string/finished_date"-->
-<!--            app:startIconDrawable="@drawable/mdi_calendar_end">-->
+        <!--        <com.google.android.material.textfield.TextInputLayout-->
+        <!--            android:id="@+id/finishedDateLayout"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:hint="@string/finished_date"-->
+        <!--            app:startIconDrawable="@drawable/mdi_calendar_end">-->
 
-<!--            <com.google.android.material.textfield.TextInputEditText-->
-<!--                android:id="@+id/finishedDateTextField"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:focusable="false"-->
-<!--                android:longClickable="false" />-->
-<!--            -->
-<!--        </com.google.android.material.textfield.TextInputLayout>-->
+        <!--            <com.google.android.material.textfield.TextInputEditText-->
+        <!--                android:id="@+id/finishedDateTextField"-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:focusable="false"-->
+        <!--                android:longClickable="false" />-->
+        <!--            -->
+        <!--        </com.google.android.material.textfield.TextInputLayout>-->
 
         <TextView
             android:id="@+id/ratingText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/rating" />
+            android:text="@string/rating"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
         <RatingBar
             android:id="@+id/ratingBar"
@@ -181,9 +214,33 @@
             android:layout_height="wrap_content"
             android:max="5"
             android:numStars="5"
-            android:rating="@={vm.newBook.rating}"
-            android:stepSize="1" />
+            android:rating="@{vm.newBook.rating}"
+            android:stepSize="1"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/ratingBarWarningText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/non_zero_rating"
+            android:visibility="gone"
+            android:textColor="@color/design_default_color_error"
+            tools:visibility="visible" />
+
+        </LinearLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/addNewBookBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/mdi_plus_circle"
+            android:contentDescription="@string/add_new_book_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

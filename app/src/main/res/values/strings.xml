@@ -18,4 +18,15 @@
     <string name="reading">Reading</string>
     <string name="want_to_read">Want to read</string>
     <string name="started_date_finished_date">Started Date - Finished Date</string>
+    <string name="add_new_book_button">Add new book button</string>
+    <string name="book_shelf">Bookshelf</string>
+    <string name="required">*Required</string>
+    <string name="book_name_text_empty">You must enter the book name</string>
+    <string name="author_name_text_empty">You must enter the author name</string>
+    <string name="book_genre_text_empty">You must enter the book genre</string>
+    <string name="date_range_text_empty">You must select a date range</string>
+    <string name="date_text_empty">You must select a date</string>
+    <string name="cannot_be_empty">This field cannot be empty</string>
+    <string name="status_not_selected">You must select one reading status</string>
+    <string name="non_zero_rating">Rating cannot be zero</string>
 </resources>
