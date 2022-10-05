@@ -10,7 +10,13 @@ data class NewBook(
     var startedDate: LocalDate = LocalDate.now(),
     var dateRange: Pair<LocalDate, LocalDate> =
         Pair(LocalDate.now(), LocalDate.now()),
-    var status: String = Status.NONE.string,
+
+
+    // Change status to Status!!!!!!!!!!!!!!!!!!
+
+
+
+    var status: Status = Status.NONE,
     var rating: Float = (0).toFloat(), // android:rating receives float
 //    var startingDateAllowed: ObservableBoolean =
 //        ObservableBoolean(status != Status.WANT_TO_READ.string),
@@ -27,24 +33,24 @@ data class NewBook(
         authorName = this.authorName,
         genre = this.genre,
         startedDate = when (this.status) {
-            Status.READ.string -> {
+            Status.READ -> {
                 this.dateRange.first
             }
-            Status.READING.string -> {
+            Status.READING -> {
                 this.startedDate
             }
             else -> {
                 null
             }
         },
-        finishedDate = if (this.status == Status.READ.string) {
+        finishedDate = if (this.status == Status.READ) {
             this.dateRange.second
         } else {
             null
         },
         status = this.status,
-        rating = if (this.status == Status.READ.string ||
-            this.status == Status.READING.string) {
+        rating = if (this.status == Status.READ ||
+            this.status == Status.READING) {
             this.rating // allow for temporary rating while reading, can change later
         } else {
             (0).toFloat()

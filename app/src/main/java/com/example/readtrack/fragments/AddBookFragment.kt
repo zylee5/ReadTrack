@@ -1,16 +1,12 @@
 package com.example.readtrack.fragments
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.media.Rating
 import android.os.Bundle
-import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RatingBar
-import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -24,7 +20,6 @@ import com.google.android.material.chip.ChipGroup
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import java.time.Instant
@@ -41,7 +36,7 @@ class AddBookFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val binding = FragmentAddBookBinding.inflate(inflater, container, false)
             .apply {
                 vm = addBookViewModel
@@ -61,17 +56,17 @@ class AddBookFragment : Fragment() {
                 }
 
                 readChip.setOnCheckedChangeListener { _, _ ->
-                    addBookViewModel.newBook.value!!.status = Status.READ.string
+                    addBookViewModel.newBook.value!!.status = Status.READ
                     setViewVisibilityForStatus(this, Status.READ)
                 }
 
                 readingChip.setOnCheckedChangeListener { _, _ ->
-                    addBookViewModel.newBook.value!!.status = Status.READING.string
+                    addBookViewModel.newBook.value!!.status = Status.READING
                     setViewVisibilityForStatus(this, Status.READING)
                 }
 
                 wtrChip.setOnCheckedChangeListener { _, _ ->
-                    addBookViewModel.newBook.value!!.status = Status.WANT_TO_READ.string
+                    addBookViewModel.newBook.value!!.status = Status.WANT_TO_READ
                     setViewVisibilityForStatus(this, Status.WANT_TO_READ)
                 }
 
@@ -91,7 +86,7 @@ class AddBookFragment : Fragment() {
                     }
                 }
 
-                bookNameTextField.doOnTextChanged { text, start, before, count ->
+                bookNameTextField.doOnTextChanged { _, _, _, _ ->
                     setTextLayoutErrorIfEmpty(bookNameLayout)
                 }
 
@@ -101,7 +96,7 @@ class AddBookFragment : Fragment() {
                     }
                 }
 
-                bookAuthorTextField.doOnTextChanged { text, start, before, count ->
+                bookAuthorTextField.doOnTextChanged { _, _, _, _ ->
                     setTextLayoutErrorIfEmpty(bookAuthorLayout)
                 }
 
@@ -111,7 +106,7 @@ class AddBookFragment : Fragment() {
                     }
                 }
 
-                bookGenreTextField.doOnTextChanged { text, start, before, count ->
+                bookGenreTextField.doOnTextChanged { _, _, _, _ ->
                     setTextLayoutErrorIfEmpty(bookGenreLayout)
                 }
 
@@ -121,15 +116,15 @@ class AddBookFragment : Fragment() {
                     }
                 }
 
-                startedToFinishedDateTextField.doOnTextChanged { text, start, before, count ->
+                startedToFinishedDateTextField.doOnTextChanged { _, _, _, _ ->
                     setTextLayoutErrorIfEmpty(startedToFinishedDateLayout)
                 }
 
-                startedDateTextField.doOnTextChanged { text, start, before, count ->
+                startedDateTextField.doOnTextChanged { _, _, _, _ ->
                     setTextLayoutErrorIfEmpty(startedDateLayout)
                 }
 
-                ratingBar.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
+                ratingBar.setOnRatingBarChangeListener { _, rating, _ ->
                     Log.d(TAG, "Rating has changed to: $rating")
                     ratingBarWarningText.visibility =
                         if (rating <= 0)
@@ -351,6 +346,7 @@ class AddBookFragment : Fragment() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun createDateRangePicker(
         textField: TextInputEditText
     ) {

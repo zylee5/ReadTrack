@@ -8,6 +8,6 @@ data class StoredBook(
     val genre: String,
     val startedDate: LocalDate?,
     val finishedDate: LocalDate?,
-    val status: String,
+    val status: Status,
     val rating: Float?
 )
