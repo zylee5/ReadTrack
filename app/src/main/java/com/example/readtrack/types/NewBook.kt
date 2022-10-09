@@ -10,12 +10,6 @@ data class NewBook(
     var startedDate: LocalDate = LocalDate.now(),
     var dateRange: Pair<LocalDate, LocalDate> =
         Pair(LocalDate.now(), LocalDate.now()),
-
-
-    // Change status to Status!!!!!!!!!!!!!!!!!!
-
-
-
     var status: Status = Status.NONE,
     var rating: Float = (0).toFloat(), // android:rating receives float
 //    var startingDateAllowed: ObservableBoolean =

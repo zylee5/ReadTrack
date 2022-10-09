@@ -10,6 +10,7 @@ import android.widget.RatingBar
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.readtrack.R
 import com.example.readtrack.databinding.FragmentAddBookBinding
@@ -22,6 +23,7 @@ import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -68,22 +70,6 @@ class AddBookFragment : Fragment() {
                 wtrChip.setOnCheckedChangeListener { _, _ ->
                     addBookViewModel.newBook.value!!.status = Status.WANT_TO_READ
                     setViewVisibilityForStatus(this, Status.WANT_TO_READ)
-                }
-
-                addNewBookBtn.setOnClickListener {
-                    val newBook = addBookViewModel.newBook.value!!
-
-                    if (isAddBookFormValid(this)) {
-                        val newStoredBook = newBook.toStoredBook()
-
-                        Log.d(TAG, "New StoredBook instance: $newStoredBook")
-                        bookShelfViewModel.addBook(newStoredBook)
-
-                        findNavController().navigate(R.id.bookShelfFragment)
-                    } else {
-                        Log.d(TAG, "Form incomplete")
-                        showWarningMsgWhenFormInputMissing(this)
-                    }
                 }
 
                 bookNameTextField.doOnTextChanged { _, _, _, _ ->
@@ -138,6 +124,27 @@ class AddBookFragment : Fragment() {
                     extensions/baseAdapters/src/main/java/androidx/databinding/adapters/ RatingBarBindingAdapter.java
                     */
                     addBookViewModel.newBook.value!!.rating = rating
+                }
+
+                addNewBookBtn.setOnClickListener {
+                    val newBook = addBookViewModel.newBook.value!!
+
+                    if (isAddBookFormValid(this)) {
+                        val newStoredBook = newBook.toStoredBook()
+
+                        Log.d(TAG, "New StoredBook instance: $newStoredBook")
+                        // addBook contains database modifying operation
+                        // and thus a suspend function
+                        // and thus has to be run inside a coroutine block
+                        // which at here tied to the lifecycle of AddBookFragment
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            bookShelfViewModel.addBook(newStoredBook)
+                        }
+                        findNavController().navigate(R.id.bookShelfFragment)
+                    } else {
+                        Log.d(TAG, "Form incomplete")
+                        showWarningMsgWhenFormInputMissing(this)
+                    }
                 }
 
                 lifecycleOwner = viewLifecycleOwner

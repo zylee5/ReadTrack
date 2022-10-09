@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter
 
 private const val TAG = "Converter"
 
-object Converter {
+object Converters {
     /***
      * Convert LocalDate to string
      * Direction: view model to view

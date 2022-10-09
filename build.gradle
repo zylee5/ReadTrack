@@ -4,6 +4,8 @@ buildscript {
         nav_version = '2.5.2'
         material_version = '1.5.0'
         lifecycle_version = '2.5.1'
+        room_version = '2.4.3'
+        recyclerview_version = '1.2.1'
     }
 }
 
