@@ -139,8 +139,9 @@ class AddBookFragment : Fragment() {
                         // which at here tied to the lifecycle of AddBookFragment
                         viewLifecycleOwner.lifecycleScope.launch {
                             bookShelfViewModel.addBook(newStoredBook)
+                            findNavController().navigate(R.id.bookShelfFragment)
                         }
-                        findNavController().navigate(R.id.bookShelfFragment)
+
                     } else {
                         Log.d(TAG, "Form incomplete")
                         showWarningMsgWhenFormInputMissing(this)

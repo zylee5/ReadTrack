@@ -3,13 +3,12 @@ package com.example.readtrack.data
 import android.content.Context
 import androidx.room.*
 import com.example.readtrack.types.StoredBook
-import kotlinx.coroutines.CoroutineScope
 
 @Database(
     entities = [StoredBook::class],
     version = 1
 )
-@TypeConverters(Converters::class)
+@TypeConverters(RoomConverters::class)
 abstract class ReadTrackDatabase : RoomDatabase() {
     abstract fun readTrackDao(): ReadTrackDao
 
@@ -18,8 +17,8 @@ abstract class ReadTrackDatabase : RoomDatabase() {
         private var INSTANCE: ReadTrackDatabase? = null
 
         fun getDatabase(context: Context)
-        : ReadTrackDatabase {
-            if (INSTANCE != null) return INSTANCE as ReadTrackDatabase
+        : ReadTrackDatabase =
+            INSTANCE ?:
             synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context,
@@ -27,9 +26,8 @@ abstract class ReadTrackDatabase : RoomDatabase() {
                     "ReadTrackDatabase"
                 ).build()
                 this.INSTANCE = instance
-                return instance
+                instance
             }
-        }
     }
 
 }

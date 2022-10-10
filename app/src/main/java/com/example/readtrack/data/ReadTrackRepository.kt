@@ -11,13 +11,12 @@ class ReadTrackRepository(private val readTrackDao: ReadTrackDao) {
         private var INSTANCE: ReadTrackRepository? = null
 
         fun getInstance(readTrackDao: ReadTrackDao)
-        : ReadTrackRepository {
-            if (INSTANCE != null) return INSTANCE as ReadTrackRepository
+        : ReadTrackRepository =
+            INSTANCE ?:
             synchronized(this) {
                 val instance = ReadTrackRepository(readTrackDao)
                 this.INSTANCE = instance
-                return instance
+                instance
             }
-        }
     }
 }
