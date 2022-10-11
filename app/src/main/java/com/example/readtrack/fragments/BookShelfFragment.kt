@@ -31,6 +31,9 @@ class BookShelfFragment : Fragment() {
             }
         }
 
+        // storedBooks only gets initialized once from dao
+        // it has to be observed for any changes later on
+        // so that the list adapter can update the recycler view continuously
         bookShelfViewModel.storedBooks.observe(viewLifecycleOwner) { storedBooks ->
             bookListAdapter.submitList(storedBooks)
         }
