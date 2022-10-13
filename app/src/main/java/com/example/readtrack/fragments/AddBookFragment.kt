@@ -1,12 +1,18 @@
 package com.example.readtrack.fragments
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RatingBar
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -14,7 +20,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.readtrack.R
 import com.example.readtrack.databinding.FragmentAddBookBinding
+import com.example.readtrack.dialogs.AddBookCoverDialog
 import com.example.readtrack.types.Status
+import com.example.readtrack.util.ImageUtils
 import com.example.readtrack.viewmodels.AddBookViewModel
 import com.example.readtrack.viewmodels.BookShelfViewModel
 import com.google.android.material.chip.ChipGroup
@@ -31,7 +39,8 @@ import java.time.format.DateTimeFormatter
 
 private const val TAG = "AddBookFragment"
 
-class AddBookFragment : Fragment() {
+class AddBookFragment : Fragment(), AddBookCoverDialog.AddBookCoverDialogListener {
+    private lateinit var binding: FragmentAddBookBinding
     private val addBookViewModel by activityViewModels<AddBookViewModel>()
     private val bookShelfViewModel by activityViewModels<BookShelfViewModel>()
 
@@ -39,7 +48,7 @@ class AddBookFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentAddBookBinding.inflate(inflater, container, false)
+        binding = FragmentAddBookBinding.inflate(inflater, container, false)
             .apply {
                 vm = addBookViewModel
 
@@ -58,18 +67,24 @@ class AddBookFragment : Fragment() {
                 }
 
                 readChip.setOnCheckedChangeListener { _, _ ->
-                    addBookViewModel.newBook.value!!.status = Status.READ
-                    setViewVisibilityForStatus(this, Status.READ)
+                    addBookViewModel.newBook.value?.let {
+                        it.status = Status.READ
+                    }
+                    setViewVisibilityForStatus(Status.READ)
                 }
 
                 readingChip.setOnCheckedChangeListener { _, _ ->
-                    addBookViewModel.newBook.value!!.status = Status.READING
-                    setViewVisibilityForStatus(this, Status.READING)
+                    addBookViewModel.newBook.value?.let {
+                        it.status = Status.READING
+                    }
+                    setViewVisibilityForStatus(Status.READING)
                 }
 
                 wtrChip.setOnCheckedChangeListener { _, _ ->
-                    addBookViewModel.newBook.value!!.status = Status.WANT_TO_READ
-                    setViewVisibilityForStatus(this, Status.WANT_TO_READ)
+                    addBookViewModel.newBook.value?.let {
+                        it.status = Status.WANT_TO_READ
+                    }
+                    setViewVisibilityForStatus(Status.WANT_TO_READ)
                 }
 
                 bookNameTextField.doOnTextChanged { _, _, _, _ ->
@@ -123,28 +138,38 @@ class AddBookFragment : Fragment() {
                     /* https://android.googlesource.com/platform/frameworks/data-binding/+/refs/heads/studio-master-dev/
                     extensions/baseAdapters/src/main/java/androidx/databinding/adapters/ RatingBarBindingAdapter.java
                     */
-                    addBookViewModel.newBook.value!!.rating = rating
+                    addBookViewModel.newBook.value?.let {
+                        it.rating = rating
+                    }
+                }
+
+                addBookCoverBtn.setOnClickListener {
+                    // open a dialog fragment to add a book cover photo
+                    // by either capturing through camera
+                    // or choosing from gallery
+                    val newDialogFragment = AddBookCoverDialog.getInstance(requireContext())
+                    newDialogFragment?.show(childFragmentManager, "addBookCoverDialog")
                 }
 
                 addNewBookBtn.setOnClickListener {
-                    val newBook = addBookViewModel.newBook.value!!
+                    addBookViewModel.newBook.value?.let {
+                        if (isAddBookFormValid()) {
+                            val newStoredBook = it.toStoredBook()
 
-                    if (isAddBookFormValid(this)) {
-                        val newStoredBook = newBook.toStoredBook()
+                            Log.d(TAG, "New StoredBook instance: $newStoredBook")
+                            // addBook contains database modifying operation
+                            // and thus a suspend function
+                            // and thus has to be run inside a coroutine block
+                            // which at here tied to the lifecycle of AddBookFragment
+                            viewLifecycleOwner.lifecycleScope.launch {
+                                bookShelfViewModel.addBook(newStoredBook)
+                                findNavController().navigate(R.id.bookShelfFragment)
+                            }
 
-                        Log.d(TAG, "New StoredBook instance: $newStoredBook")
-                        // addBook contains database modifying operation
-                        // and thus a suspend function
-                        // and thus has to be run inside a coroutine block
-                        // which at here tied to the lifecycle of AddBookFragment
-                        viewLifecycleOwner.lifecycleScope.launch {
-                            bookShelfViewModel.addBook(newStoredBook)
-                            findNavController().navigate(R.id.bookShelfFragment)
+                        } else {
+                            Log.d(TAG, "Form incomplete")
+                            showWarningMsgWhenFormInputMissing()
                         }
-
-                    } else {
-                        Log.d(TAG, "Form incomplete")
-                        showWarningMsgWhenFormInputMissing(this)
                     }
                 }
 
@@ -154,9 +179,51 @@ class AddBookFragment : Fragment() {
         return binding.root
     }
 
-    private fun setViewVisibilityForStatus(
-        binding: FragmentAddBookBinding, status: Status
-    ) {
+    private val pickImgResultLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult() // a generic contract taking any Intent input
+    ) { result ->
+        // --- ActivityResultCallback (onActivityResult()) ---
+        // after returning from the activity
+        // handle the activity result
+        if (result.resultCode == Activity.RESULT_OK) {
+            result.data?.data?.let { uri ->
+                addBookViewModel.newBook.value?.let {
+                    it.coverUri = uri.toString()
+                }
+                var bitmap = ImageUtils.decodeUriStreamToBitmap(
+                    uri,
+                    // Convert the dimension values (dp) to pixels (px) in integers
+                    resources.getDimensionPixelSize(R.dimen.bk_cover_img_width),
+                    resources.getDimensionPixelSize(R.dimen.bk_cover_img_height),
+                    requireContext()
+                )
+//                bitmap = bitmap?.let {
+//                    Bitmap.createScaledBitmap(
+//                        it,
+//                        resources.getDimensionPixelSize(R.dimen.bk_cover_img_width),
+//                        resources.getDimensionPixelSize(R.dimen.bk_cover_img_height),
+//                        true
+//                    )
+//                }
+                Log.d(TAG, "Width: ${bitmap?.width}")
+                Log.d(TAG, "Height: ${bitmap?.height}")
+
+                binding.addBookCoverBtn.background = BitmapDrawable(resources, bitmap)
+                binding.addBookCoverBtn.text = ""
+            }
+        }
+    }
+    override fun onPickOptionClicked() {
+        val pickIntent = Intent(
+            Intent.ACTION_PICK,
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        )
+        // Launch the pick image activity for result
+        // (startActivityForResult has been deprecated)
+        pickImgResultLauncher.launch(pickIntent)
+    }
+
+    private fun setViewVisibilityForStatus(status: Status) {
         binding.apply {
             startedToFinishedDateLayout.visibility =
                 if (status == Status.READ) View.VISIBLE
@@ -186,10 +253,7 @@ class AddBookFragment : Fragment() {
      * (4) Rating cannot be zero for none WANT_TO_READ status
      *
      */
-    private fun isAddBookFormValid(
-        binding: FragmentAddBookBinding
-    ): Boolean {
-
+    private fun isAddBookFormValid(): Boolean {
         binding.apply {
             val selectedStatus = statusChipGroup.checkedChipId
 
@@ -224,9 +288,7 @@ class AddBookFragment : Fragment() {
      * Criteria:
      * (same as isAddBookFormValid)
      */
-    private fun showWarningMsgWhenFormInputMissing(
-        binding: FragmentAddBookBinding
-    ) {
+    private fun showWarningMsgWhenFormInputMissing() {
         binding.apply {
             val selectedStatus = statusChipGroup.checkedChipId
 
@@ -237,17 +299,17 @@ class AddBookFragment : Fragment() {
             when (selectedStatus) {
                 R.id.readChip -> {
                     setTextLayoutErrorIfEmpty(startedToFinishedDateLayout)
-                    setWarningTextVisibleIfNoSelectionFor(this, ratingBar)
+                    setWarningTextVisibleIfNoSelectionFor(ratingBar)
                 }
                 R.id.readingChip -> {
                     setTextLayoutErrorIfEmpty(startedDateLayout)
-                    setWarningTextVisibleIfNoSelectionFor(this, ratingBar)
+                    setWarningTextVisibleIfNoSelectionFor(ratingBar)
                 }
                 R.id.wtrChip -> {
                     // nothing
                 }
                 else -> {
-                    setWarningTextVisibleIfNoSelectionFor(this, statusChipGroup)
+                    setWarningTextVisibleIfNoSelectionFor(statusChipGroup)
                 }
             }
         }
@@ -289,7 +351,7 @@ class AddBookFragment : Fragment() {
      * Set warning TextView from 'binding' visible
      * when 'view' such as RatingBar and ChipGroup has no values selected
      */
-    private fun setWarningTextVisibleIfNoSelectionFor(binding: FragmentAddBookBinding, view: View) {
+    private fun setWarningTextVisibleIfNoSelectionFor(view: View) {
         binding.apply {
             when (view) {
                 is RatingBar -> {
@@ -310,7 +372,7 @@ class AddBookFragment : Fragment() {
      */
     private fun isTxtFieldEmpty(
         textField: TextInputEditText
-    ): Boolean = textField.text!!.trim().isEmpty()
+    ): Boolean = textField.text?.trim()?.isEmpty() ?: false
 
     private fun createDatePicker(
         textField: TextInputEditText
@@ -402,7 +464,6 @@ class AddBookFragment : Fragment() {
             setTextLayoutErrorIfEmpty(textField.parent.parent as TextInputLayout)
         }
     }
-
 }
 
 /*

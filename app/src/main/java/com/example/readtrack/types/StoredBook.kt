@@ -8,6 +8,7 @@ import java.time.LocalDate
 data class StoredBook(
     @PrimaryKey(autoGenerate = true)
     var bookId: Long = 0,
+    val coverUri: String,
     val name: String,
     val authorName: String,
     val genre: String,

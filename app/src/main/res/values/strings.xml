@@ -29,4 +29,5 @@
     <string name="cannot_be_empty">This field cannot be empty</string>
     <string name="status_not_selected">You must select one reading status</string>
     <string name="non_zero_rating">Rating cannot be zero</string>
+    <string name="add_a_book_cover">Add a book cover</string>
 </resources>

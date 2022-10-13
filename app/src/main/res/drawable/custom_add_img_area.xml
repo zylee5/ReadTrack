@@ -11,15 +11,15 @@
             <corners
                 android:radius="15dp" />
             <size
-                android:height="180dp"
-                android:width="130dp" />
+                android:width="@dimen/bk_cover_img_width"
+                android:height="@dimen/bk_cover_img_height" />
         </shape>
     </item>
 
     <item
         android:top="130dp"
-        android:left="110dp"
-        android:bottom="5dp"
+        android:left="160dp"
+        android:bottom="10dp"
         android:right="5dp">
         <bitmap
             android:tint="#447C8C"
