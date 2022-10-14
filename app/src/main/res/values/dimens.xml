@@ -2,4 +2,6 @@
 <resources>
     <dimen name="bk_cover_img_width">200dp</dimen>
     <dimen name="bk_cover_img_height">300dp</dimen>
+    <dimen name="list_bk_cover_width">140dp</dimen>
+    <dimen name="list_bk_cover_height">210dp</dimen>
 </resources>

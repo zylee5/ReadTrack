@@ -32,15 +32,15 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
 
-                <android.widget.Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/addBookCoverBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_margin="10dp"
                     android:adjustViewBounds="true"
-                    android:background="@drawable/custom_add_img_area"
                     android:scaleType="fitCenter"
+                    android:background="@drawable/custom_add_img_area"
                     android:text="@string/add_a_book_cover"
                     android:textAllCaps="false"
                     android:textColor="#447C8C" />

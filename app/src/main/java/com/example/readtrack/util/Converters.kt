@@ -1,5 +1,6 @@
 package com.example.readtrack.util
 
+import android.graphics.drawable.BitmapDrawable
 import android.util.Log
 import androidx.databinding.InverseMethod
 import java.time.LocalDate
@@ -8,6 +9,8 @@ import java.time.format.DateTimeFormatter
 private const val TAG = "Converter"
 
 object Converters {
+    private val dateFormatter = DateTimeFormatter.ofPattern("d MMM yyyy")
+
     /***
      * Convert LocalDate to string
      * Direction: view model to view
@@ -15,25 +18,17 @@ object Converters {
     @InverseMethod("stringToDate") // Specify this function is the inverse method of "stringToDate"
     @JvmStatic
     fun dateToString(
-        newValue: LocalDate
-     ): String {
-        return ""
-    }
+        newValue: LocalDate?
+     ): String? = newValue?.format(dateFormatter)
 
     /***
      * Convert string to LocalDate
      * Direction: view to view model
      */
-
     @JvmStatic
     fun stringToDate(
-        newValue: String
-    ): LocalDate {
-        val dateFormatter = DateTimeFormatter.ofPattern("d MMM yyyy")
-        Log.d(TAG, LocalDate.parse(newValue, dateFormatter).toString())
-
-        return LocalDate.parse(newValue, dateFormatter)
-    }
+        newValue: String?
+    ): LocalDate? = newValue?.let { LocalDate.parse(it, dateFormatter) }
 
     /***
      * Convert a date range to string
@@ -42,9 +37,20 @@ object Converters {
     @InverseMethod("dateRangeStrToDate")
     @JvmStatic
     fun dateRangeToString(
-        dateRange: Pair<LocalDate, LocalDate>
-    ): String {
-        return ""
+        dateRange: Pair<LocalDate, LocalDate>?
+    ): String? {
+        val startedDate = dateRange?.first
+        val finishedDate = dateRange?.second
+
+        val startedDateStr = startedDate?.format(dateFormatter)
+        val finishedDateStr = finishedDate?.format(dateFormatter)
+
+        return if (!startedDateStr.isNullOrEmpty()
+            && !finishedDateStr.isNullOrEmpty()) {
+            "$startedDateStr - $finishedDateStr"
+        } else {
+            null
+        }
     }
 
     /***
@@ -53,18 +59,20 @@ object Converters {
      */
     @JvmStatic
     fun dateRangeStrToDate(
-        dateRangeStr: String
-    ): Pair<LocalDate, LocalDate> {
-        val dateFormatter = DateTimeFormatter.ofPattern("d MMM yyyy")
+        dateRangeStr: String?
+    ): Pair<LocalDate, LocalDate>? {
+        val parts = dateRangeStr?.split(" - ")
+        val startedDateStr = parts?.get(0)
+        val finishedDateStr = parts?.get(1)
 
-        val parts = dateRangeStr.split(" - ")
-        val startedDateStr = parts[0]
-        val finishedDateStr = parts[1]
+        val startedDate = startedDateStr?.let { LocalDate.parse(it, dateFormatter) }
+        val finishedDate = finishedDateStr?.let { LocalDate.parse(it, dateFormatter) }
 
-        val startedDate = LocalDate.parse(startedDateStr, dateFormatter)
-        val finishedDate = LocalDate.parse(finishedDateStr, dateFormatter)
-        Log.d(TAG, Pair(startedDate, finishedDate).toString())
-
-        return Pair(startedDate, finishedDate)
+        return if (startedDate != null
+            && finishedDate != null) {
+            Pair(startedDate, finishedDate)
+        } else {
+            null
+        }
     }
 }

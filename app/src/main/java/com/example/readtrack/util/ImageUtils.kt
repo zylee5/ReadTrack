@@ -1,11 +1,15 @@
 package com.example.readtrack.util
 
+import android.R.attr
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import java.io.InputStream
-import java.lang.Exception
+import kotlin.math.max
+import kotlin.math.pow
+import kotlin.math.sqrt
+
 
 object ImageUtils {
     /***
@@ -46,14 +50,24 @@ object ImageUtils {
 
                     // Output the down-sampled image
                     options.inJustDecodeBounds = false
-                    val bitmap = BitmapFactory.decodeStream(
+                    val roughBitmap = BitmapFactory.decodeStream(
                         newStream,
                         null,
                         options
                     )
 
+                    val y = sqrt(width * height / (roughBitmap!!.width.toDouble() / roughBitmap.height))
+                    val x = (y / roughBitmap.height) * roughBitmap.width
+
+                    val resizedBitmap = Bitmap.createScaledBitmap(
+                        roughBitmap,
+                        x.toInt(),
+                        y.toInt(),
+                        true
+                    )
+
                     newStream.close()
-                    return bitmap
+                    return resizedBitmap
                 }
 
             } ?: return null

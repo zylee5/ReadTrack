@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.nfc.Tag
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -18,6 +19,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.example.readtrack.R
 import com.example.readtrack.databinding.FragmentAddBookBinding
 import com.example.readtrack.dialogs.AddBookCoverDialog
@@ -190,23 +192,13 @@ class AddBookFragment : Fragment(), AddBookCoverDialog.AddBookCoverDialogListene
                 addBookViewModel.newBook.value?.let {
                     it.coverUri = uri.toString()
                 }
-                var bitmap = ImageUtils.decodeUriStreamToBitmap(
+                val bitmap = ImageUtils.decodeUriStreamToBitmap(
                     uri,
                     // Convert the dimension values (dp) to pixels (px) in integers
                     resources.getDimensionPixelSize(R.dimen.bk_cover_img_width),
                     resources.getDimensionPixelSize(R.dimen.bk_cover_img_height),
                     requireContext()
                 )
-//                bitmap = bitmap?.let {
-//                    Bitmap.createScaledBitmap(
-//                        it,
-//                        resources.getDimensionPixelSize(R.dimen.bk_cover_img_width),
-//                        resources.getDimensionPixelSize(R.dimen.bk_cover_img_height),
-//                        true
-//                    )
-//                }
-                Log.d(TAG, "Width: ${bitmap?.width}")
-                Log.d(TAG, "Height: ${bitmap?.height}")
 
                 binding.addBookCoverBtn.background = BitmapDrawable(resources, bitmap)
                 binding.addBookCoverBtn.text = ""

@@ -4,6 +4,7 @@
         <variable
             name="book"
             type="com.example.readtrack.types.StoredBook" />
+        <import type="com.example.readtrack.util.Converters" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -15,14 +16,15 @@
 
         <ImageView
             android:id="@+id/bookCover"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_width="@dimen/list_bk_cover_width"
+            android:layout_height="@dimen/list_bk_cover_height"
+            android:layout_margin="16dp"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:imageUri="@{book.coverUri}"
             tools:src="@drawable/mdi_bookshelf" />
 
         <TextView
@@ -61,13 +63,42 @@
             android:id="@+id/readingStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
             android:text="@{book.status.string}"
             app:layout_constraintStart_toStartOf="@id/bookTitle"
-            app:layout_constraintTop_toBottomOf="@id/bookGenre"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/startedDate"
             tools:text="Reading" />
+
+        <TextView
+            android:id="@+id/startedDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            android:text="@{`Started: ` + Converters.dateToString(book.startedDate)}"
+            app:layout_constraintStart_toStartOf="@id/bookTitle"
+            app:layout_constraintBottom_toTopOf="@id/finishedDate"
+            tools:text="Started: 7 Oct 2022"/>
+
+        <TextView
+            android:id="@+id/finishedDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            android:text="@{`Finished: ` + Converters.dateToString(book.finishedDate)}"
+            app:layout_constraintStart_toStartOf="@id/bookTitle"
+            app:layout_constraintBottom_toTopOf="@id/rating"
+            tools:text="Finished: 11 Oct 2022"/>
+
+        <TextView
+            android:id="@+id/rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            android:text="@{`Rating: ` + book.rating.toString() + `/5.0`}"
+            app:layout_constraintStart_toStartOf="@id/bookTitle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="Rating: 4.0/5.0"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -8,9 +8,8 @@ data class NewBook(
     var name: String = "",
     var authorName: String = "", // TODO: Possibly a data class
     var genre: String = "",
-    var startedDate: LocalDate = LocalDate.now(),
-    var dateRange: Pair<LocalDate, LocalDate> =
-        Pair(LocalDate.now(), LocalDate.now()),
+    var startedDate: LocalDate? = null,
+    var dateRange: Pair<LocalDate, LocalDate>? = null,
     var status: Status = Status.NONE,
     var rating: Float = 0f, // android:rating receives float
 //    var startingDateAllowed: ObservableBoolean =
@@ -30,7 +29,7 @@ data class NewBook(
         genre = this.genre,
         startedDate = when (this.status) {
             Status.READ -> {
-                this.dateRange.first
+                this.dateRange?.first
             }
             Status.READING -> {
                 this.startedDate
@@ -40,7 +39,7 @@ data class NewBook(
             }
         },
         finishedDate = if (this.status == Status.READ) {
-            this.dateRange.second
+            this.dateRange?.second
         } else {
             null
         },
