@@ -3,9 +3,8 @@ package com.example.readtrack.fragments
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
+import android.content.pm.PackageManager
 import android.graphics.drawable.BitmapDrawable
-import android.nfc.Tag
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -14,12 +13,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RatingBar
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
 import com.example.readtrack.R
 import com.example.readtrack.databinding.FragmentAddBookBinding
 import com.example.readtrack.dialogs.AddBookCoverDialog
@@ -34,6 +33,8 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.IOException
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -213,6 +214,117 @@ class AddBookFragment : Fragment(), AddBookCoverDialog.AddBookCoverDialogListene
         // Launch the pick image activity for result
         // (startActivityForResult has been deprecated)
         pickImgResultLauncher.launch(pickIntent)
+    }
+
+
+
+
+
+
+
+
+    /***
+     * Problems:
+     * 1) Temporary files of 0B that are created whenever the capture image option is selected are not deleted - ok
+     * when no images are captured (option selected but quit the camera activity)
+     * 2) Images captured that are unused in the end are remained in the directory - ok
+     * 3) Images captured are in their original size, which is probably not needed
+     * 4) Bitmap image set as the button background does not survive configuration change
+     */
+    private val captureImgResultLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        // If the image list is not found, return
+        addBookViewModel.newBook.value?.coverImgFiles?.let { imgFiles ->
+            val currentImg = imgFiles[imgFiles.lastIndex]
+            // If the last image is not found on the list, return
+            currentImg?.let { imgFile ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    // Get the image uri
+                    val imgUri = FileProvider.getUriForFile(
+                        requireContext(),
+                        "com.example.readtrack.fileprovider",
+                        imgFile
+                    )
+                    // Update the uri property of newBook instance
+                    addBookViewModel.newBook.value?.let {
+                        it.coverUri = imgUri.toString()
+                    }
+                    // Revoke the temporary write permission
+                    requireContext().revokeUriPermission(
+                        imgUri,
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    )
+                    val bitmap = ImageUtils.decodeFileToBitmap(
+                        imgFile.absolutePath,
+                        resources.getDimensionPixelSize(R.dimen.bk_cover_img_width),
+                        resources.getDimensionPixelSize(R.dimen.bk_cover_img_height)
+                    )
+                    binding.addBookCoverBtn.background = BitmapDrawable(resources, bitmap)
+                    binding.addBookCoverBtn.text = ""
+
+                    // Delete all images taken previously (including empty temp files)
+                    for (i in imgFiles.size - 2 downTo 0) {
+                        val img = imgFiles[i]
+                        imgFiles.removeAt(i)
+                        img?.delete()
+                    }
+
+                } else {
+                    // When the camera activity is cancelled
+                    // delete the 0B temp file
+                    imgFile.delete()
+                }
+            }
+        }
+    }
+    override fun onCaptureOptionClicked() {
+        // Create a temporary file and add to the list
+        try {
+            val img = ImageUtils.createUniqueImgFile(requireContext())
+            addBookViewModel.newBook.value?.coverImgFiles?.add(img)
+        } catch (e: IOException) {
+            // If no file has been created, activity will not launch
+            return
+        }
+
+        // If the list is not found, return
+        addBookViewModel.newBook.value?.coverImgFiles?.let { imgFiles ->
+            val currentImg = imgFiles[imgFiles.size - 1]
+            // If the image file is not found on the list, return
+            currentImg?.let { imgFile ->
+                // Add uri to the created file as an extra to the capture intent
+                // * A FileProvider registered in manifest
+                val imgUri = FileProvider.getUriForFile(
+                    requireContext(),
+                    "com.example.readtrack.fileprovider",
+                    imgFile
+                )
+                val captureIntent = Intent(
+                    MediaStore.ACTION_IMAGE_CAPTURE
+                ).apply {
+                    putExtra(
+                        MediaStore.EXTRA_OUTPUT,
+                        imgUri
+                    )
+                }
+                // Give temporary write permission on the uri to the Intent
+                requireContext().packageManager.queryIntentActivities(
+                    captureIntent,
+                    PackageManager.MATCH_DEFAULT_ONLY
+                ).map {
+                    it.activityInfo.packageName
+                }.forEach {
+                    requireContext().grantUriPermission(
+                        it,
+                        imgUri,
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    )
+                }
+                // Launch the image capture activity
+                captureImgResultLauncher.launch(captureIntent)
+            }
+        }
     }
 
     private fun setViewVisibilityForStatus(status: Status) {

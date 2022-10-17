@@ -1,10 +1,12 @@
 package com.example.readtrack.types
 
+import java.io.File
 import java.time.LocalDate
 
 
 data class NewBook(
     var coverUri: String = "",
+    var coverImgFiles: MutableList<File?> = ArrayList(),
     var name: String = "",
     var authorName: String = "", // TODO: Possibly a data class
     var genre: String = "",
@@ -51,6 +53,4 @@ data class NewBook(
             0f
         }
     )
-
-
 }

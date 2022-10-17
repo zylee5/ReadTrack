@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlin.ClassCastException
@@ -14,6 +13,7 @@ class AddBookCoverDialog : DialogFragment() {
     // To deliver the onClick events to the host fragment
     interface AddBookCoverDialogListener {
         fun onPickOptionClicked()
+        fun onCaptureOptionClicked()
     }
 
     private lateinit var listener: AddBookCoverDialogListener
@@ -41,7 +41,7 @@ class AddBookCoverDialog : DialogFragment() {
 
         // Add the options based on
         // whether the intent can be performed
-        if (canUseCamera(context)) {
+        if (canCaptureWithCamera(context)) {
             options.add("Take a photo")
             captureIdx = 0
         }
@@ -55,7 +55,7 @@ class AddBookCoverDialog : DialogFragment() {
             .setTitle("Add a book cover")
             .setItems(options.toTypedArray<CharSequence>()) { _, which ->
                 when (which){
-                    captureIdx -> {}
+                    captureIdx -> listener.onCaptureOptionClicked()
                     pickIdx -> listener.onPickOptionClicked()
                 }
             }
@@ -64,7 +64,18 @@ class AddBookCoverDialog : DialogFragment() {
     }
 
     companion object {
-        private fun canUseCamera(context: Context): Boolean = true
+        /***
+         * Verify whether the device can perform the intent of
+         * capturing image using camera
+         */
+        private fun canCaptureWithCamera (context: Context): Boolean {
+            val captureIntent = Intent(
+                MediaStore.ACTION_IMAGE_CAPTURE
+            )
+            return captureIntent.resolveActivity(
+                context.packageManager
+            ) != null
+        }
 
         /***
          * Verify whether the device can perform the intent of
@@ -75,13 +86,13 @@ class AddBookCoverDialog : DialogFragment() {
                 Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             )
-            return (pickIntent.resolveActivity(
+            return pickIntent.resolveActivity(
                 context.packageManager
-            ) != null)
+            ) != null
         }
 
         fun getInstance(context: Context): AddBookCoverDialog? =
-            if (canUseCamera(context) || canChooseFromGallery(context))
+            if (canCaptureWithCamera(context) || canChooseFromGallery(context))
                 AddBookCoverDialog()
             else
                 null

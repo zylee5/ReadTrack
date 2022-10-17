@@ -5,7 +5,14 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Environment
+import java.io.File
+import java.io.IOException
 import java.io.InputStream
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import kotlin.jvm.Throws
 import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -81,6 +88,46 @@ object ImageUtils {
     }
 
     /***
+     * Create a file with current time as its name
+     */
+    @Throws(IOException::class)
+    fun createUniqueImgFile(context: Context): File {
+        val formatter = DateTimeFormatter.ofPattern("d_MM_yyyy")
+        val timeStamp = LocalDateTime.now().format(formatter)
+        val fileName = "ReadTrack_${timeStamp}"
+        val fileDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        // Can throw exception
+        return File.createTempFile(fileName, ".jpg", fileDir)
+    }
+
+    /***
+     * Read an image from a File
+     */
+    fun decodeFileToBitmap(
+        path: String,
+        width: Int,
+        height: Int
+    ): Bitmap {
+        val options = BitmapFactory.Options()
+            .apply {
+                inJustDecodeBounds = true
+            }
+        BitmapFactory.decodeFile(path, options)
+
+        options.apply {
+            inSampleSize = calculateInSampleSize(
+                options.outWidth,
+                options.outHeight,
+                width,
+                height
+            )
+            inJustDecodeBounds = false
+        }
+
+        return BitmapFactory.decodeFile(path, options)
+    }
+
+    /***
      * Return the scale value of BitmapFactory.options.inSampleSize
      * in the power of 2 based on the required width and height
      * https://developer.android.com/reference/android/graphics/BitmapFactory.Options#inSampleSize
@@ -103,4 +150,6 @@ object ImageUtils {
         }
         return inSampleSize
     }
+
+
 }
