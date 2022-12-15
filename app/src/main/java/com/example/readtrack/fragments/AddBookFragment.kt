@@ -271,13 +271,10 @@ class AddBookFragment : Fragment(), AddBookCoverDialog.AddBookCoverDialogListene
      * 1) Temporary files of 0B that are created whenever the capture image option is selected are not deleted - solved
      * when no images are captured (option selected but quit the camera activity)
      * 2) Images captured that are unused in the end are remained in the directory
-     * 3) Images captured are in their original size, which is probably not needed - tolerable
-     * 4) Bitmap image set as the button background does not survive configuration change
+     * e.g., user first took an image then later select another from gallery
+     * 3) Images captured are in their original size, which is probably not needed
+     * 4) Bitmap image set as the button background does not survive configuration change - solved
      */
-
-
-    // After adding new book, unused image captured are not deleted
-    // e.g., user first took an image then later select another from gallery
     private val captureImgResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -305,14 +302,15 @@ class AddBookFragment : Fragment(), AddBookCoverDialog.AddBookCoverDialogListene
                         imgUri,
                         Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
-//                    // Generate bitmap from currentImg
-//                    val bitmap = ImageUtils.decodeFileToBitmap(
-//                        currentImg.absolutePath,
-//                        resources.getDimensionPixelSize(R.dimen.bk_cover_img_width),
-//                        resources.getDimensionPixelSize(R.dimen.bk_cover_img_height)
-//                    )
-//                    binding.addBookCoverBtn.background = BitmapDrawable(resources, bitmap)
-//                    binding.addBookCoverBtn.text = ""
+
+                    /*
+                    // Generate bitmap from currentImg
+                    val bitmap = ImageUtils.decodeFileToBitmap(
+                        currentImg.absolutePath,
+                        resources.getDimensionPixelSize(R.dimen.bk_cover_img_width),
+                        resources.getDimensionPixelSize(R.dimen.bk_cover_img_height)
+                    )
+                    */
 
                     // Delete all images taken previously (including empty temp files)
                     for (i in imgFiles.size - 2 downTo 0) {

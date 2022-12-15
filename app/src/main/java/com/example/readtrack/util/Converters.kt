@@ -23,7 +23,7 @@ object Converters {
     @JvmStatic
     fun dateToString(
         newValue: LocalDate?
-     ): String = newValue?.format(dateFormatter) ?: "-"
+     ): String? = newValue?.format(dateFormatter)
 
     /***
      * Convert string to LocalDate
