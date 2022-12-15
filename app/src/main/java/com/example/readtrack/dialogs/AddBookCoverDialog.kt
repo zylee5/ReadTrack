@@ -54,7 +54,7 @@ class AddBookCoverDialog : DialogFragment() {
         return MaterialAlertDialogBuilder(context)
             .setTitle("Add a book cover")
             .setItems(options.toTypedArray<CharSequence>()) { _, which ->
-                when (which){
+                when (which) {
                     captureIdx -> listener.onCaptureOptionClicked()
                     pickIdx -> listener.onPickOptionClicked()
                 }

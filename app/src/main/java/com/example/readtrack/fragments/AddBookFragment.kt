@@ -33,7 +33,6 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
-import java.io.File
 import java.io.IOException
 import java.time.Instant
 import java.time.LocalDate
@@ -182,6 +181,15 @@ class AddBookFragment : Fragment(), AddBookCoverDialog.AddBookCoverDialogListene
         return binding.root
     }
 
+    override fun onPickOptionClicked() {
+        val pickIntent = Intent(
+            Intent.ACTION_PICK,
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        )
+        // Launch the pick image activity for result
+        // (startActivityForResult has been deprecated)
+        pickImgResultLauncher.launch(pickIntent)
+    }
     private val pickImgResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult() // a generic contract taking any Intent input
     ) { result ->
@@ -192,92 +200,14 @@ class AddBookFragment : Fragment(), AddBookCoverDialog.AddBookCoverDialogListene
             result.data?.data?.let { uri ->
                 addBookViewModel.newBook.value?.let {
                     it.coverUri = uri.toString()
-                }
-                val bitmap = ImageUtils.decodeUriStreamToBitmap(
-                    uri,
-                    // Convert the dimension values (dp) to pixels (px) in integers
-                    resources.getDimensionPixelSize(R.dimen.bk_cover_img_width),
-                    resources.getDimensionPixelSize(R.dimen.bk_cover_img_height),
-                    requireContext()
-                )
-
-                binding.addBookCoverBtn.background = BitmapDrawable(resources, bitmap)
-                binding.addBookCoverBtn.text = ""
-            }
-        }
-    }
-    override fun onPickOptionClicked() {
-        val pickIntent = Intent(
-            Intent.ACTION_PICK,
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        )
-        // Launch the pick image activity for result
-        // (startActivityForResult has been deprecated)
-        pickImgResultLauncher.launch(pickIntent)
-    }
-
-
-
-
-
-
-
-
-    /***
-     * Problems:
-     * 1) Temporary files of 0B that are created whenever the capture image option is selected are not deleted - ok
-     * when no images are captured (option selected but quit the camera activity)
-     * 2) Images captured that are unused in the end are remained in the directory - ok
-     * 3) Images captured are in their original size, which is probably not needed
-     * 4) Bitmap image set as the button background does not survive configuration change
-     */
-    private val captureImgResultLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        // If the image list is not found, return
-        addBookViewModel.newBook.value?.coverImgFiles?.let { imgFiles ->
-            val currentImg = imgFiles[imgFiles.lastIndex]
-            // If the last image is not found on the list, return
-            currentImg?.let { imgFile ->
-                if (result.resultCode == Activity.RESULT_OK) {
-                    // Get the image uri
-                    val imgUri = FileProvider.getUriForFile(
-                        requireContext(),
-                        "com.example.readtrack.fileprovider",
-                        imgFile
-                    )
-                    // Update the uri property of newBook instance
-                    addBookViewModel.newBook.value?.let {
-                        it.coverUri = imgUri.toString()
-                    }
-                    // Revoke the temporary write permission
-                    requireContext().revokeUriPermission(
-                        imgUri,
-                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                    )
-                    val bitmap = ImageUtils.decodeFileToBitmap(
-                        imgFile.absolutePath,
-                        resources.getDimensionPixelSize(R.dimen.bk_cover_img_width),
-                        resources.getDimensionPixelSize(R.dimen.bk_cover_img_height)
-                    )
-                    binding.addBookCoverBtn.background = BitmapDrawable(resources, bitmap)
-                    binding.addBookCoverBtn.text = ""
-
-                    // Delete all images taken previously (including empty temp files)
-                    for (i in imgFiles.size - 2 downTo 0) {
-                        val img = imgFiles[i]
-                        imgFiles.removeAt(i)
-                        img?.delete()
-                    }
-
-                } else {
-                    // When the camera activity is cancelled
-                    // delete the 0B temp file
-                    imgFile.delete()
+                    it.hasCoverImg.set(true) // even though coverUri has changed, hasCoverImg will not change according to that
+                                             // manual updating is required
+                    it.hasCoverImg.notifyChange()
                 }
             }
         }
     }
+
     override fun onCaptureOptionClicked() {
         // Create a temporary file and add to the list
         try {
@@ -290,16 +220,22 @@ class AddBookFragment : Fragment(), AddBookCoverDialog.AddBookCoverDialogListene
 
         // If the list is not found, return
         addBookViewModel.newBook.value?.coverImgFiles?.let { imgFiles ->
-            val currentImg = imgFiles[imgFiles.size - 1]
-            // If the image file is not found on the list, return
-            currentImg?.let { imgFile ->
-                // Add uri to the created file as an extra to the capture intent
-                // * A FileProvider registered in manifest
+            val lastImg = imgFiles[imgFiles.lastIndex]
+
+            // If the latest added image is not found on the list, return
+            lastImg?.let { currentImg ->
+                /**
+                 * Use a FileProvider to generate the uri for the temp file
+                 * The uri is content:// and not file://
+                 * content:// allows us to grant temp access to the uri
+                 * as opposed to file:// that requires modification of file system permission, which is unsafe
+                 */
                 val imgUri = FileProvider.getUriForFile(
                     requireContext(),
                     "com.example.readtrack.fileprovider",
-                    imgFile
+                    currentImg
                 )
+                // Add uri to the created file as an extra to the capture intent
                 val captureIntent = Intent(
                     MediaStore.ACTION_IMAGE_CAPTURE
                 ).apply {
@@ -308,11 +244,15 @@ class AddBookFragment : Fragment(), AddBookCoverDialog.AddBookCoverDialogListene
                         imgUri
                     )
                 }
-                // Give temporary write permission on the uri to the Intent
-                requireContext().packageManager.queryIntentActivities(
+                /** Give temporary write permission on the uri
+                 * to the camera package
+                 */
+                // Retrieve all activities that can be performed by captureIntent
+                val intentActivitiesList = requireContext().packageManager.queryIntentActivities(
                     captureIntent,
                     PackageManager.MATCH_DEFAULT_ONLY
-                ).map {
+                )
+                intentActivitiesList.map {
                     it.activityInfo.packageName
                 }.forEach {
                     requireContext().grantUriPermission(
@@ -323,6 +263,70 @@ class AddBookFragment : Fragment(), AddBookCoverDialog.AddBookCoverDialogListene
                 }
                 // Launch the image capture activity
                 captureImgResultLauncher.launch(captureIntent)
+            }
+        }
+    }
+    /***
+     * Problems:
+     * 1) Temporary files of 0B that are created whenever the capture image option is selected are not deleted - solved
+     * when no images are captured (option selected but quit the camera activity)
+     * 2) Images captured that are unused in the end are remained in the directory
+     * 3) Images captured are in their original size, which is probably not needed - tolerable
+     * 4) Bitmap image set as the button background does not survive configuration change
+     */
+
+
+    // After adding new book, unused image captured are not deleted
+    // e.g., user first took an image then later select another from gallery
+    private val captureImgResultLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        // If the image list is not found, return
+        addBookViewModel.newBook.value?.coverImgFiles?.let { imgFiles ->
+            val lastImg = imgFiles[imgFiles.lastIndex]
+
+            // If the latest image is not found on the list, return
+            lastImg?.let { currentImg ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    // Get the image uri
+                    val imgUri = FileProvider.getUriForFile(
+                        requireContext(),
+                        "com.example.readtrack.fileprovider",
+                        currentImg
+                    )
+                    // Update the uri property of newBook instance
+                    addBookViewModel.newBook.value?.let {
+                        it.coverUri = imgUri.toString()
+                        it.hasCoverImg.set(true)
+                        it.hasCoverImg.notifyChange()
+                    }
+                    // Revoke the temporary write permission
+                    requireContext().revokeUriPermission(
+                        imgUri,
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    )
+//                    // Generate bitmap from currentImg
+//                    val bitmap = ImageUtils.decodeFileToBitmap(
+//                        currentImg.absolutePath,
+//                        resources.getDimensionPixelSize(R.dimen.bk_cover_img_width),
+//                        resources.getDimensionPixelSize(R.dimen.bk_cover_img_height)
+//                    )
+//                    binding.addBookCoverBtn.background = BitmapDrawable(resources, bitmap)
+//                    binding.addBookCoverBtn.text = ""
+
+                    // Delete all images taken previously (including empty temp files)
+                    for (i in imgFiles.size - 2 downTo 0) {
+                        val img = imgFiles[i]
+                        imgFiles.removeAt(i)
+                        img?.delete()
+                    }
+
+                } else {
+                    // When the camera activity is cancelled
+                    // delete the empty temp file
+                    imgFiles.remove(currentImg)
+                    currentImg.delete()
+                }
             }
         }
     }

@@ -1,8 +1,12 @@
 package com.example.readtrack.util
 
 import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import android.util.Log
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.databinding.InverseMethod
+import com.example.readtrack.MainActivity
+import com.example.readtrack.R
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -19,7 +23,7 @@ object Converters {
     @JvmStatic
     fun dateToString(
         newValue: LocalDate?
-     ): String? = newValue?.format(dateFormatter)
+     ): String = newValue?.format(dateFormatter) ?: "-"
 
     /***
      * Convert string to LocalDate
@@ -74,5 +78,25 @@ object Converters {
         } else {
             null
         }
+    }
+
+    /***
+     * To convert image uri to bitmap drawable
+     * Direction: view model to view
+     */
+    @JvmStatic
+    fun uriToBitmap(
+        uri: String
+    ): BitmapDrawable {
+        val context = MainActivity.applicationContext()
+        // Moved from AddBookFragment
+        val bitmap = ImageUtils.decodeUriStreamToBitmap(
+            Uri.parse(uri),
+            // Convert the dimension values (dp) to pixels (px) in integers
+            context.resources.getDimensionPixelSize(R.dimen.bk_cover_img_width),
+            context.resources.getDimensionPixelSize(R.dimen.bk_cover_img_height),
+            context
+        )
+        return BitmapDrawable(context.resources, bitmap)
     }
 }

@@ -1,6 +1,5 @@
 package com.example.readtrack.util
 
-import android.R.attr
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -9,12 +8,9 @@ import android.os.Environment
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
-import java.time.Instant
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.jvm.Throws
-import kotlin.math.max
-import kotlin.math.pow
 import kotlin.math.sqrt
 
 
@@ -30,7 +26,7 @@ object ImageUtils {
     ): Bitmap? {
         var uriStream: InputStream? = null
         try {
-            // Open a uri stream
+            // Open an input stream for uri
             uriStream = context.contentResolver.openInputStream(uri)
 
             uriStream?.let { stream ->
@@ -40,7 +36,7 @@ object ImageUtils {
                 // Decode the uri stream to get the original image size
                 BitmapFactory.decodeStream(stream, null, options)
 
-                // Important: reopen the stream
+                // Important: Reopen the stream
                 // as the stream position has reached its end
                 stream.close()
                 uriStream = context.contentResolver.openInputStream(uri)
@@ -63,32 +59,33 @@ object ImageUtils {
                         options
                     )
 
-                    val y = sqrt(width * height / (roughBitmap!!.width.toDouble() / roughBitmap.height))
-                    val x = (y / roughBitmap.height) * roughBitmap.width
+                    roughBitmap?.let { bitmap ->
+                        val dstHeight = sqrt(width * height / (bitmap.width.toDouble() / bitmap.height))
+                        val dstWidth = (dstHeight / bitmap.height) * bitmap.width
 
-                    val resizedBitmap = Bitmap.createScaledBitmap(
-                        roughBitmap,
-                        x.toInt(),
-                        y.toInt(),
-                        true
-                    )
+                        val resizedBitmap = Bitmap.createScaledBitmap(
+                            bitmap,
+                            dstWidth.toInt(),
+                            dstHeight.toInt(),
+                            true
+                        )
 
-                    newStream.close()
-                    return resizedBitmap
+                        newStream.close()
+                        return resizedBitmap
+                    }
                 }
-
-            } ?: return null
-
+            }
+            return null
         } catch (e: Exception) {
             return null
         } finally {
-            // Close the stream under whatever circumstances
+            // Important: Close the stream under whatever circumstances
             uriStream?.close()
         }
     }
 
     /***
-     * Create a file with current time as its name
+     * Create a file with current timestamp as its name
      */
     @Throws(IOException::class)
     fun createUniqueImgFile(context: Context): File {
@@ -150,6 +147,4 @@ object ImageUtils {
         }
         return inSampleSize
     }
-
-
 }

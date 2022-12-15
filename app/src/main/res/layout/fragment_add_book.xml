@@ -40,10 +40,11 @@
                     android:layout_margin="10dp"
                     android:adjustViewBounds="true"
                     android:scaleType="fitCenter"
-                    android:background="@drawable/custom_add_img_area"
-                    android:text="@string/add_a_book_cover"
+                    android:background="@{vm.newBook.hasCoverImg ? Converters.uriToBitmap(vm.newBook.coverUri) : @drawable/custom_add_img_area}"
+                    android:text="@{vm.newBook.hasCoverImg ? `` : @string/add_a_book_cover}"
                     android:textAllCaps="false"
-                    android:textColor="#447C8C" />
+                    android:textColor="#447C8C"
+                    tools:text="@string/add_a_book_cover" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/bookNameLayout"
