@@ -17,12 +17,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.readtrack.R
 import com.example.readtrack.adapters.BookListAdapter
+import com.example.readtrack.databinding.FragmentBookShelfBinding
 import com.example.readtrack.util.SwipeGesture
 import com.example.readtrack.viewmodels.BookShelfViewModel
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 class BookShelfFragment : Fragment() {
+    private lateinit var binding: FragmentBookShelfBinding
     private val bookShelfViewModel by activityViewModels<BookShelfViewModel>()
     private val bookListAdapter = BookListAdapter()
 
@@ -31,15 +33,14 @@ class BookShelfFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view =  inflater.inflate(R.layout.fragment_book_shelf, container, false)
-
-        if (view is RecyclerView) {
-            with(view) {
-                adapter = bookListAdapter
-                addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
-                createSwipeAction(requireContext(), this)
+        binding = FragmentBookShelfBinding.inflate(inflater, container, false)
+            .apply {
+                with(bookList) {
+                    adapter = bookListAdapter
+                    addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
+                    createSwipeAction(requireContext(), this)
+                }
             }
-        }
 
         // storedBooks only gets initialized once from dao
         // it has to be observed for any changes later on
@@ -48,7 +49,7 @@ class BookShelfFragment : Fragment() {
             bookListAdapter.submitList(storedBooks)
         }
 
-        return view
+        return binding.root
     }
 
     private fun createSwipeAction(context: Context, recyclerView: RecyclerView) {
