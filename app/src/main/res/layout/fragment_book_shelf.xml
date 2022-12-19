@@ -1,41 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" >
+    xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:background="@color/md_theme_light_primary"
-        android:weightSum="10" >
+        android:orientation="vertical"
+        android:weightSum="10">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/bookShelfTxtLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1" >
+            android:layout_weight="1">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/my_bookshelf"
-                android:textColor="@color/md_theme_light_onPrimary"
-                android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
                 android:layout_margin="16dp"
-                app:layout_constraintStart_toStartOf="parent"
+                android:text="@string/my_bookshelf"
+                android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                android:textColor="@color/md_theme_light_onPrimary"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:elevation="36dp"
             android:layout_weight="9"
-            android:background="@drawable/custom_bookshelf_background">
+            android:background="@drawable/custom_bookshelf_background"
+            android:elevation="36dp">
 
             <SearchView
                 android:id="@+id/searchView"
@@ -58,21 +57,20 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/bookList"
-                android:layout_height="wrap_content"
                 android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/searchView"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/book_list_item" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-
     </LinearLayout>
+
 </layout>
 
 
