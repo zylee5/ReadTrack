@@ -16,4 +16,53 @@ data class StoredBook(
     val finishedDate: LocalDate?,
     val status: Status,
     val rating: Float?
-)
+) {
+    class StoredBookNameComparator: Comparator<StoredBook> {
+        override fun compare(b1: StoredBook?, b2: StoredBook?): Int {
+            if (b1 == null || b2 == null) return 0
+            return b1.name.lowercase().compareTo(b2.name.lowercase())
+        }
+    }
+
+    class StoredBookAuthorNameComparator: Comparator<StoredBook> {
+        override fun compare(b1: StoredBook?, b2: StoredBook?): Int {
+            if (b1 == null || b2 == null) return 0
+            return b1.authorName.lowercase().compareTo(b2.authorName.lowercase())
+        }
+    }
+
+    class StoredBookGenreComparator: Comparator<StoredBook> {
+        override fun compare(b1: StoredBook?, b2: StoredBook?): Int {
+            if (b1 == null || b2 == null) return 0
+            return b1.genre.lowercase().compareTo(b2.genre.lowercase())
+        }
+    }
+
+    class StoredBookStartDateComparator: Comparator<StoredBook> {
+        override fun compare(b1: StoredBook?, b2: StoredBook?): Int {
+            if (b1 == null || b2 == null || b1.startedDate == null || b2.startedDate == null) return 0
+            return b1.startedDate.compareTo(b2.startedDate)
+        }
+    }
+
+    class StoredBookFinishedDateComparator: Comparator<StoredBook> {
+        override fun compare(b1: StoredBook?, b2: StoredBook?): Int {
+            if (b1 == null || b2 == null || b1.finishedDate == null || b2.finishedDate == null) return 0
+            return b1.finishedDate.compareTo(b2.finishedDate)
+        }
+    }
+
+    class StoredBookStatusComparator: Comparator<StoredBook> {
+        override fun compare(b1: StoredBook?, b2: StoredBook?): Int {
+            if (b1 == null || b2 == null) return 0
+            return b1.status.compareTo(b2.status)
+        }
+    }
+
+    class StoredBookRatingComparator: Comparator<StoredBook> {
+        override fun compare(b1: StoredBook?, b2: StoredBook?): Int {
+            if (b1 == null || b2 == null || b1.rating == null || b2.rating == null) return 0
+            return b1.rating.compareTo(b2.rating)
+        }
+    }
+}

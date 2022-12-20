@@ -13,6 +13,8 @@ import com.example.readtrack.data.ReadTrackRepository
 import com.example.readtrack.types.StoredBook
 import com.example.readtrack.util.SwipeGesture
 import kotlinx.coroutines.launch
+import java.util.*
+import kotlin.Comparator
 
 class BookShelfViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: ReadTrackRepository
@@ -34,5 +36,11 @@ class BookShelfViewModel(application: Application) : AndroidViewModel(applicatio
 
     suspend fun deleteBook(book: StoredBook) {
         repository.deleteBook(book)
+    }
+
+    fun sortBooks(comparator: Comparator<StoredBook>) {
+        storedBooks.value?.let {
+            Collections.sort(it, comparator)
+        }
     }
 }
