@@ -3,20 +3,16 @@ package com.example.readtrack.fragments
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.InsetDrawable
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,11 +26,11 @@ import com.example.readtrack.util.SwipeGesture
 import com.example.readtrack.viewmodels.BookShelfViewModel
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
-import java.util.*
 import kotlin.Comparator
 
 class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener {
     private lateinit var binding: FragmentBookShelfBinding
+    private lateinit var preferences: SharedPreferences
     private val bookShelfViewModel by activityViewModels<BookShelfViewModel>()
     private val bookListAdapter = BookListAdapter()
 
@@ -43,6 +39,8 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        preferences = requireActivity().getSharedPreferences("pref", Context.MODE_PRIVATE)
+
         binding = FragmentBookShelfBinding.inflate(inflater, container, false)
             .apply {
                 with(bookList) {
@@ -62,6 +60,15 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener {
         // it has to be observed for any changes later on
         // so that the list adapter can update the recycler view continuously
         bookShelfViewModel.storedBooks.observe(viewLifecycleOwner) { storedBooks ->
+
+            // sort the list according to user settings
+            val order = preferences.getInt("Order", R.id.ascending)
+            val sortAttribute = preferences.getInt("Attribute", R.id.bookName)
+            val comparator = getComparator(order, sortAttribute)
+            if (comparator != null) {
+                Log.d("Bookshelf", "Order: ${resources.getResourceEntryName(order)}, Attribute: ${resources.getResourceEntryName(sortAttribute)}")
+                bookShelfViewModel.sortBooks(comparator)
+            }
             bookListAdapter.submitList(storedBooks)
         }
 
@@ -115,30 +122,46 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener {
         val orderRadioGrp = view.findViewById<RadioGroup>(R.id.orderRadioGrp)
         val attrRadioGrp = view.findViewById<RadioGroup>(R.id.attrRadioGrp)
 
-        val order = orderRadioGrp.checkedRadioButtonId
-        val attribute = attrRadioGrp.checkedRadioButtonId
+        val selectedOrder = orderRadioGrp.checkedRadioButtonId
+        val selectedAttribute = attrRadioGrp.checkedRadioButtonId
 
         // both order and book attribute are selected
-        if (order != -1 && attribute != -1) {
-            var comparator: Comparator<StoredBook>? = when (attribute) {
-                R.id.bookName -> StoredBook.StoredBookNameComparator()
-                R.id.authorName -> StoredBook.StoredBookAuthorNameComparator()
-                R.id.genre -> StoredBook.StoredBookGenreComparator()
-                R.id.startedDate -> StoredBook.StoredBookStartDateComparator()
-                R.id.finishedDate -> StoredBook.StoredBookFinishedDateComparator()
-                R.id.status -> StoredBook.StoredBookStatusComparator()
-                R.id.rating -> StoredBook.StoredBookRatingComparator()
-                else -> null
-            }
-
-            if (order == R.id.descending && comparator != null) {
-                comparator = comparator.reversed()
-            }
+        if (selectedOrder != -1 && selectedAttribute != -1) {
+            val comparator = getComparator(selectedOrder, selectedAttribute)
 
             if (comparator != null) {
                 bookShelfViewModel.sortBooks(comparator)
                 bookListAdapter.notifyDataSetChanged()
             }
+
+            // update user setting
+            val editor = preferences.edit()
+            editor.apply {
+                putInt("Order", selectedOrder)
+                putInt("Attribute", selectedAttribute)
+                apply()
+            }
         }
+    }
+
+    private fun getComparator(
+        order: Int, attribute: Int
+    ): Comparator<StoredBook>? {
+        var comparator: Comparator<StoredBook>? = when (attribute) {
+            R.id.bookName -> StoredBook.BookNameComparator()
+            R.id.authorName -> StoredBook.AuthorNameComparator()
+            R.id.genre -> StoredBook.GenreComparator()
+            R.id.startedDate -> StoredBook.StartDateComparator()
+            R.id.finishedDate -> StoredBook.FinishedDateComparator()
+            R.id.status -> StoredBook.StatusComparator()
+            R.id.rating -> StoredBook.RatingComparator()
+            else -> null
+        }
+
+        if (order == R.id.descending && comparator != null) {
+            comparator = comparator.reversed()
+        }
+
+        return comparator
     }
 }

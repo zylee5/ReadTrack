@@ -2,12 +2,16 @@ package com.example.readtrack.viewmodels
 
 import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
+import android.icu.text.LocaleDisplayNames.UiListItem.getComparator
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.example.readtrack.R
 import com.example.readtrack.data.ReadTrackDatabase
 import com.example.readtrack.data.ReadTrackRepository
 import com.example.readtrack.types.StoredBook
