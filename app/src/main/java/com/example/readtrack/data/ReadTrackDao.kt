@@ -12,9 +12,12 @@ abstract class ReadTrackDao {
     @Insert
     abstract suspend fun insertBook(book: StoredBook): Long
 
-    @Query("SELECT * from books")
+    @Query("SELECT * FROM books")
     abstract fun getAllStoredBooks(): LiveData<List<StoredBook>>
 
     @Delete
     abstract suspend fun deleteBook(book: StoredBook)
+
+    @Query("SELECT * FROM books WHERE name LIKE :query")
+    abstract fun getBooksForQuery(query: String): LiveData<List<StoredBook>>
 }

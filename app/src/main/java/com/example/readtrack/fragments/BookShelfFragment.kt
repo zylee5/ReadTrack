@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioGroup
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -54,6 +55,29 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener {
                     val newSortBookFragment = SortBooksDialog()
                     newSortBookFragment.show(childFragmentManager, "sortBookDialog")
                 }
+
+                // filter the list with search view
+                searchView.setOnQueryTextListener (
+                    object : SearchView.OnQueryTextListener {
+                        override fun onQueryTextSubmit(text: String?): Boolean {
+                            return false
+                        }
+
+                        override fun onQueryTextChange(text: String?): Boolean {
+                            val query = "%$text%"
+
+                            // To set the MutableLiveData to the latest query text
+                            bookShelfViewModel.queryText.value = query
+                            // To scroll the RecyclerView to the top
+                            bookList.postDelayed( {
+                                bookList.smoothScrollToPosition(0)
+                            }, 100)
+                            return true
+                        }
+
+                    }
+
+                )
             }
 
         // storedBooks only gets initialized once from dao
@@ -107,8 +131,6 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener {
                                 val alertDialog = builder.create()
                                 alertDialog.show()
                             }
-
-
                     }
                 }
 

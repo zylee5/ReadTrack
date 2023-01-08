@@ -16,6 +16,8 @@ class BookListAdapter : ListAdapter<StoredBook, BookListAdapter.BookListViewHold
     inner class BookListViewHolder(
         private val binding: BookListItemBinding
     ): RecyclerView.ViewHolder(binding.root) {
+
+        // Assign 'item' as the 'book' instance in BookListItem view
         fun bind(item: StoredBook) {
             binding.apply {
                 book = item
@@ -23,6 +25,7 @@ class BookListAdapter : ListAdapter<StoredBook, BookListAdapter.BookListViewHold
         }
     }
 
+    // Initialize a view holder instance
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
     : BookListViewHolder =
         BookListViewHolder(
@@ -34,6 +37,8 @@ class BookListAdapter : ListAdapter<StoredBook, BookListAdapter.BookListViewHold
             )
         )
 
+    // Get a StoredBook instance from the list at 'position'
+    // and assign it as the 'book' instance in each BookListItem view
     override fun onBindViewHolder(holder: BookListViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
