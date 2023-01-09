@@ -18,6 +18,6 @@ abstract class ReadTrackDao {
     @Delete
     abstract suspend fun deleteBook(book: StoredBook)
 
-    @Query("SELECT * FROM books WHERE name LIKE :query")
+    @Query("SELECT * FROM books WHERE name LIKE :query OR authorName LIKE :query")
     abstract fun getBooksForQuery(query: String): LiveData<List<StoredBook>>
 }
