@@ -46,6 +46,7 @@
                 android:background="@drawable/search_view_bg"
                 android:queryHint="Title or author"
                 android:iconifiedByDefault="false"
+                android:imeOptions="flagNoExtractUi"
                 app:layout_constraintEnd_toStartOf="@id/sortOptionBtn"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

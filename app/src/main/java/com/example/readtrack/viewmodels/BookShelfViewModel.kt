@@ -58,4 +58,10 @@ class BookShelfViewModel(application: Application) : AndroidViewModel(applicatio
             Collections.sort(it, comparator)
         }
     }
+
+    // Call this function when query text is inputted
+    // It sets the query to queryText, which then modifies storedBooks
+    fun searchByTitleOrAuthor(query: String) {
+        queryText.value = query
+    }
 }

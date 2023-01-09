@@ -9,6 +9,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
 import android.widget.RadioGroup
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -27,7 +29,9 @@ import com.example.readtrack.util.SwipeGesture
 import com.example.readtrack.viewmodels.BookShelfViewModel
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
-import kotlin.Comparator
+
+
+private const val TAG = "BookShelfFragment"
 
 class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener {
     private lateinit var binding: FragmentBookShelfBinding
@@ -50,13 +54,34 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener {
                     createSwipeAction(requireContext(), this)
                 }
 
-                // open the sort book dialog
+                // Open the sort book dialog
                 sortOptionBtn.setOnClickListener {
                     val newSortBookFragment = SortBooksDialog()
                     newSortBookFragment.show(childFragmentManager, "sortBookDialog")
                 }
 
-                // filter the list with search view
+                // Search query only when searchView is focused
+                // so that when fragment is replaced and then resumed (where searchView is unfocused)
+                // no query search will be made
+                var shouldSearch = false
+                searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
+                    // Log.d(TAG, "Focus? $hasFocus")
+                    shouldSearch = hasFocus
+                }
+
+                // One exception is when clear button of searchView is pressed
+                // searchView remains unfocused if it was already unfocused
+                // but we still want to trigger search for empty query
+                searchView.findViewById<ImageView>(
+                    searchView.context.resources
+                        .getIdentifier("android:id/search_close_btn", null, null)
+                ).setOnClickListener {
+                    // Log.d(TAG, "Clear button clicked")
+                    shouldSearch = true
+                    searchView.setQuery("", false)
+                }
+
+                // Filter the list with search view
                 searchView.setOnQueryTextListener (
                     object : SearchView.OnQueryTextListener {
                         override fun onQueryTextSubmit(text: String?): Boolean {
@@ -64,14 +89,18 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener {
                         }
 
                         override fun onQueryTextChange(text: String?): Boolean {
+                            // Log.d(TAG, "Should search? $shouldSearch")
+                            if (!shouldSearch) return false
+
                             val query = "%$text%"
 
                             // To set the MutableLiveData to the latest query text
-                            bookShelfViewModel.queryText.value = query
+                            bookShelfViewModel.searchByTitleOrAuthor(query)
                             // To scroll the RecyclerView to the top
                             bookList.postDelayed( {
                                 bookList.smoothScrollToPosition(0)
                             }, 100)
+                            // Log.d(TAG, "Query text is changed")
                             return true
                         }
 
@@ -80,17 +109,16 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener {
                 )
             }
 
-        // storedBooks only gets initialized once from dao
-        // it has to be observed for any changes later on
+        // storedBooks has to be observed for any changes later on
         // so that the list adapter can update the recycler view continuously
         bookShelfViewModel.storedBooks.observe(viewLifecycleOwner) { storedBooks ->
 
-            // sort the list according to user settings
+            // Sort the list according to user settings
             val order = preferences.getInt("Order", R.id.ascending)
             val sortAttribute = preferences.getInt("Attribute", R.id.bookName)
             val comparator = getComparator(order, sortAttribute)
             if (comparator != null) {
-                Log.d("Bookshelf", "Order: ${resources.getResourceEntryName(order)}, Attribute: ${resources.getResourceEntryName(sortAttribute)}")
+                // Log.d(TAG, "Order: ${resources.getResourceEntryName(order)}, Attribute: ${resources.getResourceEntryName(sortAttribute)}")
                 bookShelfViewModel.sortBooks(comparator)
             }
             bookListAdapter.submitList(storedBooks)
@@ -116,7 +144,7 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener {
                                         viewLifecycleOwner.lifecycleScope.launch {
                                             bookShelfViewModel.deleteBook(selectedBook)
                                         }
-                                        // to allow undo delete
+                                        // To allow undo delete
                                         Snackbar.make(recyclerView, "'${selectedBook.name}' is deleted", Snackbar.LENGTH_LONG)
                                             .setAction("Undo") {
                                                 viewLifecycleOwner.lifecycleScope.launch {
@@ -147,16 +175,23 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener {
         val selectedOrder = orderRadioGrp.checkedRadioButtonId
         val selectedAttribute = attrRadioGrp.checkedRadioButtonId
 
-        // both order and book attribute are selected
+        // Both order and book attribute are selected
         if (selectedOrder != -1 && selectedAttribute != -1) {
             val comparator = getComparator(selectedOrder, selectedAttribute)
 
             if (comparator != null) {
+                // Sort the list based on the order and attribute selected
                 bookShelfViewModel.sortBooks(comparator)
                 bookListAdapter.notifyDataSetChanged()
+                // To scroll the RecyclerView to the top
+                binding.apply {
+                    bookList.postDelayed( {
+                        bookList.smoothScrollToPosition(0)
+                    }, 100)
+                }
             }
 
-            // update user setting
+            // Update user setting
             val editor = preferences.edit()
             editor.apply {
                 putInt("Order", selectedOrder)
