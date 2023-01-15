@@ -10,12 +10,25 @@ import com.example.readtrack.R
 import com.example.readtrack.databinding.BookListItemBinding
 import com.example.readtrack.types.StoredBook
 
-class BookListAdapter : ListAdapter<StoredBook, BookListAdapter.BookListViewHolder>(
+class BookListAdapter(
+    private val onItemClickedListener: OnItemClickedListener
+) : ListAdapter<StoredBook, BookListAdapter.BookListViewHolder>(
     BookListDiffCallback()
 ) {
+    // The ViewHolder is the BookListItem view
     inner class BookListViewHolder(
         private val binding: BookListItemBinding
     ): RecyclerView.ViewHolder(binding.root) {
+        init {
+            // binding.root is the whole item view
+            binding.root.setOnClickListener {
+                val position = bindingAdapterPosition
+                // Prevent deleted item gets clicked before animation completed
+                if (position != RecyclerView.NO_POSITION) {
+                    onItemClickedListener.onItemClicked(getItem(position))
+                }
+            }
+        }
 
         // Assign 'item' as the 'book' instance in BookListItem view
         fun bind(item: StoredBook) {
@@ -42,6 +55,10 @@ class BookListAdapter : ListAdapter<StoredBook, BookListAdapter.BookListViewHold
     override fun onBindViewHolder(holder: BookListViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
+}
+
+interface OnItemClickedListener {
+    fun onItemClicked(bookClicked: StoredBook)
 }
 
 private class BookListDiffCallback: DiffUtil.ItemCallback<StoredBook>() {

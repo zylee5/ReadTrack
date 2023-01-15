@@ -5,14 +5,10 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.RadioGroup
-import android.widget.SearchView
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -22,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.readtrack.R
 import com.example.readtrack.adapters.BookListAdapter
+import com.example.readtrack.adapters.OnItemClickedListener
 import com.example.readtrack.databinding.FragmentBookShelfBinding
 import com.example.readtrack.dialogs.SortBooksDialog
 import com.example.readtrack.types.StoredBook
@@ -33,11 +30,11 @@ import kotlinx.coroutines.launch
 
 private const val TAG = "BookShelfFragment"
 
-class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener {
+class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener, OnItemClickedListener {
     private lateinit var binding: FragmentBookShelfBinding
     private lateinit var preferences: SharedPreferences
     private val bookShelfViewModel by activityViewModels<BookShelfViewModel>()
-    private val bookListAdapter = BookListAdapter()
+    private val bookListAdapter = BookListAdapter(this)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -125,6 +122,26 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener {
         }
 
         return binding.root
+    }
+    
+    // When the view item in RecyclerView is clicked
+    override fun onItemClicked(bookClicked: StoredBook) {
+
+
+        // Open AddBookFragment as a dialog
+        val editBookRecordDialog = AddBookFragment()
+
+        val bookId = bookClicked.bookId
+        val args = Bundle()
+        args.putLong("Id", bookId)
+
+        editBookRecordDialog.arguments = args
+        editBookRecordDialog.show(childFragmentManager, "editBookDialog")
+
+
+
+
+
     }
 
     private fun createSwipeAction(context: Context, recyclerView: RecyclerView) {

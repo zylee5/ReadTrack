@@ -30,12 +30,13 @@
             android:authorities="com.example.readtrack.fileprovider"
             android:name="androidx.core.content.FileProvider"
             android:exported="false"
-            android:grantUriPermissions="true" >
+            android:grantUriPermissions="true">
             <!-- The FileProvider can only generate content uri from the paths specified in file_paths -->
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
     </application>
 
     <queries>

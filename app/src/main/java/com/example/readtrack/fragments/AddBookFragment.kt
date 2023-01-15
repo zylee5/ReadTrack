@@ -4,7 +4,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.drawable.BitmapDrawable
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -12,16 +13,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RatingBar
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.core.widget.doOnTextChanged
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
 import com.example.readtrack.R
+import com.example.readtrack.databinding.BookRecordLayoutBinding
+import com.example.readtrack.databinding.DialogEditBookRecordBinding
 import com.example.readtrack.databinding.FragmentAddBookBinding
 import com.example.readtrack.dialogs.AddBookCoverDialog
+import com.example.readtrack.types.NewBook
 import com.example.readtrack.types.Status
 import com.example.readtrack.util.ImageUtils
 import com.example.readtrack.viewmodels.AddBookViewModel
@@ -39,21 +44,113 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
+
 private const val TAG = "AddBookFragment"
 
-class AddBookFragment : Fragment(), AddBookCoverDialog.AddBookCoverDialogListener {
-    private lateinit var binding: FragmentAddBookBinding
+class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogListener {
+    private var bookId: Long? = null
+    private lateinit var liveDataObserved: MutableLiveData<NewBook>
+    private lateinit var addBookBinding: FragmentAddBookBinding
+    private lateinit var bookRecordLayoutBinding: BookRecordLayoutBinding
+    private lateinit var editBookRecordBinding: DialogEditBookRecordBinding
     private val addBookViewModel by activityViewModels<AddBookViewModel>()
     private val bookShelfViewModel by activityViewModels<BookShelfViewModel>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val myArgs = arguments
+        if (myArgs != null) {
+            bookId = myArgs.getLong("Id")
+            Log.d(TAG, "bookId: $bookId")
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Make the dialog fullscreen
+        if (bookId != null) {
+            dialog?.let {
+                val width = ViewGroup.LayoutParams.MATCH_PARENT
+                val height = ViewGroup.LayoutParams.MATCH_PARENT
+                it.window?.setLayout(width, height)
+                it.window?.setBackgroundDrawable(context?.getDrawable(R.color.md_theme_light_surface) ?: ColorDrawable(
+                    Color.WHITE)
+                )
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentAddBookBinding.inflate(inflater, container, false)
-            .apply {
-                vm = addBookViewModel
+        // Add book
+        if (bookId == null) {
+            addBookBinding = FragmentAddBookBinding.inflate(inflater, container, false)
+            liveDataObserved = addBookViewModel.newBook
+            addBookBinding
+                .apply {
+                    vm = addBookViewModel
+                    lifecycleOwner = viewLifecycleOwner
+                    addNewBookBtn.setOnClickListener {
+                        liveDataObserved.value?.let { newBook ->
+                            if (isAddBookFormValid()) {
+                                val newStoredBook = newBook.toStoredBook(0)
 
+                                Log.d(TAG, "New StoredBook instance: $newStoredBook")
+                                // addBook contains database modifying operation
+                                // and thus a suspend function
+                                // and thus has to be run inside a coroutine block
+                                // which at here tied to the lifecycle of AddBookFragment
+                                viewLifecycleOwner.lifecycleScope.launch {
+                                    bookShelfViewModel.addBook(newStoredBook)
+                                    findNavController().navigate(R.id.bookShelfFragment)
+                                }
+
+                            } else {
+                                Log.d(TAG, "Form incomplete")
+                                showWarningMsgWhenFormInputMissing()
+                            }
+                        }
+                    }
+                }
+            bookRecordLayoutBinding = addBookBinding.bookRecordLayout
+        }
+        // Edit book
+        else {
+            editBookRecordBinding = DialogEditBookRecordBinding.inflate(inflater, container, false)
+            liveDataObserved = addBookViewModel.editBook
+            editBookRecordBinding
+                .apply {
+                    vm = addBookViewModel
+                    lifecycleOwner = viewLifecycleOwner
+                    bookId?.let{
+                        // If updatedBook is successfully set
+                        if (bookShelfViewModel.getBookById(it)) {
+                            bookShelfViewModel.retrievedNewBook.observeOnce(viewLifecycleOwner) { updatedBook ->
+                                liveDataObserved.value = updatedBook
+                                Log.d(TAG, "editBook: ${liveDataObserved.value.toString()}")
+                            }
+                        }
+                        editDialogClose.setOnClickListener { dismiss() }
+                        editDialogAction.setOnClickListener {
+                            liveDataObserved.value?.let { editBook ->
+                                if (isAddBookFormValid()) {
+                                    viewLifecycleOwner.lifecycleScope.launch {
+                                        Log.d(TAG, "saving updated book: ${editBook.toStoredBook(bookId!!)}")
+                                        bookShelfViewModel.updateBook(editBook.toStoredBook(bookId!!))
+                                        dismiss()
+                                    }
+                                }
+                            } ?: Toast.makeText(context, "Error occurred while updating record. Please try again.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            bookRecordLayoutBinding = editBookRecordBinding.bookRecordLayout
+        }
+
+        bookRecordLayoutBinding
+            .apply {
                 startedToFinishedDateTextField.setOnClickListener {
                     createDateRangePicker(startedToFinishedDateTextField)
                 }
@@ -69,23 +166,14 @@ class AddBookFragment : Fragment(), AddBookCoverDialog.AddBookCoverDialogListene
                 }
 
                 readChip.setOnCheckedChangeListener { _, _ ->
-                    addBookViewModel.newBook.value?.let {
-                        it.status = Status.READ
-                    }
                     setViewVisibilityForStatus(Status.READ)
                 }
 
                 readingChip.setOnCheckedChangeListener { _, _ ->
-                    addBookViewModel.newBook.value?.let {
-                        it.status = Status.READING
-                    }
                     setViewVisibilityForStatus(Status.READING)
                 }
 
                 wtrChip.setOnCheckedChangeListener { _, _ ->
-                    addBookViewModel.newBook.value?.let {
-                        it.status = Status.WANT_TO_READ
-                    }
                     setViewVisibilityForStatus(Status.WANT_TO_READ)
                 }
 
@@ -140,7 +228,7 @@ class AddBookFragment : Fragment(), AddBookCoverDialog.AddBookCoverDialogListene
                     /* https://android.googlesource.com/platform/frameworks/data-binding/+/refs/heads/studio-master-dev/
                     extensions/baseAdapters/src/main/java/androidx/databinding/adapters/ RatingBarBindingAdapter.java
                     */
-                    addBookViewModel.newBook.value?.let {
+                    liveDataObserved.value?.let {
                         it.rating = rating
                     }
                 }
@@ -153,39 +241,34 @@ class AddBookFragment : Fragment(), AddBookCoverDialog.AddBookCoverDialogListene
                     newDialogFragment?.show(childFragmentManager, "addBookCoverDialog")
                 }
 
-                addNewBookBtn.setOnClickListener {
-                    addBookViewModel.newBook.value?.let {
-                        if (isAddBookFormValid()) {
-                            val newStoredBook = it.toStoredBook()
-
-                            Log.d(TAG, "New StoredBook instance: $newStoredBook")
-                            // addBook contains database modifying operation
-                            // and thus a suspend function
-                            // and thus has to be run inside a coroutine block
-                            // which at here tied to the lifecycle of AddBookFragment
-                            viewLifecycleOwner.lifecycleScope.launch {
-                                bookShelfViewModel.addBook(newStoredBook)
-                                findNavController().navigate(R.id.bookShelfFragment)
-                            }
-
-                        } else {
-                            Log.d(TAG, "Form incomplete")
-                            showWarningMsgWhenFormInputMissing()
-                        }
-                    }
-                }
-
-                lifecycleOwner = viewLifecycleOwner
             }
 
-        return binding.root
+        return if (bookId == null) addBookBinding.root else editBookRecordBinding.root
+    }
+
+    fun <T> LiveData<T>.observeOnce(owner: LifecycleOwner, observer: (T) -> Unit) {
+        observe(owner, object: Observer<T> {
+            override fun onChanged(value: T) {
+                removeObserver(this)
+                observer(value)
+            }
+        })
     }
 
     override fun onPickOptionClicked() {
+
         val pickIntent = Intent(
-            Intent.ACTION_PICK,
+            Intent.ACTION_OPEN_DOCUMENT, // Allow persistent access to documents owned by a document provider
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        )
+        ).apply {
+            type = "image/*" // Only image files can be selected
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false) // Only one image can be selected
+            putExtra(Intent.EXTRA_LOCAL_ONLY, true) // No Google Drive etc.
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // Grant access (read) permission
+            addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION) // Uri should be granted persistent (access) permission
+                                                                   // for future access when retrieved from database
+        }
+
         // Launch the pick image activity for result
         // (startActivityForResult has been deprecated)
         pickImgResultLauncher.launch(pickIntent)
@@ -197,12 +280,22 @@ class AddBookFragment : Fragment(), AddBookCoverDialog.AddBookCoverDialogListene
         // after returning from the activity
         // handle the activity result
         if (result.resultCode == Activity.RESULT_OK) {
-            result.data?.data?.let { uri ->
-                addBookViewModel.newBook.value?.let {
-                    it.coverUri = uri.toString()
-                    it.hasCoverImg.set(true) // even though coverUri has changed, hasCoverImg will not change according to that
-                                             // manual updating is required
-                    it.hasCoverImg.notifyChange()
+            result.data?.let { intent ->
+                val flags = intent.flags and Intent.FLAG_GRANT_READ_URI_PERMISSION
+
+                activity?.let { activity ->
+                    val resolver = activity.contentResolver
+                    intent.data?.let { uri ->
+                        // Important: Actually persist the permissions set by 'flags' on 'uri'
+                        resolver.takePersistableUriPermission(uri, flags)
+
+                        liveDataObserved.value?.let { newBook ->
+                            newBook.coverUri = uri.toString()
+                            newBook.hasCoverImg.set(true) // even though coverUri has changed, hasCoverImg will not change according to that
+                                                          // manual updating is required
+                            newBook.hasCoverImg.notifyChange()
+                        }
+                    }
                 }
             }
         }
@@ -212,14 +305,14 @@ class AddBookFragment : Fragment(), AddBookCoverDialog.AddBookCoverDialogListene
         // Create a temporary file and add to the list
         try {
             val img = ImageUtils.createUniqueImgFile(requireContext())
-            addBookViewModel.newBook.value?.coverImgFiles?.add(img)
+            liveDataObserved.value?.coverImgFiles?.add(img)
         } catch (e: IOException) {
             // If no file has been created, activity will not launch
             return
         }
 
         // If the list is not found, return
-        addBookViewModel.newBook.value?.coverImgFiles?.let { imgFiles ->
+        liveDataObserved.value?.coverImgFiles?.let { imgFiles ->
             val lastImg = imgFiles[imgFiles.lastIndex]
 
             // If the latest added image is not found on the list, return
@@ -236,6 +329,7 @@ class AddBookFragment : Fragment(), AddBookCoverDialog.AddBookCoverDialogListene
                     currentImg
                 )
                 // Add uri to the created file as an extra to the capture intent
+                // The captured full-sized image will be written in the uri
                 val captureIntent = Intent(
                     MediaStore.ACTION_IMAGE_CAPTURE
                 ).apply {
@@ -279,7 +373,7 @@ class AddBookFragment : Fragment(), AddBookCoverDialog.AddBookCoverDialogListene
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         // If the image list is not found, return
-        addBookViewModel.newBook.value?.coverImgFiles?.let { imgFiles ->
+        liveDataObserved.value?.coverImgFiles?.let { imgFiles ->
             val lastImg = imgFiles[imgFiles.lastIndex]
 
             // If the latest image is not found on the list, return
@@ -292,7 +386,7 @@ class AddBookFragment : Fragment(), AddBookCoverDialog.AddBookCoverDialogListene
                         currentImg
                     )
                     // Update the uri property of newBook instance
-                    addBookViewModel.newBook.value?.let {
+                    liveDataObserved.value?.let {
                         it.coverUri = imgUri.toString()
                         it.hasCoverImg.set(true)
                         it.hasCoverImg.notifyChange()
@@ -330,7 +424,7 @@ class AddBookFragment : Fragment(), AddBookCoverDialog.AddBookCoverDialogListene
     }
 
     private fun setViewVisibilityForStatus(status: Status) {
-        binding.apply {
+        bookRecordLayoutBinding.apply {
             startedToFinishedDateLayout.visibility =
                 if (status == Status.READ) View.VISIBLE
                 else View.GONE
@@ -360,7 +454,7 @@ class AddBookFragment : Fragment(), AddBookCoverDialog.AddBookCoverDialogListene
      *
      */
     private fun isAddBookFormValid(): Boolean {
-        binding.apply {
+        bookRecordLayoutBinding.apply {
             val selectedStatus = statusChipGroup.checkedChipId
 
             return !isTxtFieldEmpty(bookNameTextField)
@@ -395,7 +489,7 @@ class AddBookFragment : Fragment(), AddBookCoverDialog.AddBookCoverDialogListene
      * (same as isAddBookFormValid)
      */
     private fun showWarningMsgWhenFormInputMissing() {
-        binding.apply {
+        bookRecordLayoutBinding.apply {
             val selectedStatus = statusChipGroup.checkedChipId
 
             setTextLayoutErrorIfEmpty(bookNameLayout)
@@ -458,7 +552,7 @@ class AddBookFragment : Fragment(), AddBookCoverDialog.AddBookCoverDialogListene
      * when 'view' such as RatingBar and ChipGroup has no values selected
      */
     private fun setWarningTextVisibleIfNoSelectionFor(view: View) {
-        binding.apply {
+        bookRecordLayoutBinding.apply {
             when (view) {
                 is RatingBar -> {
                     if (view.rating <= 0)

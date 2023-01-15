@@ -1,10 +1,12 @@
 package com.example.readtrack.util
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
+import android.util.Log
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
@@ -13,7 +15,7 @@ import java.time.format.DateTimeFormatter
 import kotlin.jvm.Throws
 import kotlin.math.sqrt
 
-
+private const val TAG = "ImageUtils"
 object ImageUtils {
     /***
      * Read an image from a Uri stream as Bitmap object
@@ -27,6 +29,7 @@ object ImageUtils {
         var uriStream: InputStream? = null
         try {
             // Open an input stream for uri
+            // Important: make sure that the uri is accessible
             uriStream = context.contentResolver.openInputStream(uri)
 
             uriStream?.let { stream ->
@@ -77,6 +80,7 @@ object ImageUtils {
             }
             return null
         } catch (e: Exception) {
+            Log.e(TAG, "decodeUriStreamToBitmap: $e")
             return null
         } finally {
             // Important: Close the stream under whatever circumstances

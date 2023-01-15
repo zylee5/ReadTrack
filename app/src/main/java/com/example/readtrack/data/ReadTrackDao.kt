@@ -1,10 +1,7 @@
 package com.example.readtrack.data
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import com.example.readtrack.types.StoredBook
 
 @Dao
@@ -20,4 +17,10 @@ abstract class ReadTrackDao {
 
     @Query("SELECT * FROM books WHERE name LIKE :query OR authorName LIKE :query")
     abstract fun getBooksForQuery(query: String): LiveData<List<StoredBook>>
+
+    @Query("SELECT * FROM books WHERE bookId = :id")
+    abstract fun getBookById(id: Long): LiveData<StoredBook>
+
+    @Update
+    abstract suspend fun updateBook(updatedBook: StoredBook)
 }

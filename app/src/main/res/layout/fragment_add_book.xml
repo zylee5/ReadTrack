@@ -7,7 +7,6 @@
         <import type="com.example.readtrack.types.Status" />
         <import type="android.view.View" />
         <import type="com.example.readtrack.util.Converters" />
-
         <variable
             name="vm"
             type="com.example.readtrack.viewmodels.AddBookViewModel" />
@@ -38,256 +37,49 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="@drawable/custom_bookshelf_background"
-        android:layout_weight="9"
-        android:elevation="36dp" >
-
-        <ScrollView
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_margin="16dp"
-            android:scrollbars="none"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" >
+            android:background="@drawable/custom_bookshelf_background"
+            android:layout_weight="9"
+            android:elevation="36dp" >
 
-            <LinearLayout
-                android:id="@+id/addBookFormLayout"
+            <ScrollView
                 android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="16dp"
+                android:scrollbars="none"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" >
+
+                <include
+                    layout="@layout/book_record_layout"
+                    android:id="@+id/book_record_layout"
+                    app:coverImg="@{vm.newBook.hasCoverImg ? Converters.uriToBitmap(vm.newBook.coverUri) : @drawable/custom_add_img_area}"
+                    app:coverTxt="@{vm.newBook.hasCoverImg ? `` : @string/add_a_book_cover}"
+                    app:name="@={vm.newBook.name}"
+                    app:author="@={vm.newBook.authorName}"
+                    app:genre="@={vm.newBook.genre}"
+                    app:status="@={vm.newBook.status}"
+                    app:dateRange="@={Converters.dateRangeToString(vm.newBook.dateRange)}"
+                    app:startedDate="@={Converters.dateToString(vm.newBook.startedDate)}"
+                    app:rating="@{vm.newBook.rating}" />
+
+            </ScrollView>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/addNewBookBtn"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:src="@drawable/mdi_plus_circle"
+                android:contentDescription="@string/add_new_book_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/addBookCoverBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="10dp"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"
-                    android:background="@{vm.newBook.hasCoverImg ? Converters.uriToBitmap(vm.newBook.coverUri) : @drawable/custom_add_img_area}"
-                    android:text="@{vm.newBook.hasCoverImg ? `` : @string/add_a_book_cover}"
-                    android:textAllCaps="false"
-                    android:textColor="#447C8C"
-                    tools:text="@string/add_a_book_cover" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/bookNameLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/book_name"
-                    app:errorEnabled="true"
-                    app:helperText="@string/required"
-                    app:startIconDrawable="@drawable/mdi_book_open_variant">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/bookNameTextField"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@={vm.newBook.name}" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/bookAuthorLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/book_author"
-                    app:errorEnabled="true"
-                    app:helperText="@string/required"
-                    app:startIconDrawable="@drawable/mdi_account">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/bookAuthorTextField"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@={vm.newBook.authorName}" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/bookGenreLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/book_genre"
-                    app:errorEnabled="true"
-                    app:helperText="@string/required"
-                    app:startIconDrawable="@drawable/mdi_heart_multiple">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/bookGenreTextField"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@={vm.newBook.genre}" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <!--        <com.google.android.material.textfield.TextInputLayout-->
-                <!--            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"-->
-                <!--            android:layout_width="match_parent"-->
-                <!--            android:layout_height="wrap_content"-->
-                <!--            android:hint="@string/status"-->
-                <!--            app:startIconDrawable="@drawable/mdi_progress_check">-->
-
-                <!--            <com.google.android.material.textfield.MaterialAutoCompleteTextView-->
-                <!--                android:id="@+id/statusTextField"-->
-                <!--                android:layout_width="match_parent"-->
-                <!--                android:layout_height="wrap_content"-->
-                <!--                android:inputType="none"-->
-                <!--                android:text="@={vm.book.status}"-->
-                <!--                app:simpleItems="@array/status_array" />-->
-
-                <!--        </com.google.android.material.textfield.TextInputLayout>-->
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/status" />
-
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/statusChipGroup"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:selectionRequired="true"
-                    app:singleLine="true"
-                    app:singleSelection="true">
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/readChip"
-                        style="@style/Widget.Material3.Chip.Filter"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checkable="true"
-                        android:text="@string/read" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/readingChip"
-                        style="@style/Widget.Material3.Chip.Filter"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checkable="true"
-                        android:text="@string/reading" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/wtrChip"
-                        style="@style/Widget.Material3.Chip.Filter"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checkable="true"
-                        android:text="@string/want_to_read" />
-
-                </com.google.android.material.chip.ChipGroup>
-
-                <TextView
-                    android:id="@+id/statusChipWarningText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/status_not_selected"
-                    android:textColor="@color/design_default_color_error"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/startedToFinishedDateLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/started_date_finished_date"
-                    android:visibility="gone"
-                    app:errorEnabled="true"
-                    app:helperText="@string/required"
-                    app:startIconDrawable="@drawable/mdi_calendar_range"
-                    tools:visibility="visible">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/startedToFinishedDateTextField"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="false"
-                        android:longClickable="false"
-                        android:text="@={Converters.dateRangeToString(vm.newBook.dateRange)}" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/startedDateLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/started_date"
-                    android:visibility="gone"
-                    app:errorEnabled="true"
-                    app:helperText="@string/required"
-                    app:startIconDrawable="@drawable/mdi_calendar_start"
-                    tools:visibility="visible">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/startedDateTextField"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="false"
-                        android:longClickable="false"
-                        android:text="@={Converters.dateToString(vm.newBook.startedDate)}" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <!--        <com.google.android.material.textfield.TextInputLayout-->
-                <!--            android:id="@+id/finishedDateLayout"-->
-                <!--            android:layout_width="match_parent"-->
-                <!--            android:layout_height="wrap_content"-->
-                <!--            android:hint="@string/finished_date"-->
-                <!--            app:startIconDrawable="@drawable/mdi_calendar_end">-->
-
-                <!--            <com.google.android.material.textfield.TextInputEditText-->
-                <!--                android:id="@+id/finishedDateTextField"-->
-                <!--                android:layout_width="match_parent"-->
-                <!--                android:layout_height="wrap_content"-->
-                <!--                android:focusable="false"-->
-                <!--                android:longClickable="false" />-->
-                <!--            -->
-                <!--        </com.google.android.material.textfield.TextInputLayout>-->
-
-                <TextView
-                    android:id="@+id/ratingText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/rating"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
-
-                <RatingBar
-                    android:id="@+id/ratingBar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:max="5"
-                    android:numStars="5"
-                    android:rating="@{vm.newBook.rating}"
-                    android:stepSize="1"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
-
-                <TextView
-                    android:id="@+id/ratingBarWarningText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/non_zero_rating"
-                    android:textColor="@color/design_default_color_error"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
-
-            </LinearLayout>
-        </ScrollView>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/addNewBookBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:src="@drawable/mdi_plus_circle"
-            android:contentDescription="@string/add_new_book_button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
 

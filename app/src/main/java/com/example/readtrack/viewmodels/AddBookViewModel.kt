@@ -10,7 +10,7 @@ class AddBookViewModel : ViewModel() {
         this.value = NewBook()
     }
 
-//    fun setStatus(value: String) {
-//        newBook.value?.status = value
-//    }
+    val editBook = MutableLiveData<NewBook>()
+
+
 }

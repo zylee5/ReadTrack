@@ -32,7 +32,14 @@ object Converters {
     @JvmStatic
     fun stringToDate(
         newValue: String?
-    ): LocalDate? = newValue?.let { LocalDate.parse(it, dateFormatter) }
+    ): LocalDate? {
+        Log.d(TAG, "Started Date String: $newValue")
+        return if (newValue?.isNotEmpty() == true){
+            LocalDate.parse(newValue, dateFormatter)
+        } else {
+            null
+        }
+    }
 
     /***
      * Convert a date range to string
@@ -65,18 +72,23 @@ object Converters {
     fun dateRangeStrToDate(
         dateRangeStr: String?
     ): Pair<LocalDate, LocalDate>? {
-        val parts = dateRangeStr?.split(" - ")
-        val startedDateStr = parts?.get(0)
-        val finishedDateStr = parts?.get(1)
+        Log.d(TAG, "Date Range String: $dateRangeStr")
+        if (dateRangeStr?.isNotEmpty() == true) {
+            val parts = dateRangeStr.split(" - ")
+            val startedDateStr = parts[0]
+            val finishedDateStr = parts[1]
 
-        val startedDate = startedDateStr?.let { LocalDate.parse(it, dateFormatter) }
-        val finishedDate = finishedDateStr?.let { LocalDate.parse(it, dateFormatter) }
+            val startedDate = LocalDate.parse(startedDateStr, dateFormatter)
+            val finishedDate = LocalDate.parse(finishedDateStr, dateFormatter)
 
-        return if (startedDate != null
-            && finishedDate != null) {
-            Pair(startedDate, finishedDate)
+            return if (startedDate != null
+                && finishedDate != null) {
+                Pair(startedDate, finishedDate)
+            } else {
+                null
+            }
         } else {
-            null
+            return null
         }
     }
 

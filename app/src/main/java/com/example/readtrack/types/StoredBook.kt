@@ -2,6 +2,7 @@ package com.example.readtrack.types
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.io.File
 import java.time.LocalDate
 
 @Entity(tableName = "books")
@@ -17,6 +18,25 @@ data class StoredBook(
     val status: Status,
     val rating: Float?
 ) {
+    fun toNewBook() = NewBook(
+        coverUri = this.coverUri,
+        name = this.name,
+        authorName = this.authorName,
+        genre = this.genre,
+        startedDate = if (this.status == Status.READING) {
+            this.startedDate
+        } else {
+            null
+        },
+        dateRange = if (this.startedDate != null && this.finishedDate != null && this.status == Status.READ) {
+            Pair(this.startedDate, this.finishedDate)
+        } else {
+            null
+        },
+        status = this.status,
+        rating = this.rating ?: 0f
+    )
+
     class BookNameComparator: Comparator<StoredBook> {
         override fun compare(b1: StoredBook?, b2: StoredBook?): Int {
             if (b1 == null || b2 == null) return 0
@@ -65,4 +85,6 @@ data class StoredBook(
             return b1.rating.compareTo(b2.rating)
         }
     }
+
+
 }

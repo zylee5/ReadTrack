@@ -1,6 +1,7 @@
 package com.example.readtrack.types
 
 import androidx.databinding.ObservableBoolean
+import androidx.databinding.ObservableInt
 import java.io.File
 import java.time.LocalDate
 
@@ -15,8 +16,7 @@ data class NewBook(
     var dateRange: Pair<LocalDate, LocalDate>? = null,
     var status: Status = Status.NONE,
     var rating: Float = 0f, // android:rating receives float
-    var hasCoverImg: ObservableBoolean =
-        ObservableBoolean(coverUri.isNotEmpty())
+    var hasCoverImg: ObservableBoolean = ObservableBoolean(coverUri.isNotEmpty())
 //    var startingDateAllowed: ObservableBoolean =
 //        ObservableBoolean(status != Status.WANT_TO_READ.string),
 //    var finishingDateAllowed: ObservableBoolean =
@@ -27,7 +27,8 @@ data class NewBook(
     /***
      * Convert new book instance to stored book instance
      */
-    fun toStoredBook() = StoredBook(
+    fun toStoredBook(id: Long) = StoredBook(
+        bookId = id,
         coverUri = this.coverUri,
         name = this.name,
         authorName = this.authorName,

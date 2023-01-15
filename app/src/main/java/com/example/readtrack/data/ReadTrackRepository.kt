@@ -7,6 +7,8 @@ class ReadTrackRepository(private val readTrackDao: ReadTrackDao) {
     fun getAllStoredBooks() = readTrackDao.getAllStoredBooks()
     suspend fun deleteBook(book: StoredBook) = readTrackDao.deleteBook(book)
     fun getBooksForQuery(query: String) = readTrackDao.getBooksForQuery(query)
+    fun getBookById(id: Long) = readTrackDao.getBookById(id)
+    suspend fun updateBook(updatedBook: StoredBook) = readTrackDao.updateBook(updatedBook)
 
     companion object {
         @Volatile
