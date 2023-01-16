@@ -50,8 +50,8 @@ private const val TAG = "AddBookFragment"
 class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogListener {
     private var bookId: Long? = null
     private lateinit var liveDataObserved: MutableLiveData<NewBook>
-    private lateinit var addBookBinding: FragmentAddBookBinding
     private lateinit var bookRecordLayoutBinding: BookRecordLayoutBinding
+    private lateinit var addBookBinding: FragmentAddBookBinding
     private lateinit var editBookRecordBinding: DialogEditBookRecordBinding
     private val addBookViewModel by activityViewModels<AddBookViewModel>()
     private val bookShelfViewModel by activityViewModels<BookShelfViewModel>()
@@ -95,7 +95,7 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                     addNewBookBtn.setOnClickListener {
                         liveDataObserved.value?.let { newBook ->
                             if (isAddBookFormValid()) {
-                                val newStoredBook = newBook.toStoredBook(0)
+                                val newStoredBook = newBook.toStoredBook()
 
                                 Log.d(TAG, "New StoredBook instance: $newStoredBook")
                                 // addBook contains database modifying operation
@@ -105,6 +105,8 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                                 viewLifecycleOwner.lifecycleScope.launch {
                                     bookShelfViewModel.addBook(newStoredBook)
                                     findNavController().navigate(R.id.bookShelfFragment)
+                                    // To clear the input in the view
+                                    liveDataObserved.value = NewBook()
                                 }
 
                             } else {
@@ -125,19 +127,17 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                     vm = addBookViewModel
                     lifecycleOwner = viewLifecycleOwner
                     bookId?.let{
-                        // If updatedBook is successfully set
-                        if (bookShelfViewModel.getBookById(it)) {
-                            bookShelfViewModel.retrievedNewBook.observeOnce(viewLifecycleOwner) { updatedBook ->
-                                liveDataObserved.value = updatedBook
-                                Log.d(TAG, "editBook: ${liveDataObserved.value.toString()}")
-                            }
+
+                        // Set editBook.value as the returned StoredBook from db (which was converted into NewBook instance)
+                        bookShelfViewModel.getBookById(it).observeOnce(viewLifecycleOwner) { retrievedStoredBook ->
+                            liveDataObserved.value = retrievedStoredBook.toNewBook()
                         }
+
                         editDialogClose.setOnClickListener { dismiss() }
                         editDialogAction.setOnClickListener {
                             liveDataObserved.value?.let { editBook ->
                                 if (isAddBookFormValid()) {
                                     viewLifecycleOwner.lifecycleScope.launch {
-                                        Log.d(TAG, "saving updated book: ${editBook.toStoredBook(bookId!!)}")
                                         bookShelfViewModel.updateBook(editBook.toStoredBook(bookId!!))
                                         dismiss()
                                     }

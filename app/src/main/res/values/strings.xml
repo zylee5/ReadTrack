@@ -37,4 +37,6 @@
     <string name="ascending">Ascending</string>
     <string name="descending">Descending</string>
     <string name="attributes">Attributes</string>
+    <string name="update_book_record">Update Book Record</string>
+    <string name="save">Save</string>
 </resources>

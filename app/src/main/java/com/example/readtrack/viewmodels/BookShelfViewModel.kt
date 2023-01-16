@@ -13,7 +13,6 @@ private const val TAG = "BookShelfViewModel"
 class BookShelfViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: ReadTrackRepository
     val storedBooks: LiveData<List<StoredBook>>
-    var retrievedNewBook: LiveData<NewBook> = MutableLiveData()
 
     private val queryText: MutableLiveData<String> = MutableLiveData()
 
@@ -59,12 +58,8 @@ class BookShelfViewModel(application: Application) : AndroidViewModel(applicatio
         queryText.value = query
     }
 
-    fun getBookById(id: Long): Boolean {
-        val storedBook = repository.getBookById(id)
-        this.retrievedNewBook = Transformations.map(storedBook) {
-            it.toNewBook()
-        }
-        return true
+    fun getBookById(id: Long): LiveData<StoredBook> {
+        return repository.getBookById(id)
     }
 
     suspend fun updateBook(updatedBook: StoredBook) {

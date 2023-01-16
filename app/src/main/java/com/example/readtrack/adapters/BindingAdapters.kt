@@ -17,6 +17,7 @@ fun loadImage(view: ImageView, uri: String?) {
             .into(view)
     }
 }
+
 object StatusBindingAdapters {
     @BindingAdapter("status")
     @JvmStatic

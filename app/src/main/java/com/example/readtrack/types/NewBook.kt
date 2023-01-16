@@ -27,7 +27,7 @@ data class NewBook(
     /***
      * Convert new book instance to stored book instance
      */
-    fun toStoredBook(id: Long) = StoredBook(
+    fun toStoredBook(id: Long = 0) = StoredBook(
         bookId = id,
         coverUri = this.coverUri,
         name = this.name,
