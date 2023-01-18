@@ -6,6 +6,7 @@ import com.example.readtrack.data.ReadTrackDatabase
 import com.example.readtrack.data.ReadTrackRepository
 import com.example.readtrack.types.NewBook
 import com.example.readtrack.types.StoredBook
+import kotlinx.coroutines.delay
 import java.util.*
 import kotlin.Comparator
 
@@ -13,7 +14,6 @@ private const val TAG = "BookShelfViewModel"
 class BookShelfViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: ReadTrackRepository
     val storedBooks: LiveData<List<StoredBook>>
-
     private val queryText: MutableLiveData<String> = MutableLiveData()
 
     init {
@@ -58,7 +58,7 @@ class BookShelfViewModel(application: Application) : AndroidViewModel(applicatio
         queryText.value = query
     }
 
-    fun getBookById(id: Long): LiveData<StoredBook> {
+    suspend fun getBookById(id: Long): StoredBook {
         return repository.getBookById(id)
     }
 

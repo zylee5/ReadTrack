@@ -34,6 +34,7 @@ class BookListAdapter(
         fun bind(item: StoredBook) {
             binding.apply {
                 book = item
+                executePendingBindings()
             }
         }
     }

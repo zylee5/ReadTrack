@@ -19,7 +19,7 @@ abstract class ReadTrackDao {
     abstract fun getBooksForQuery(query: String): LiveData<List<StoredBook>>
 
     @Query("SELECT * FROM books WHERE bookId = :id")
-    abstract fun getBookById(id: Long): LiveData<StoredBook>
+    abstract suspend fun getBookById(id: Long): StoredBook
 
     @Update
     abstract suspend fun updateBook(updatedBook: StoredBook)

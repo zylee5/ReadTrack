@@ -61,22 +61,6 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
         val myArgs = arguments
         if (myArgs != null) {
             bookId = myArgs.getLong("Id")
-            Log.d(TAG, "bookId: $bookId")
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        // Make the dialog fullscreen
-        if (bookId != null) {
-            dialog?.let {
-                val width = ViewGroup.LayoutParams.MATCH_PARENT
-                val height = ViewGroup.LayoutParams.MATCH_PARENT
-                it.window?.setLayout(width, height)
-                it.window?.setBackgroundDrawable(context?.getDrawable(R.color.md_theme_light_surface) ?: ColorDrawable(
-                    Color.WHITE)
-                )
-            }
         }
     }
 
@@ -127,10 +111,10 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                     vm = addBookViewModel
                     lifecycleOwner = viewLifecycleOwner
                     bookId?.let{
-
-                        // Set editBook.value as the returned StoredBook from db (which was converted into NewBook instance)
-                        bookShelfViewModel.getBookById(it).observeOnce(viewLifecycleOwner) { retrievedStoredBook ->
-                            liveDataObserved.value = retrievedStoredBook.toNewBook()
+                        // Get StoredBook with bookId from db, convert it into NewBook
+                        // and assign it to the value of liveDataObserved
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            liveDataObserved.value = bookShelfViewModel.getBookById(it).toNewBook()
                         }
 
                         editDialogClose.setOnClickListener { dismiss() }
@@ -242,7 +226,6 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                 }
 
             }
-
         return if (bookId == null) addBookBinding.root else editBookRecordBinding.root
     }
 
@@ -253,6 +236,21 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                 observer(value)
             }
         })
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Make the dialog fullscreen
+        if (bookId != null) {
+            dialog?.let {
+                val width = ViewGroup.LayoutParams.MATCH_PARENT
+                val height = ViewGroup.LayoutParams.MATCH_PARENT
+                it.window?.setLayout(width, height)
+                it.window?.setBackgroundDrawable(context?.getDrawable(R.color.md_theme_light_surface) ?: ColorDrawable(
+                    Color.WHITE)
+                )
+            }
+        }
     }
 
     override fun onPickOptionClicked() {
