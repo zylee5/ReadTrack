@@ -19,7 +19,11 @@ import androidx.core.content.FileProvider
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.*
+import androidx.lifecycle.Observer
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.readtrack.R
 import com.example.readtrack.databinding.BookRecordLayoutBinding
@@ -146,7 +150,7 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                 // Chip once checked cannot be unchecked (app:selectionRequired="true")
                 // thus everytime new selection is made make sure warning text does not appear
                 statusChipGroup.setOnCheckedStateChangeListener { _, _ ->
-                    statusChipWarningText.visibility = View.GONE
+//                    statusChipWarningText.visibility = View.GONE
                 }
 
                 readChip.setOnCheckedChangeListener { _, _ ->
@@ -161,15 +165,15 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                     setViewVisibilityForStatus(Status.WANT_TO_READ)
                 }
 
-                bookNameTextField.doOnTextChanged { _, _, _, _ ->
-                    setTextLayoutErrorIfEmpty(bookNameLayout)
-                }
-
-                bookNameTextField.setOnFocusChangeListener { _, focused ->
-                    if (!focused) {
-                        bookNameLayout.error = null
-                    }
-                }
+//                bookNameTextField.doOnTextChanged { _, _, _, _ ->
+//                    setTextLayoutErrorIfEmpty(bookNameLayout)
+//                }
+//
+//                bookNameTextField.setOnFocusChangeListener { _, focused ->
+//                    if (!focused) {
+//                        bookNameLayout.error = null
+//                    }
+//                }
 
                 bookAuthorTextField.doOnTextChanged { _, _, _, _ ->
                     setTextLayoutErrorIfEmpty(bookAuthorLayout)
@@ -201,11 +205,11 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
 
                 ratingBar.setOnRatingBarChangeListener { _, rating, _ ->
                     Log.d(TAG, "Rating has changed to: $rating")
-                    ratingBarWarningText.visibility =
-                        if (rating <= 0)
-                            View.VISIBLE
-                        else
-                            View.GONE
+//                    ratingBarWarningText.visibility =
+//                        if (rating <= 0)
+//                            View.VISIBLE
+//                        else
+//                            View.GONE
 
                     // Two-way data binding on this property does not work as intended, hence only one-way in xml
                     // Issue: default binding adapter:
@@ -226,6 +230,9 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                 }
 
             }
+        addBookViewModel.isFormValid.observe(viewLifecycleOwner) {
+            Log.d(TAG, "Mediator observed changes - value: $it")
+        }
         return if (bookId == null) addBookBinding.root else editBookRecordBinding.root
     }
 
@@ -436,21 +443,12 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                 if (status == Status.WANT_TO_READ) View.GONE
                 else View.VISIBLE
             // To prevent previously set visible rating bar warning message showing up
-            if (status == Status.WANT_TO_READ)
-                ratingBarWarningText.visibility = View.GONE
+//            if (status == Status.WANT_TO_READ)
+//                ratingBarWarningText.visibility = View.GONE
         }
     }
 
-    /***
-     * Check if the add book form is valid
-     * Criteria:
-     * (1) Status must be selected
-     * (2) Name, author, genre must be filled regardless of status
-     * (3) Correct date text field must be filled based on selected status
-     *     READ: date range, READING: single date
-     * (4) Rating cannot be zero for none WANT_TO_READ status
-     *
-     */
+
     private fun isAddBookFormValid(): Boolean {
         bookRecordLayoutBinding.apply {
             val selectedStatus = statusChipGroup.checkedChipId
@@ -497,17 +495,17 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
             when (selectedStatus) {
                 R.id.readChip -> {
                     setTextLayoutErrorIfEmpty(startedToFinishedDateLayout)
-                    setWarningTextVisibleIfNoSelectionFor(ratingBar)
+//                    setWarningTextVisibleIfNoSelectionFor(ratingBar)
                 }
                 R.id.readingChip -> {
                     setTextLayoutErrorIfEmpty(startedDateLayout)
-                    setWarningTextVisibleIfNoSelectionFor(ratingBar)
+//                    setWarningTextVisibleIfNoSelectionFor(ratingBar)
                 }
                 R.id.wtrChip -> {
                     // nothing
                 }
                 else -> {
-                    setWarningTextVisibleIfNoSelectionFor(statusChipGroup)
+//                    setWarningTextVisibleIfNoSelectionFor(statusChipGroup)
                 }
             }
         }
@@ -537,7 +535,7 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
      * if its associated TextInputEditText is empty
      */
     private fun setTextLayoutErrorIfEmpty(layout: TextInputLayout) {
-        val errorMsg = getString(R.string.cannot_be_empty)
+        val errorMsg = getString(R.string.must_fill)
         layout.error =
             if (isTxtFieldEmpty(layout.editText as TextInputEditText))
                 errorMsg
@@ -550,18 +548,18 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
      * when 'view' such as RatingBar and ChipGroup has no values selected
      */
     private fun setWarningTextVisibleIfNoSelectionFor(view: View) {
-        bookRecordLayoutBinding.apply {
-            when (view) {
-                is RatingBar -> {
-                    if (view.rating <= 0)
-                        ratingBarWarningText.visibility = View.VISIBLE
-                }
-                is ChipGroup -> {
-                    if (view.checkedChipId == -1)
-                        statusChipWarningText.visibility = View.VISIBLE
-                }
-            }
-        }
+//        bookRecordLayoutBinding.apply {
+//            when (view) {
+//                is RatingBar -> {
+//                    if (view.rating <= 0)
+//                        ratingBarWarningText.visibility = View.VISIBLE
+//                }
+//                is ChipGroup -> {
+//                    if (view.checkedChipId == -1)
+//                        statusChipWarningText.visibility = View.VISIBLE
+//                }
+//            }
+//        }
     }
 
     /***

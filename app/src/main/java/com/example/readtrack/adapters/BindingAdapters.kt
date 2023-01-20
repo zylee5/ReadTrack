@@ -1,12 +1,15 @@
 package com.example.readtrack.adapters
 
+import android.content.res.Resources
 import android.view.View
 import android.widget.ImageView
 import androidx.databinding.*
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.Resource
 import com.example.readtrack.R
 import com.example.readtrack.types.Status
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.textfield.TextInputLayout
 
 @BindingAdapter("imageUri")
 fun loadImage(view: ImageView, uri: String?) {
@@ -15,6 +18,15 @@ fun loadImage(view: ImageView, uri: String?) {
             .with(view.context)
             .load(uri)
             .into(view)
+    }
+}
+
+@BindingAdapter("error")
+fun setError(tInputLayout: TextInputLayout, errorMsg: String) {
+    if (errorMsg.isNotEmpty()) {
+        tInputLayout.error = errorMsg
+    } else {
+        tInputLayout.error = null
     }
 }
 

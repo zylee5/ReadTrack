@@ -20,21 +20,21 @@ data class StoredBook(
 ) {
     fun toNewBook() = NewBook(
         coverUri = this.coverUri,
-        name = this.name,
-        authorName = this.authorName,
-        genre = this.genre,
-        startedDate = if (this.status == Status.READING) {
+        _name = this.name,
+        _authorName = this.authorName,
+        _genre = this.genre,
+        _startedDate = if (this.status == Status.READING) {
             this.startedDate
         } else {
             null
         },
-        dateRange = if (this.startedDate != null && this.finishedDate != null && this.status == Status.READ) {
+        _dateRange = if (this.startedDate != null && this.finishedDate != null && this.status == Status.READ) {
             Pair(this.startedDate, this.finishedDate)
         } else {
             null
         },
-        status = this.status,
-        rating = this.rating ?: 0f
+        _status = this.status,
+        _rating = this.rating ?: 0f
     )
 
     class BookNameComparator: Comparator<StoredBook> {
