@@ -63,7 +63,8 @@
                     android:padding="8dp"
                     android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                     android:text="@string/save"
-                    android:textColor="@color/md_theme_light_primary" />
+                    android:textColor="@color/edit_save_btn_color"
+                    android:enabled="@{vm.isEditBookFormValid}" />
             </RelativeLayout>
         </androidx.cardview.widget.CardView>
 
@@ -91,14 +92,5 @@
                 app:startedDate="@={Converters.dateToString(vm.editBook.startedDate)}"
                 app:rating="@{vm.editBook.rating}" />
         </ScrollView>
-<!--
-app:coverImg="@{Converters.uriToBitmap(vm.updatedBook.coverUri)}"
-                app:coverTxt="@{``}"
-                app:name="@{vm.updatedBook.name}"
-                app:author="@{vm.updatedBook.authorName}"
-                app:genre="@{vm.updatedBook.genre}"
-                app:startedDate="@{Converters.dateToString(vm.updatedBook.startedDate)}"
-                app:rating="@{vm.updatedBook.rating}"
--->
     </LinearLayout>
 </layout>

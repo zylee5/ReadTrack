@@ -8,6 +8,8 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +17,7 @@ import android.view.ViewGroup
 import android.widget.RatingBar
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.FileProvider
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
@@ -35,7 +38,6 @@ import com.example.readtrack.types.Status
 import com.example.readtrack.util.ImageUtils
 import com.example.readtrack.viewmodels.AddBookViewModel
 import com.example.readtrack.viewmodels.BookShelfViewModel
-import com.google.android.material.chip.ChipGroup
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -82,29 +84,26 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                     lifecycleOwner = viewLifecycleOwner
                     addNewBookBtn.setOnClickListener {
                         liveDataObserved.value?.let { newBook ->
-                            if (isAddBookFormValid()) {
-                                val newStoredBook = newBook.toStoredBook()
+                            val newStoredBook = newBook.toStoredBook()
 
-                                Log.d(TAG, "New StoredBook instance: $newStoredBook")
-                                // addBook contains database modifying operation
-                                // and thus a suspend function
-                                // and thus has to be run inside a coroutine block
-                                // which at here tied to the lifecycle of AddBookFragment
-                                viewLifecycleOwner.lifecycleScope.launch {
-                                    bookShelfViewModel.addBook(newStoredBook)
-                                    findNavController().navigate(R.id.bookShelfFragment)
-                                    // To clear the input in the view
-                                    liveDataObserved.value = NewBook()
-                                }
-
-                            } else {
-                                Log.d(TAG, "Form incomplete")
-                                showWarningMsgWhenFormInputMissing()
+                            Log.d(TAG, "New StoredBook instance: $newStoredBook")
+                            // addBook contains database modifying operation
+                            // and thus a suspend function
+                            // and thus has to be run inside a coroutine block
+                            // which at here tied to the lifecycle of AddBookFragment
+                            viewLifecycleOwner.lifecycleScope.launch {
+                                bookShelfViewModel.addBook(newStoredBook)
+                                findNavController().navigate(R.id.bookShelfFragment)
+                                // To clear the input in the view
+                                liveDataObserved.value = NewBook()
                             }
                         }
                     }
                 }
             bookRecordLayoutBinding = addBookBinding.bookRecordLayout
+            addBookViewModel.isAddBookFormValid.observe(viewLifecycleOwner) {
+                Log.d(TAG, "isAddBookFormValid mediator observed changes - value: $it")
+            }
         }
         // Edit book
         else {
@@ -124,17 +123,18 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                         editDialogClose.setOnClickListener { dismiss() }
                         editDialogAction.setOnClickListener {
                             liveDataObserved.value?.let { editBook ->
-                                if (isAddBookFormValid()) {
-                                    viewLifecycleOwner.lifecycleScope.launch {
-                                        bookShelfViewModel.updateBook(editBook.toStoredBook(bookId!!))
-                                        dismiss()
-                                    }
+                                viewLifecycleOwner.lifecycleScope.launch {
+                                    bookShelfViewModel.updateBook(editBook.toStoredBook(bookId!!))
+                                    dismiss()
                                 }
-                            } ?: Toast.makeText(context, "Error occurred while updating record. Please try again.", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
                 }
             bookRecordLayoutBinding = editBookRecordBinding.bookRecordLayout
+            addBookViewModel.isEditBookFormValid.observe(viewLifecycleOwner) {
+                Log.d(TAG, "isEditBookFormValid mediator observed changes - value: $it")
+            }
         }
 
         bookRecordLayoutBinding
@@ -165,18 +165,10 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                     setViewVisibilityForStatus(Status.WANT_TO_READ)
                 }
 
-//                bookNameTextField.doOnTextChanged { _, _, _, _ ->
-//                    setTextLayoutErrorIfEmpty(bookNameLayout)
-//                }
-//
-//                bookNameTextField.setOnFocusChangeListener { _, focused ->
-//                    if (!focused) {
-//                        bookNameLayout.error = null
-//                    }
-//                }
-
-                bookAuthorTextField.doOnTextChanged { _, _, _, _ ->
-                    setTextLayoutErrorIfEmpty(bookAuthorLayout)
+                bookNameTextField.setOnFocusChangeListener { _, focused ->
+                    if (!focused) {
+                        bookNameLayout.error = null
+                    }
                 }
 
                 bookAuthorTextField.setOnFocusChangeListener { _, focused ->
@@ -185,26 +177,13 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                     }
                 }
 
-                bookGenreTextField.doOnTextChanged { _, _, _, _ ->
-                    setTextLayoutErrorIfEmpty(bookGenreLayout)
-                }
-
                 bookGenreTextField.setOnFocusChangeListener { _, focused ->
                     if (!focused) {
                         bookGenreLayout.error = null
                     }
                 }
 
-                startedToFinishedDateTextField.doOnTextChanged { _, _, _, _ ->
-                    setTextLayoutErrorIfEmpty(startedToFinishedDateLayout)
-                }
-
-                startedDateTextField.doOnTextChanged { _, _, _, _ ->
-                    setTextLayoutErrorIfEmpty(startedDateLayout)
-                }
-
                 ratingBar.setOnRatingBarChangeListener { _, rating, _ ->
-                    Log.d(TAG, "Rating has changed to: $rating")
 //                    ratingBarWarningText.visibility =
 //                        if (rating <= 0)
 //                            View.VISIBLE
@@ -230,19 +209,7 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                 }
 
             }
-        addBookViewModel.isFormValid.observe(viewLifecycleOwner) {
-            Log.d(TAG, "Mediator observed changes - value: $it")
-        }
         return if (bookId == null) addBookBinding.root else editBookRecordBinding.root
-    }
-
-    fun <T> LiveData<T>.observeOnce(owner: LifecycleOwner, observer: (T) -> Unit) {
-        observe(owner, object: Observer<T> {
-            override fun onChanged(value: T) {
-                removeObserver(this)
-                observer(value)
-            }
-        })
     }
 
     override fun onStart() {
@@ -261,7 +228,6 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
     }
 
     override fun onPickOptionClicked() {
-
         val pickIntent = Intent(
             Intent.ACTION_OPEN_DOCUMENT, // Allow persistent access to documents owned by a document provider
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI
@@ -443,123 +409,9 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                 if (status == Status.WANT_TO_READ) View.GONE
                 else View.VISIBLE
             // To prevent previously set visible rating bar warning message showing up
-//            if (status == Status.WANT_TO_READ)
-//                ratingBarWarningText.visibility = View.GONE
+            // if (status == Status.WANT_TO_READ)
+            //    ratingBarWarningText.visibility = View.GONE
         }
-    }
-
-
-    private fun isAddBookFormValid(): Boolean {
-        bookRecordLayoutBinding.apply {
-            val selectedStatus = statusChipGroup.checkedChipId
-
-            return !isTxtFieldEmpty(bookNameTextField)
-                    && !isTxtFieldEmpty(bookAuthorTextField)
-                    && !isTxtFieldEmpty(bookGenreTextField)
-                    && when(selectedStatus) {
-                        // Read
-                        R.id.readChip -> {
-                            !isTxtFieldEmpty(startedToFinishedDateTextField)
-                                    && ratingBar.rating > 0
-                        }
-                        // Reading
-                        R.id.readingChip -> {
-                            !isTxtFieldEmpty(startedDateTextField)
-                                    && ratingBar.rating > 0
-                        }
-                        // Want to read
-                        R.id.wtrChip -> {
-                            true
-                        }
-                        // Unchecked
-                        else -> {
-                            false
-                        }
-                    }
-        }
-    }
-
-    /***
-     * Show warning messages based on non-valid parts of the add book form
-     * Criteria:
-     * (same as isAddBookFormValid)
-     */
-    private fun showWarningMsgWhenFormInputMissing() {
-        bookRecordLayoutBinding.apply {
-            val selectedStatus = statusChipGroup.checkedChipId
-
-            setTextLayoutErrorIfEmpty(bookNameLayout)
-            setTextLayoutErrorIfEmpty(bookAuthorLayout)
-            setTextLayoutErrorIfEmpty(bookGenreLayout)
-
-            when (selectedStatus) {
-                R.id.readChip -> {
-                    setTextLayoutErrorIfEmpty(startedToFinishedDateLayout)
-//                    setWarningTextVisibleIfNoSelectionFor(ratingBar)
-                }
-                R.id.readingChip -> {
-                    setTextLayoutErrorIfEmpty(startedDateLayout)
-//                    setWarningTextVisibleIfNoSelectionFor(ratingBar)
-                }
-                R.id.wtrChip -> {
-                    // nothing
-                }
-                else -> {
-//                    setWarningTextVisibleIfNoSelectionFor(statusChipGroup)
-                }
-            }
-        }
-
-        /*
-        views.filterIsInstance<TextInputLayout>().forEach {
-            setTextLayoutErrorIfEmpty(it, it.editText!!.text, getString(R.string.cannot_be_empty))
-        }
-
-        // TODO: both blocks of code below are supposed to work for multiple instances of ChipGroup & RatingBar
-        // but there is only one warning TextView for a single instance
-        if (views.filterIsInstance<ChipGroup>()
-                .any { it.checkedChipId == -1 }) { // if no chips in chip group(s) selected
-            binding.statusChipWarningText.visibility = View.VISIBLE
-        }
-
-        if (views.filterIsInstance<RatingBar>()
-                .any { it.rating <= 0
-                        && binding.statusChipGroup.checkedChipId != R.id.wtrChip}) { // if any rating bar has value <= 0 for READ & READING status
-            binding.ratingBarWarningText.visibility = View.VISIBLE
-        }
-        */
-    }
-
-    /***
-     * Set TextInputLayout with error message
-     * if its associated TextInputEditText is empty
-     */
-    private fun setTextLayoutErrorIfEmpty(layout: TextInputLayout) {
-        val errorMsg = getString(R.string.must_fill)
-        layout.error =
-            if (isTxtFieldEmpty(layout.editText as TextInputEditText))
-                errorMsg
-            else
-                null
-    }
-
-    /***
-     * Set warning TextView from 'binding' visible
-     * when 'view' such as RatingBar and ChipGroup has no values selected
-     */
-    private fun setWarningTextVisibleIfNoSelectionFor(view: View) {
-//        bookRecordLayoutBinding.apply {
-//            when (view) {
-//                is RatingBar -> {
-//                    if (view.rating <= 0)
-//                        ratingBarWarningText.visibility = View.VISIBLE
-//                }
-//                is ChipGroup -> {
-//                    if (view.checkedChipId == -1)
-//                        statusChipWarningText.visibility = View.VISIBLE
-//                }
-//            }
-//        }
     }
 
     /***
@@ -600,16 +452,6 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
             val formattedDate = localDate.format(dateFormatter)
             textField.setText(formattedDate)
         }
-
-        // Set the action for when the cancel button is clicked
-        picker.addOnNegativeButtonClickListener {
-            setTextLayoutErrorIfEmpty(textField.parent.parent as TextInputLayout)
-        }
-
-        // Set the action for when the picker is canceled (back button, etc.)
-        picker.addOnCancelListener {
-            setTextLayoutErrorIfEmpty(textField.parent.parent as TextInputLayout)
-        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -649,43 +491,69 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
             val finishedDate = localFinishedDate.format(dateFormatter)
             textField.setText("$startedDate - $finishedDate")
         }
-
-        // Set the action for when the cancel button is clicked
-        picker.addOnNegativeButtonClickListener {
-            setTextLayoutErrorIfEmpty(textField.parent.parent as TextInputLayout)
-        }
-
-        // Set the action for when the picker is canceled (back button, etc.)
-        picker.addOnCancelListener {
-            setTextLayoutErrorIfEmpty(textField.parent.parent as TextInputLayout)
-        }
     }
 }
 
-/*
 /***
- * Drop down menu with an item selected lost other options after fragment transition/rotation
- * https://github.com/material-components/material-components-android/issues/1464
- * NOT WORKING
+ * Set warning TextView from 'binding' visible
+ * when 'view' such as RatingBar and ChipGroup has no values selected
  */
-class ExposedDropdownMenu(
-    context: Context, attributeSet: AttributeSet?
-): MaterialAutoCompleteTextView(context, attributeSet) {
-    override fun getFreezesText(): Boolean {
-        return false
-    }
-}
-*/
+//    private fun setWarningTextVisibleIfNoSelectionFor(view: View) {
+//        bookRecordLayoutBinding.apply {
+//            when (view) {
+//                is RatingBar -> {
+//                    if (view.rating <= 0)
+//                        ratingBarWarningText.visibility = View.VISIBLE
+//                }
+//                is ChipGroup -> {
+//                    if (view.checkedChipId == -1)
+//                        statusChipWarningText.visibility = View.VISIBLE
+//                }
+//            }
+//        }
+//    }
 
-/*
-    /***
-     * Return all child views of 'viewGroup' in an array list
-     * Only highest level views relative to 'viewGroup' are returned
-     */
-    private fun getAllChildViews(viewGroup: ViewGroup): ArrayList<View> =
-        arrayListOf<View>().apply {
-            (0 until viewGroup.childCount).forEach {
-                this.add(viewGroup.getChildAt(it))
-            }
-        }
-*/
+/***
+ * Show warning messages based on non-valid parts of the add book form
+ * Criteria:
+ * (same as isAddBookFormValid)
+ */
+//    private fun showWarningMsgWhenFormInputMissing() {
+//        bookRecordLayoutBinding.apply {
+//            val selectedStatus = statusChipGroup.checkedChipId
+//
+//            setTextLayoutErrorIfEmpty(bookNameLayout)
+//            setTextLayoutErrorIfEmpty(bookAuthorLayout)
+//            setTextLayoutErrorIfEmpty(bookGenreLayout)
+//
+//            when (selectedStatus) {
+//                R.id.readChip -> {
+//                    setTextLayoutErrorIfEmpty(startedToFinishedDateLayout)
+//                    // setWarningTextVisibleIfNoSelectionFor(ratingBar)
+//                }
+//                R.id.readingChip -> {
+//                    setTextLayoutErrorIfEmpty(startedDateLayout)
+//                    // setWarningTextVisibleIfNoSelectionFor(ratingBar)
+//                }
+//                R.id.wtrChip -> {
+//                    // nothing
+//                }
+//                else -> {
+//                    // setWarningTextVisibleIfNoSelectionFor(statusChipGroup)
+//                }
+//            }
+//        }
+//    }
+
+/***
+ * Set TextInputLayout with error message
+ * if its associated TextInputEditText is empty
+ */
+//    private fun setTextLayoutErrorIfEmpty(layout: TextInputLayout) {
+//        val errorMsg = getString(R.string.must_fill)
+//        layout.error =
+//            if (isTxtFieldEmpty(layout.editText as TextInputEditText))
+//                errorMsg
+//            else
+//                null
+//    }

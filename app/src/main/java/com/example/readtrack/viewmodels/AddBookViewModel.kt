@@ -17,12 +17,7 @@ class AddBookViewModel : ViewModel() {
     val newBook = PropertyAwareMutableLiveData<NewBook>().apply {
         this.value = NewBook()
     }
-    val editBook = MutableLiveData<NewBook>()
-    val nameErrorMsg = MutableLiveData("")
-    val authorErrorMsg = MutableLiveData("")
-    val genreErrorMsg = MutableLiveData("")
-    val dateRangeErrorMsg = MutableLiveData("")
-    val startedDateErrorMsg = MutableLiveData("")
+    val editBook = PropertyAwareMutableLiveData<NewBook>()
 
     /***
      * Check if the add book form is valid
@@ -35,67 +30,40 @@ class AddBookViewModel : ViewModel() {
      *
      */
     // Set to true/false based on the properties of NewBook
-    val isFormValid = MediatorLiveData<Boolean>().apply {
+    val isAddBookFormValid = MediatorLiveData<Boolean>().apply {
         addSource(newBook) {
-            value = !isTextEmpty(it.name)
-                    && !isTextEmpty(it.authorName)
-                    && !isTextEmpty(it.genre)
-                    && when(it.status) {
-                        Status.READ -> {
-                            it.dateRange != null
-                                    && it.rating > 0
-                        }
-                        Status.READING -> {
-                            it.startedDate != null
-                                    && it.rating > 0
-                        }
-                        Status.WANT_TO_READ -> {
-                            true
-                        }
-                        // NONE
-                        else -> {
-                            false
-                        }
-                    }
+            value = isNewBookComplete(it)
         }
     }
 
-    fun validateName(name: String) {
-        Log.d(TAG, "validateName is called. Name: $name")
-        if (isTextEmpty(name)) {
-            nameErrorMsg.value = commonErrorMsg
-        } else {
-            nameErrorMsg.value = ""
+    val isEditBookFormValid = MediatorLiveData<Boolean>().apply {
+        addSource(editBook) {
+            value = isNewBookComplete(it)
         }
     }
-    fun validateAuthor(authorName: String) {
-        if (isTextEmpty(authorName)) {
-            authorErrorMsg.value = commonErrorMsg
-        } else {
-            authorErrorMsg.value = ""
-        }
-    }
-    fun validateGenre(genre: String) {
-        if (isTextEmpty(genre)) {
-            genreErrorMsg.value = commonErrorMsg
-        } else {
-            genreErrorMsg.value = ""
-        }
-    }
-    fun validateDateRange(dateRangeStr: String) {
-        if (isTextEmpty(dateRangeStr)) {
-            dateRangeErrorMsg.value = commonErrorMsg
-        } else {
-            dateRangeErrorMsg.value = ""
-        }
-    }
-    fun validateStartedDate(startedDateStr: String) {
-        if (isTextEmpty(startedDateStr)) {
-            startedDateErrorMsg.value = commonErrorMsg
-        } else {
-            startedDateErrorMsg.value = ""
-        }
-    }
+
+    private fun isNewBookComplete(
+        newBook: NewBook
+    ): Boolean = !isTextEmpty(newBook.name)
+            && !isTextEmpty(newBook.authorName)
+            && !isTextEmpty(newBook.genre)
+            && when(newBook.status) {
+                Status.READ -> {
+                    newBook.dateRange != null
+                            && newBook.rating > 0
+                }
+                Status.READING -> {
+                    newBook.startedDate != null
+                            && newBook.rating > 0
+                }
+                Status.WANT_TO_READ -> {
+                    true
+                }
+                // NONE
+                else -> {
+                    false
+                }
+            }
 
     private fun isTextEmpty(txt: String): Boolean = txt.trim().isEmpty()
 }

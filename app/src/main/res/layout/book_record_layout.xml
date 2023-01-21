@@ -6,9 +6,6 @@
 
     <data>
         <variable
-            name="vm"
-            type="com.example.readtrack.viewmodels.AddBookViewModel" />
-        <variable
             name="coverImg"
             type="android.graphics.drawable.Drawable" />
         <variable
@@ -35,21 +32,6 @@
         <variable
             name="rating"
             type="Float" />
-        <variable
-            name="nameErrorMsg"
-            type="String" />
-        <variable
-            name="authorErrorMsg"
-            type="String" />
-        <variable
-            name="genreErrorMsg"
-            type="String" />
-        <variable
-            name="dateRangeErrorMsg"
-            type="String" />
-        <variable
-            name="startedDateErrorMsg"
-            type="String" />
     </data>
 
     <LinearLayout
@@ -78,7 +60,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/book_name"
             app:errorEnabled="true"
-            app:error="@{nameErrorMsg}"
+            app:validation="@{name}"
             app:helperText="@string/required"
             app:startIconDrawable="@drawable/mdi_book_open_variant">
 
@@ -86,8 +68,7 @@
                 android:id="@+id/bookNameTextField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@={name}"
-                android:afterTextChanged="@{() -> vm.validateName(name)}"/>
+                android:text="@={name}"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -96,7 +77,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/book_author"
             app:errorEnabled="true"
-            app:error="@{authorErrorMsg}"
+            app:validation="@{author}"
             app:helperText="@string/required"
             app:startIconDrawable="@drawable/mdi_account">
 
@@ -104,8 +85,7 @@
                 android:id="@+id/bookAuthorTextField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@={author}"
-                android:afterTextChanged="@{() -> vm.validateAuthor(author)}"/>
+                android:text="@={author}" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -114,7 +94,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/book_genre"
             app:errorEnabled="true"
-            app:error="@{genreErrorMsg}"
+            app:validation="@{genre}"
             app:helperText="@string/required"
             app:startIconDrawable="@drawable/mdi_heart_multiple">
 
@@ -122,8 +102,7 @@
                 android:id="@+id/bookGenreTextField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@={genre}"
-                android:afterTextChanged="@{() -> vm.validateGenre(genre)}"/>
+                android:text="@={genre}" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
@@ -190,7 +169,6 @@
             android:hint="@string/started_date_finished_date"
             android:visibility="gone"
             app:errorEnabled="true"
-            app:error="@{dateRangeErrorMsg}"
             app:helperText="@string/required"
             app:startIconDrawable="@drawable/mdi_calendar_range"
             tools:visibility="visible">
@@ -201,8 +179,7 @@
                 android:layout_height="wrap_content"
                 android:focusable="false"
                 android:longClickable="false"
-                android:text="@={dateRange}"
-                android:afterTextChanged="@{() -> vm.validateDateRange(dateRange)}"/>
+                android:text="@={dateRange}" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -213,7 +190,6 @@
             android:hint="@string/started_date"
             android:visibility="gone"
             app:errorEnabled="true"
-            app:error="@{startedDateErrorMsg}"
             app:helperText="@string/required"
             app:startIconDrawable="@drawable/mdi_calendar_start"
             tools:visibility="visible">
@@ -224,8 +200,7 @@
                 android:layout_height="wrap_content"
                 android:focusable="false"
                 android:longClickable="false"
-                android:text="@={startedDate}"
-                android:afterTextChanged="@{() -> vm.validateStartedDate(startedDate)}"/>
+                android:text="@={startedDate}" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
