@@ -1,14 +1,9 @@
 package com.example.readtrack.viewmodels
 
-import android.util.Log
-import android.view.animation.Transformation
 import androidx.lifecycle.*
-import com.example.readtrack.R
 import com.example.readtrack.types.NewBook
 import com.example.readtrack.types.Status
-import com.example.readtrack.types.StoredBook
 import com.example.readtrack.util.PropertyAwareMutableLiveData
-import com.google.android.material.textfield.TextInputEditText
 
 private const val TAG = "AddBookViewModel"
 class AddBookViewModel : ViewModel() {
@@ -32,17 +27,17 @@ class AddBookViewModel : ViewModel() {
     // Set to true/false based on the properties of NewBook
     val isAddBookFormValid = MediatorLiveData<Boolean>().apply {
         addSource(newBook) {
-            value = isNewBookComplete(it)
+            value = isNewBookValid(it)
         }
     }
 
     val isEditBookFormValid = MediatorLiveData<Boolean>().apply {
         addSource(editBook) {
-            value = isNewBookComplete(it)
+            value = isNewBookValid(it)
         }
     }
 
-    private fun isNewBookComplete(
+    private fun isNewBookValid(
         newBook: NewBook
     ): Boolean = !isTextEmpty(newBook.name)
             && !isTextEmpty(newBook.authorName)

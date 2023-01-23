@@ -44,29 +44,18 @@
             android:layout_weight="9"
             android:elevation="36dp" >
 
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_margin="16dp"
-                android:scrollbars="none"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" >
-
-                <include
-                    layout="@layout/book_record_layout"
-                    android:id="@+id/book_record_layout"
-                    app:coverImg="@{vm.newBook.hasCoverImg ? Converters.uriToBitmap(vm.newBook.coverUri) : @drawable/custom_add_img_area}"
-                    app:coverTxt="@{vm.newBook.hasCoverImg ? `` : @string/add_a_book_cover}"
-                    app:name="@={vm.newBook.name}"
-                    app:author="@={vm.newBook.authorName}"
-                    app:genre="@={vm.newBook.genre}"
-                    app:status="@={vm.newBook.status}"
-                    app:dateRange="@={Converters.dateRangeToString(vm.newBook.dateRange)}"
-                    app:startedDate="@={Converters.dateToString(vm.newBook.startedDate)}"
-                    app:rating="@{vm.newBook.rating}" />
-
-            </ScrollView>
+            <include
+                layout="@layout/book_record_layout"
+                android:id="@+id/bookRecordLayout"
+                app:coverImg="@{vm.newBook.hasCoverImg ? Converters.uriToBitmap(vm.newBook.coverUri) : @drawable/custom_add_img_area}"
+                app:coverTxt="@{vm.newBook.hasCoverImg ? `` : @string/add_a_book_cover}"
+                app:name="@={vm.newBook.name}"
+                app:author="@={vm.newBook.authorName}"
+                app:genre="@={vm.newBook.genre}"
+                app:status="@={vm.newBook.status}"
+                app:dateRange="@={Converters.dateRangeToString(vm.newBook.dateRange)}"
+                app:startedDate="@={Converters.dateToString(vm.newBook.startedDate)}"
+                app:rating="@{vm.newBook.rating}" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/addNewBookBtn"

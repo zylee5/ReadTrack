@@ -5,6 +5,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <data>
+        <import type="com.example.readtrack.types.Status" />
+        <import type="android.view.View" />
         <variable
             name="coverImg"
             type="android.graphics.drawable.Drawable" />
@@ -34,209 +36,219 @@
             type="Float" />
     </data>
 
-    <LinearLayout
-        android:id="@+id/addBookFormLayout"
+    <ScrollView
+        android:id="@+id/scrollLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/addBookCoverBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="10dp"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:background="@{coverImg}"
-            android:text="@{coverTxt}"
-            android:textAllCaps="false"
-            android:textColor="#447C8C"
-            tools:text="@string/add_a_book_cover" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/bookNameLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/book_name"
-            app:errorEnabled="true"
-            app:validation="@{name}"
-            app:helperText="@string/required"
-            app:startIconDrawable="@drawable/mdi_book_open_variant">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/bookNameTextField"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@={name}"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/bookAuthorLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/book_author"
-            app:errorEnabled="true"
-            app:validation="@{author}"
-            app:helperText="@string/required"
-            app:startIconDrawable="@drawable/mdi_account">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/bookAuthorTextField"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@={author}" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/bookGenreLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/book_genre"
-            app:errorEnabled="true"
-            app:validation="@{genre}"
-            app:helperText="@string/required"
-            app:startIconDrawable="@drawable/mdi_heart_multiple">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/bookGenreTextField"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@={genre}" />
-        </com.google.android.material.textfield.TextInputLayout>
+        android:layout_height="match_parent"
+        android:layout_margin="16dp"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" >
 
         <LinearLayout
-            android:id="@+id/statusLayout"
+            android:id="@+id/addBookFormLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/addBookCoverBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/status_required"/>
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:background="@{coverImg}"
+                android:text="@{coverTxt}"
+                android:textAllCaps="false"
+                android:textColor="#447C8C"
+                tools:text="@string/add_a_book_cover" />
 
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/statusChipGroup"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/bookNameLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:status="@={status}"
-                app:selectionRequired="true"
-                app:singleLine="true"
-                app:singleSelection="true">
+                android:hint="@string/book_name"
+                app:errorEnabled="true"
+                app:validation="@{name}"
+                app:helperText="@string/required"
+                app:startIconDrawable="@drawable/mdi_book_open_variant">
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/readChip"
-                    style="@style/Widget.Material3.Chip.Filter"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/bookNameTextField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@={name}"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/bookAuthorLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/book_author"
+                app:errorEnabled="true"
+                app:validation="@{author}"
+                app:helperText="@string/required"
+                app:startIconDrawable="@drawable/mdi_account">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/bookAuthorTextField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@={author}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/bookGenreLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/book_genre"
+                app:errorEnabled="true"
+                app:validation="@{genre}"
+                app:helperText="@string/required"
+                app:startIconDrawable="@drawable/mdi_heart_multiple">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/bookGenreTextField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@={genre}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:id="@+id/statusLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:text="@string/read" />
+                    android:text="@string/status_required"/>
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/readingChip"
-                    style="@style/Widget.Material3.Chip.Filter"
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/statusChipGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:selectionRequired="true"
+                    app:singleLine="true"
+                    app:singleSelection="true"
+                    app:status="@={status}">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/readChip"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:text="@string/read" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/readingChip"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:text="@string/reading" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/wtrChip"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:text="@string/want_to_read" />
+
+                </com.google.android.material.chip.ChipGroup>
+
+            </LinearLayout>
+
+    <!--        <TextView-->
+    <!--            android:id="@+id/statusChipWarningText"-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:text="@string/status_not_selected"-->
+    <!--            android:textColor="@color/design_default_color_error"-->
+    <!--            android:visibility="gone"-->
+    <!--            tools:visibility="visible" />-->
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/startedToFinishedDateLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/started_date_finished_date"
+                android:visibility="@{status == Status.READ ? View.VISIBLE : View.GONE}"
+                app:errorEnabled="true"
+                app:helperText="@string/required"
+                app:startIconDrawable="@drawable/mdi_calendar_range"
+                tools:visibility="visible">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/startedToFinishedDateTextField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:longClickable="false"
+                    android:text="@={dateRange}" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/startedDateLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/started_date"
+                android:visibility="@{status == Status.READING ? View.VISIBLE : View.GONE}"
+                app:errorEnabled="true"
+                app:helperText="@string/required"
+                app:startIconDrawable="@drawable/mdi_calendar_start"
+                tools:visibility="visible">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/startedDateTextField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:longClickable="false"
+                    android:text="@={startedDate}" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:id="@+id/ratingLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="@{status == Status.WANT_TO_READ || status == Status.NONE ? View.GONE : View.VISIBLE}">
+
+                <TextView
+                    android:id="@+id/ratingText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rating_required"
+                    tools:visibility="visible" />
+
+                <RatingBar
+                    android:id="@+id/ratingBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:text="@string/reading" />
+                    android:max="5"
+                    android:numStars="5"
+                    android:rating="@{rating}"
+                    android:stepSize="1"
+                    tools:visibility="visible" />
+            </LinearLayout>
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/wtrChip"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:text="@string/want_to_read" />
-
-            </com.google.android.material.chip.ChipGroup>
-
+    <!--        <TextView-->
+    <!--            android:id="@+id/ratingBarWarningText"-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:text="@string/non_zero_rating"-->
+    <!--            android:textColor="@color/design_default_color_error"-->
+    <!--            android:visibility="gone"-->
+    <!--            tools:visibility="visible" />-->
         </LinearLayout>
-
-<!--        <TextView-->
-<!--            android:id="@+id/statusChipWarningText"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="@string/status_not_selected"-->
-<!--            android:textColor="@color/design_default_color_error"-->
-<!--            android:visibility="gone"-->
-<!--            tools:visibility="visible" />-->
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/startedToFinishedDateLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/started_date_finished_date"
-            android:visibility="gone"
-            app:errorEnabled="true"
-            app:helperText="@string/required"
-            app:startIconDrawable="@drawable/mdi_calendar_range"
-            tools:visibility="visible">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/startedToFinishedDateTextField"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:focusable="false"
-                android:longClickable="false"
-                android:text="@={dateRange}" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/startedDateLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/started_date"
-            android:visibility="gone"
-            app:errorEnabled="true"
-            app:helperText="@string/required"
-            app:startIconDrawable="@drawable/mdi_calendar_start"
-            tools:visibility="visible">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/startedDateTextField"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:focusable="false"
-                android:longClickable="false"
-                android:text="@={startedDate}" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <LinearLayout
-            android:id="@+id/ratingLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/ratingText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/rating_required"
-                android:visibility="gone"
-                tools:visibility="visible" />
-
-            <RatingBar
-                android:id="@+id/ratingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:max="5"
-                android:numStars="5"
-                android:rating="@{rating}"
-                android:stepSize="1"
-                android:visibility="gone"
-                tools:visibility="visible" />
-        </LinearLayout>
-
-<!--        <TextView-->
-<!--            android:id="@+id/ratingBarWarningText"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="@string/non_zero_rating"-->
-<!--            android:textColor="@color/design_default_color_error"-->
-<!--            android:visibility="gone"-->
-<!--            tools:visibility="visible" />-->
-    </LinearLayout>
+    </ScrollView>
 </layout>

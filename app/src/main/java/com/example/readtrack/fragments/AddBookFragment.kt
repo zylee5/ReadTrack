@@ -6,25 +6,20 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.icu.lang.UCharacter.GraphemeClusterBreak.L
 import android.os.Bundle
 import android.provider.MediaStore
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RatingBar
-import android.widget.Toast
+import android.widget.ScrollView
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.FileProvider
-import androidx.core.widget.doOnTextChanged
+import androidx.databinding.BindingMethod
+import androidx.databinding.BindingMethods
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -34,10 +29,11 @@ import com.example.readtrack.databinding.DialogEditBookRecordBinding
 import com.example.readtrack.databinding.FragmentAddBookBinding
 import com.example.readtrack.dialogs.AddBookCoverDialog
 import com.example.readtrack.types.NewBook
-import com.example.readtrack.types.Status
 import com.example.readtrack.util.ImageUtils
 import com.example.readtrack.viewmodels.AddBookViewModel
 import com.example.readtrack.viewmodels.BookShelfViewModel
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -147,24 +143,6 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                     createDatePicker(startedDateTextField)
                 }
 
-                // Chip once checked cannot be unchecked (app:selectionRequired="true")
-                // thus everytime new selection is made make sure warning text does not appear
-                statusChipGroup.setOnCheckedStateChangeListener { _, _ ->
-//                    statusChipWarningText.visibility = View.GONE
-                }
-
-                readChip.setOnCheckedChangeListener { _, _ ->
-                    setViewVisibilityForStatus(Status.READ)
-                }
-
-                readingChip.setOnCheckedChangeListener { _, _ ->
-                    setViewVisibilityForStatus(Status.READING)
-                }
-
-                wtrChip.setOnCheckedChangeListener { _, _ ->
-                    setViewVisibilityForStatus(Status.WANT_TO_READ)
-                }
-
                 bookNameTextField.setOnFocusChangeListener { _, focused ->
                     if (!focused) {
                         bookNameLayout.error = null
@@ -191,10 +169,6 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
 //                            View.GONE
 
                     // Two-way data binding on this property does not work as intended, hence only one-way in xml
-                    // Issue: default binding adapter:
-                    /* https://android.googlesource.com/platform/frameworks/data-binding/+/refs/heads/studio-master-dev/
-                    extensions/baseAdapters/src/main/java/androidx/databinding/adapters/ RatingBarBindingAdapter.java
-                    */
                     liveDataObserved.value?.let {
                         it.rating = rating
                     }
@@ -391,26 +365,6 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                     currentImg.delete()
                 }
             }
-        }
-    }
-
-    private fun setViewVisibilityForStatus(status: Status) {
-        bookRecordLayoutBinding.apply {
-            startedToFinishedDateLayout.visibility =
-                if (status == Status.READ) View.VISIBLE
-                else View.GONE
-            startedDateLayout.visibility =
-                if (status == Status.READING) View.VISIBLE
-                else View.GONE
-            ratingText.visibility =
-                if (status == Status.WANT_TO_READ) View.GONE
-                else View.VISIBLE
-            ratingBar.visibility =
-                if (status == Status.WANT_TO_READ) View.GONE
-                else View.VISIBLE
-            // To prevent previously set visible rating bar warning message showing up
-            // if (status == Status.WANT_TO_READ)
-            //    ratingBarWarningText.visibility = View.GONE
         }
     }
 
