@@ -79,6 +79,6 @@
             app:status="@={vm.editBook.status}"
             app:dateRange="@={Converters.dateRangeToString(vm.editBook.dateRange)}"
             app:startedDate="@={Converters.dateToString(vm.editBook.startedDate)}"
-            app:rating="@{vm.editBook.rating}" />
+            app:rating="@={vm.editBook.rating}" />
     </LinearLayout>
 </layout>

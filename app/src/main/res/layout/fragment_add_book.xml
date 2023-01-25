@@ -55,7 +55,7 @@
                 app:status="@={vm.newBook.status}"
                 app:dateRange="@={Converters.dateRangeToString(vm.newBook.dateRange)}"
                 app:startedDate="@={Converters.dateToString(vm.newBook.startedDate)}"
-                app:rating="@{vm.newBook.rating}" />
+                app:rating="@={vm.newBook.rating}" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/addNewBookBtn"

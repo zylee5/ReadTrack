@@ -148,6 +148,8 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                     createDatePicker(startedDateTextField)
                 }
 
+                // When error has been set, and then focus on the text field moved to another text field
+                // error should be cleared
                 bookNameTextField.setOnFocusChangeListener { _, focused ->
                     if (!focused) {
                         bookNameLayout.error = null
@@ -163,13 +165,6 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                 bookGenreTextField.setOnFocusChangeListener { _, focused ->
                     if (!focused) {
                         bookGenreLayout.error = null
-                    }
-                }
-
-                ratingBar.setOnRatingBarChangeListener { _, rating, _ ->
-                    // Two-way data binding on this property does not work as intended, hence only one-way in xml
-                    liveDataObserved.value?.let {
-                        it.rating = rating
                     }
                 }
 
