@@ -7,7 +7,6 @@ import com.example.readtrack.util.PropertyAwareMutableLiveData
 
 private const val TAG = "AddBookViewModel"
 class AddBookViewModel : ViewModel() {
-    private val commonErrorMsg = "You must fill in this field"
     // When properties in newBook are updated, isFormValid needs to get notified (triggering onChanged)
     val newBook = PropertyAwareMutableLiveData<NewBook>().apply {
         this.value = NewBook()

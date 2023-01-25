@@ -80,7 +80,7 @@
                     android:id="@+id/bookNameTextField"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@={name}"/>
+                    android:text="@={name}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout

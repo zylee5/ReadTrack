@@ -9,7 +9,10 @@ import androidx.databinding.InverseBindingListener
 import com.bumptech.glide.Glide
 import com.example.readtrack.R
 import com.example.readtrack.types.Status
+import com.example.readtrack.util.findParentViewWithType
+import com.example.readtrack.util.scrollToBottom
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import java.util.*
 import kotlin.concurrent.schedule
@@ -50,6 +53,7 @@ fun ChipGroup.statusToChip(status: Status?) =
         Status.READ -> check(R.id.readChip)
         Status.READING -> check(R.id.readingChip)
         Status.WANT_TO_READ -> check(R.id.wtrChip)
+        Status.NONE -> clearCheck()
         else -> check(View.NO_ID)
     }
 
@@ -66,6 +70,7 @@ fun ChipGroup.chipToStatus(): Status =
 fun ChipGroup.setListeners(attrChange: InverseBindingListener?) =
     setOnCheckedStateChangeListener { _, _ ->
         attrChange?.onChange()
+        // Scroll to bottom of scrollView
         val scrollView = findParentViewWithType(this, ScrollView::class)
         if (scrollView != null) {
             Timer().schedule(100) {
@@ -73,19 +78,3 @@ fun ChipGroup.setListeners(attrChange: InverseBindingListener?) =
             }
         }
     }
-
-private fun ScrollView.scrollToBottom() {
-    val lastChild = getChildAt(childCount - 1)
-    val bottom = lastChild.bottom + paddingBottom
-    val delta = bottom - (scrollY+ height)
-    smoothScrollBy(0, delta)
-}
-
-@Suppress("UNCHECKED_CAST")
-fun <T: View> findParentViewWithType(currentView: View, type: KClass<T>): T? {
-    var parent = currentView.parent
-    while (parent != null && parent::class != type) {
-        parent = parent.parent
-    }
-    return parent as? T
-}

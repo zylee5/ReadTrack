@@ -29,7 +29,9 @@ import com.example.readtrack.databinding.DialogEditBookRecordBinding
 import com.example.readtrack.databinding.FragmentAddBookBinding
 import com.example.readtrack.dialogs.AddBookCoverDialog
 import com.example.readtrack.types.NewBook
+import com.example.readtrack.types.Status
 import com.example.readtrack.util.ImageUtils
+import com.example.readtrack.util.findParentViewWithType
 import com.example.readtrack.viewmodels.AddBookViewModel
 import com.example.readtrack.viewmodels.BookShelfViewModel
 import com.google.android.material.chip.Chip
@@ -45,6 +47,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 
 private const val TAG = "AddBookFragment"
@@ -120,7 +123,9 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                         editDialogAction.setOnClickListener {
                             liveDataObserved.value?.let { editBook ->
                                 viewLifecycleOwner.lifecycleScope.launch {
-                                    bookShelfViewModel.updateBook(editBook.toStoredBook(bookId!!))
+                                    bookId?.let {
+                                        bookShelfViewModel.updateBook(editBook.toStoredBook(it))
+                                    }
                                     dismiss()
                                 }
                             }
@@ -162,12 +167,6 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                 }
 
                 ratingBar.setOnRatingBarChangeListener { _, rating, _ ->
-//                    ratingBarWarningText.visibility =
-//                        if (rating <= 0)
-//                            View.VISIBLE
-//                        else
-//                            View.GONE
-
                     // Two-way data binding on this property does not work as intended, hence only one-way in xml
                     liveDataObserved.value?.let {
                         it.rating = rating
@@ -181,7 +180,6 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                     val newDialogFragment = AddBookCoverDialog.getInstance(requireContext())
                     newDialogFragment?.show(childFragmentManager, "addBookCoverDialog")
                 }
-
             }
         return if (bookId == null) addBookBinding.root else editBookRecordBinding.root
     }
