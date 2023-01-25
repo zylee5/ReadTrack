@@ -92,7 +92,7 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                             // which at here tied to the lifecycle of AddBookFragment
                             viewLifecycleOwner.lifecycleScope.launch {
                                 bookShelfViewModel.addBook(newStoredBook)
-                                findNavController().navigate(R.id.bookShelfFragment)
+                                findNavController().navigate(R.id.action_addBookFragment_to_bookShelfFragment)
                                 // To clear the input in the view
                                 liveDataObserved.value = NewBook()
                             }
