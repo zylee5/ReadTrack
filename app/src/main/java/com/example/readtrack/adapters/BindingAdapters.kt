@@ -1,5 +1,6 @@
 package com.example.readtrack.adapters
 
+import android.net.Uri
 import android.view.View
 import android.widget.ImageView
 import android.widget.ScrollView
@@ -26,6 +27,8 @@ fun loadImage(view: ImageView, uri: String?) {
             .with(view.context)
             .load(uri)
             .into(view)
+    } else {
+        view.setImageResource(R.drawable.default_book_cover)
     }
 }
 

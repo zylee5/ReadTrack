@@ -11,13 +11,13 @@ import androidx.lifecycle.MutableLiveData
 class PropertyAwareMutableLiveData<T : BaseObservable> : MutableLiveData<T>() {
     private val callback = object : Observable.OnPropertyChangedCallback() {
         override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-            Log.d("Custom LiveData", "onPropertyChanged is called")
+            Log.d("Custom MutableLiveData", "onPropertyChanged is called")
             value = value
         }
     }
 
     override fun setValue(value: T?) {
-        Log.d("Custom LiveData", "setValue is called")
+        Log.d("Custom MutableLiveData", "setValue is called")
         super.setValue(value)
         value?.addOnPropertyChangedCallback(callback)
     }

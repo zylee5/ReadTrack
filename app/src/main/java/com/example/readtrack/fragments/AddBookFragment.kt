@@ -100,9 +100,9 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                     }
                 }
             bookRecordLayoutBinding = addBookBinding.bookRecordLayout
-            addBookViewModel.isAddBookFormValid.observe(viewLifecycleOwner) {
-                Log.d(TAG, "isAddBookFormValid mediator observed changes - value: $it")
-            }
+//            addBookViewModel.isAddBookFormValid.observe(viewLifecycleOwner) {
+//                Log.d(TAG, "isAddBookFormValid mediator observed changes - value: $it")
+//            }
         }
         // Edit book
         else {
@@ -133,9 +133,9 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                     }
                 }
             bookRecordLayoutBinding = editBookRecordBinding.bookRecordLayout
-            addBookViewModel.isEditBookFormValid.observe(viewLifecycleOwner) {
-                Log.d(TAG, "isEditBookFormValid mediator observed changes - value: $it")
-            }
+//            addBookViewModel.isEditBookFormValid.observe(viewLifecycleOwner) {
+//                Log.d(TAG, "isEditBookFormValid mediator observed changes - value: $it")
+//            }
         }
 
         bookRecordLayoutBinding

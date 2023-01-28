@@ -20,13 +20,19 @@
         tools:layout="@layout/fragment_add_book">
         <action
             android:id="@+id/action_addBookFragment_to_bookShelfFragment"
-            app:destination="@id/bookShelfFragment" />
+            app:destination="@id/bookShelfFragment"
+            app:popUpTo="@id/bookShelfFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
         android:id="@+id/bookShelfFragment"
         android:name="com.example.readtrack.fragments.BookShelfFragment"
         android:label="fragment_book_shelf"
-        tools:layout="@layout/fragment_book_shelf" />
+        tools:layout="@layout/fragment_book_shelf" >
+        <action
+            android:id="@+id/action_bookShelfFragment_to_addBookFragment"
+            app:destination="@id/addBookFragment" />
+    </fragment>
 
 </navigation>
