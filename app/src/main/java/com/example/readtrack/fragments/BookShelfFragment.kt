@@ -44,9 +44,6 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener, O
         savedInstanceState: Bundle?
     ): View {
         preferences = requireActivity().getSharedPreferences("pref", Context.MODE_PRIVATE)
-        val order = preferences.getInt("Order", R.id.ascending)
-        val sortAttribute = preferences.getInt("Attribute", R.id.bookName)
-
         binding = FragmentBookShelfBinding.inflate(inflater, container, false)
             .apply {
                 with(bookList) {
@@ -114,11 +111,12 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener, O
         // so that the list adapter can update the recycler view continuously
         bookShelfViewModel.storedBooks.observe(viewLifecycleOwner) { storedBooks ->
             // Sort the list according to user settings
+            val order = preferences.getInt("Order", R.id.ascending)
+            val sortAttribute = preferences.getInt("Attribute", R.id.bookName)
             val comparator = getComparator(order, sortAttribute)
             if (comparator != null) {
-                // Log.d(TAG, "Order: ${resources.getResourceEntryName(order)}, Attribute: ${resources.getResourceEntryName(sortAttribute)}")
-                if (comparator is StoredBook.StartDateComparator || comparator is StoredBook.FinishedDateComparator) {
-                    bookShelfViewModel.sortBooks(StoredBook.StatusComparator())
+                if (sortAttribute == R.id.startedDate || sortAttribute == R.id.finishedDate) {
+                    bookShelfViewModel.sortBooks(StoredBook.StatusComparator()) // Sort by status first
                 }
                 bookShelfViewModel.sortBooks(comparator)
             }
@@ -195,8 +193,8 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener, O
 
             if (comparator != null) {
                 // Sort the list based on the order and attribute selected
-                if (comparator is StoredBook.StartDateComparator || comparator is StoredBook.FinishedDateComparator) {
-                    bookShelfViewModel.sortBooks(StoredBook.StatusComparator())
+                if (selectedAttribute == R.id.startedDate || selectedAttribute == R.id.finishedDate) {
+                    bookShelfViewModel.sortBooks(StoredBook.StatusComparator()) // Sort by status first
                 }
                 bookShelfViewModel.sortBooks(comparator)
                 bookListAdapter.notifyDataSetChanged()
