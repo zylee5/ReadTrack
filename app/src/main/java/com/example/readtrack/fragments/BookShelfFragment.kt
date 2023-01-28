@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,6 +44,8 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener, O
         savedInstanceState: Bundle?
     ): View {
         preferences = requireActivity().getSharedPreferences("pref", Context.MODE_PRIVATE)
+        val order = preferences.getInt("Order", R.id.ascending)
+        val sortAttribute = preferences.getInt("Attribute", R.id.bookName)
 
         binding = FragmentBookShelfBinding.inflate(inflater, container, false)
             .apply {
@@ -110,13 +113,13 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener, O
         // storedBooks has to be observed for any changes later on
         // so that the list adapter can update the recycler view continuously
         bookShelfViewModel.storedBooks.observe(viewLifecycleOwner) { storedBooks ->
-
             // Sort the list according to user settings
-            val order = preferences.getInt("Order", R.id.ascending)
-            val sortAttribute = preferences.getInt("Attribute", R.id.bookName)
             val comparator = getComparator(order, sortAttribute)
             if (comparator != null) {
                 // Log.d(TAG, "Order: ${resources.getResourceEntryName(order)}, Attribute: ${resources.getResourceEntryName(sortAttribute)}")
+                if (comparator is StoredBook.StartDateComparator || comparator is StoredBook.FinishedDateComparator) {
+                    bookShelfViewModel.sortBooks(StoredBook.StatusComparator())
+                }
                 bookShelfViewModel.sortBooks(comparator)
             }
             bookListAdapter.submitList(storedBooks)
@@ -127,8 +130,6 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener, O
     
     // When the view item in RecyclerView is clicked
     override fun onItemClicked(bookClicked: StoredBook) {
-
-
         // Open AddBookFragment as a dialog
         val editBookRecordDialog = AddBookFragment()
 
@@ -138,11 +139,6 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener, O
 
         editBookRecordDialog.arguments = args
         editBookRecordDialog.show(childFragmentManager, "editBookDialog")
-
-
-
-
-
     }
 
     private fun createSwipeAction(context: Context, recyclerView: RecyclerView) {
@@ -199,6 +195,9 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener, O
 
             if (comparator != null) {
                 // Sort the list based on the order and attribute selected
+                if (comparator is StoredBook.StartDateComparator || comparator is StoredBook.FinishedDateComparator) {
+                    bookShelfViewModel.sortBooks(StoredBook.StatusComparator())
+                }
                 bookShelfViewModel.sortBooks(comparator)
                 bookListAdapter.notifyDataSetChanged()
                 // To scroll the RecyclerView to the top
