@@ -31,7 +31,7 @@
     <string name="non_zero_rating">You must rate the book from one to five</string>
     <string name="add_a_book_cover">Add a book cover</string>
     <string name="my_bookshelf">My Bookshelf</string>
-    <string name="add_a_new_book">Add a new book</string>
+    <string name="add_custom_book">Add Custom Book</string>
     <string name="author_name">Author Name</string>
     <string name="order">Order</string>
     <string name="ascending">Ascending</string>
@@ -41,4 +41,10 @@
     <string name="save">Save</string>
     <string name="status_required">Status*</string>
     <string name="rating_required">Rating*</string>
+    <string name="general_exception_error">An error has occurred. Please try again.</string>
+    <string name="network_exception_error">A network error has occurred. Please check your network connection and try again.</string>
+    <string name="request_exception_error">Failed to retrieve data. Please try again.</string>
+    <string name="no_result_found">No results found.</string>
+    <string name="search">Search</string>
+    <string name="book_search">Book Search</string>
 </resources>

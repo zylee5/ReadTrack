@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
+
     <data>
         <variable
             name="book"
             type="com.example.readtrack.types.StoredBook" />
-        <import type="com.example.readtrack.util.Converters" />
+        <import type="com.example.readtrack.util.BindingConverters" />
         <import type="com.example.readtrack.types.Status" />
         <import type="android.view.View" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/bookCover"
@@ -23,87 +23,101 @@
             android:layout_margin="16dp"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
+            app:imageUri="@{book.coverUri}"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:imageUri="@{book.coverUri}"
             tools:src="@drawable/mdi_bookshelf" />
 
         <TextView
             android:id="@+id/bookTitle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
+            android:text="@{book.title}"
             android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-            android:text="@{book.name}"
             app:layout_constraintStart_toEndOf="@id/bookCover"
             app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
             tools:text="The Hunger Games" />
 
         <TextView
             android:id="@+id/bookAuthor"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:text="@{book.authors}"
             android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-            android:text="@{book.authorName}"
             app:layout_constraintStart_toStartOf="@id/bookTitle"
             app:layout_constraintTop_toBottomOf="@id/bookTitle"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
             tools:text="Suzanne Collins" />
 
         <TextView
             android:id="@+id/bookGenre"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:text="@{book.genres}"
             android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
-            android:text="@{book.genre}"
             app:layout_constraintStart_toStartOf="@id/bookTitle"
             app:layout_constraintTop_toBottomOf="@id/bookAuthor"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
             tools:text="Dystopian" />
 
         <TextView
             android:id="@+id/readingStatus"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
             android:text="@{book.status.string}"
+            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
             app:layout_constraintStart_toStartOf="@id/bookTitle"
             app:layout_constraintTop_toBottomOf="@id/bookGenre"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
             tools:text="Reading" />
 
         <TextView
             android:id="@+id/startedDate"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:text="@{`Started: ` + BindingConverters.startedDateToString(book.startedDate)}"
             android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-            android:text="@{`Started: ` + Converters.dateToString(book.startedDate)}"
             android:visibility="@{book.status == Status.WANT_TO_READ ? View.GONE : View.VISIBLE}"
-            app:layout_constraintStart_toStartOf="@id/bookTitle"
             app:layout_constraintBottom_toTopOf="@id/finishedDate"
-            tools:text="Started: 7 Oct 2022"/>
+            app:layout_constraintStart_toStartOf="@id/bookTitle"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="Started: 7 Oct 2022" />
 
         <TextView
             android:id="@+id/finishedDate"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:text="@{`Finished: ` + BindingConverters.startedDateToString(book.finishedDate)}"
             android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-            android:text="@{`Finished: ` + Converters.dateToString(book.finishedDate)}"
             android:visibility="@{book.status == Status.READ ? View.VISIBLE : View.GONE}"
-            app:layout_constraintStart_toStartOf="@id/bookTitle"
             app:layout_constraintBottom_toTopOf="@id/rating"
-            tools:text="Finished: 11 Oct 2022"/>
+            app:layout_constraintStart_toStartOf="@id/bookTitle"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="Finished: 11 Oct 2022" />
 
         <TextView
             android:id="@+id/rating"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
             android:text="@{`Rating: ` + book.rating.toString() + `/5.0`}"
+            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
             android:visibility="@{book.status == Status.WANT_TO_READ ? View.GONE : View.VISIBLE}"
-            app:layout_constraintStart_toStartOf="@id/bookTitle"
             app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="Rating: 4.0/5.0"/>
+            app:layout_constraintStart_toStartOf="@id/bookTitle"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="Rating: 4.0/5.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

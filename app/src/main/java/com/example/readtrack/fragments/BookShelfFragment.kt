@@ -5,7 +5,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
+import android.view.Gravity.apply
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,13 +13,12 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.readtrack.R
-import com.example.readtrack.adapters.BookListAdapter
+import com.example.readtrack.adapters.BookShelfListAdapter
 import com.example.readtrack.adapters.OnItemClickedListener
 import com.example.readtrack.databinding.FragmentBookShelfBinding
 import com.example.readtrack.dialogs.SortBooksDialog
@@ -28,6 +27,7 @@ import com.example.readtrack.util.SwipeGesture
 import com.example.readtrack.viewmodels.BookShelfViewModel
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
+import java.util.*
 
 
 private const val TAG = "BookShelfFragment"
@@ -36,7 +36,7 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener, O
     private lateinit var binding: FragmentBookShelfBinding
     private lateinit var preferences: SharedPreferences
     private val bookShelfViewModel by activityViewModels<BookShelfViewModel>()
-    private val bookListAdapter = BookListAdapter(this)
+    private val bookListAdapter = BookShelfListAdapter(this)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,7 +46,7 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener, O
         preferences = requireActivity().getSharedPreferences("pref", Context.MODE_PRIVATE)
         binding = FragmentBookShelfBinding.inflate(inflater, container, false)
             .apply {
-                with(bookList) {
+                with(bookSearchResultList) {
                     adapter = bookListAdapter
                     addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
                     createSwipeAction(requireContext(), this)
@@ -95,8 +95,8 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener, O
                             // To set the MutableLiveData to the latest query text
                             bookShelfViewModel.searchByTitleOrAuthor(query)
                             // To scroll the RecyclerView to the top
-                            bookList.postDelayed( {
-                                bookList.smoothScrollToPosition(0)
+                            bookSearchResultList.postDelayed( {
+                                bookSearchResultList.smoothScrollToPosition(0)
                             }, 100)
                             // Log.d(TAG, "Query text is changed")
                             return true
@@ -157,12 +157,14 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener, O
                                             bookShelfViewModel.deleteBook(selectedBook)
                                         }
                                         // To allow undo delete
-                                        Snackbar.make(recyclerView, "'${selectedBook.name}' is deleted", Snackbar.LENGTH_LONG)
+                                        Snackbar.make(recyclerView, "'${selectedBook.title}' is deleted", Snackbar.LENGTH_LONG)
                                             .setAction("Undo") {
                                                 viewLifecycleOwner.lifecycleScope.launch {
                                                     bookShelfViewModel.addBook(selectedBook)
                                                 }
-                                            }.show()
+                                            }
+                                            .setAnchorView(activity?.findViewById(R.id.bottom_nav))
+                                            .show()
                                     }
                                     .setNegativeButton("No") { dialog, _ ->
                                         bookListAdapter.notifyItemChanged(position)
@@ -200,8 +202,8 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener, O
                 bookListAdapter.notifyDataSetChanged()
                 // To scroll the RecyclerView to the top
                 binding.apply {
-                    bookList.postDelayed( {
-                        bookList.smoothScrollToPosition(0)
+                    bookSearchResultList.postDelayed( {
+                        bookSearchResultList.smoothScrollToPosition(0)
                     }, 100)
                 }
             }

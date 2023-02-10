@@ -10,13 +10,13 @@ import com.example.readtrack.R
 import com.example.readtrack.databinding.BookListItemBinding
 import com.example.readtrack.types.StoredBook
 
-class BookListAdapter(
+class BookShelfListAdapter(
     private val onItemClickedListener: OnItemClickedListener
-) : ListAdapter<StoredBook, BookListAdapter.BookListViewHolder>(
-    BookListDiffCallback()
+) : ListAdapter<StoredBook, BookShelfListAdapter.BookShelfListViewHolder>(
+    BookShelfListDiffCallback()
 ) {
     // The ViewHolder is the BookListItem view
-    inner class BookListViewHolder(
+    inner class BookShelfListViewHolder(
         private val binding: BookListItemBinding
     ): RecyclerView.ViewHolder(binding.root) {
         init {
@@ -41,8 +41,8 @@ class BookListAdapter(
 
     // Initialize a view holder instance
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
-    : BookListViewHolder =
-        BookListViewHolder(
+    : BookShelfListViewHolder =
+        BookShelfListViewHolder(
             DataBindingUtil.inflate(
                 LayoutInflater.from(parent.context),
                 R.layout.book_list_item,
@@ -53,7 +53,7 @@ class BookListAdapter(
 
     // Get a StoredBook instance from the list at 'position'
     // and assign it as the 'book' instance in each BookListItem view
-    override fun onBindViewHolder(holder: BookListViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: BookShelfListViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 }
@@ -62,7 +62,7 @@ interface OnItemClickedListener {
     fun onItemClicked(bookClicked: StoredBook)
 }
 
-private class BookListDiffCallback: DiffUtil.ItemCallback<StoredBook>() {
+private class BookShelfListDiffCallback: DiffUtil.ItemCallback<StoredBook>() {
     override fun areItemsTheSame(oldItem: StoredBook, newItem: StoredBook)
     : Boolean = oldItem.bookId == newItem.bookId
 

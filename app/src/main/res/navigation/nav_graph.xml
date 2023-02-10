@@ -4,14 +4,24 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/bookShelfFragment" >
+    app:startDestination="@id/searchBookFragment" >
 
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.readtrack.fragments.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home"
-        />
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/searchBookFragment"
+        android:name="com.example.readtrack.fragments.SearchBookFragment"
+        android:label="fragment_search_book"
+        tools:layout="@layout/fragment_search_book" >
+
+        <action
+            android:id="@+id/action_searchBookFragment_to_addBookFragment"
+            app:destination="@id/addBookFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/addBookFragment"

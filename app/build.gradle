@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'org.jetbrains.kotlin.kapt'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
 }
 
 android {
@@ -34,6 +35,10 @@ android {
     dataBinding {
         enabled true
     }
+
+    viewBinding {
+        enabled true
+    }
 }
 
 dependencies {
@@ -62,6 +67,17 @@ dependencies {
 
     // RecyclerView swipe
     implementation 'com.github.xabaras:RecyclerViewSwipeDecorator:1.4'
+
+    // Retrofit
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
+    
+    // Moshi
+    implementation "com.squareup.moshi:moshi:$moshi_version"
+    implementation "com.squareup.moshi:moshi-kotlin:$moshi_version"
+
+    // Paging
+    implementation "androidx.paging:paging-runtime:$paging_version"
 
 
 

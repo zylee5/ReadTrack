@@ -3,7 +3,6 @@ package com.example.readtrack.types
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import androidx.databinding.ObservableBoolean
-import androidx.databinding.ObservableInt
 import com.example.readtrack.BR
 import java.io.File
 import java.time.LocalDate
@@ -16,9 +15,9 @@ class NewBook(
     var coverUri: String = "",
     @Bindable
     var coverImgFiles: MutableList<File?> = ArrayList(),
-    _name: String = "",
-    _authorName: String = "",
-    _genre: String = "",
+    _title: String = "",
+    _authors: String = "",
+    _genres: String = "",
     _startedDate: LocalDate? = null,
     _dateRange: Pair<LocalDate, LocalDate>? = null,
     _status: Status = Status.NONE,
@@ -26,7 +25,7 @@ class NewBook(
     _hasCoverImg: ObservableBoolean = ObservableBoolean(coverUri.isNotEmpty())
 ): BaseObservable() {
     @Bindable
-    var name = _name
+    var title = _title
         set(value) {
             // Important: Only notify observer when the value changes
             if (field != value) {
@@ -35,7 +34,7 @@ class NewBook(
             }
         }
     @Bindable
-    var authorName = _authorName // TODO: Possibly a data class
+    var authors = _authors
         set(value) {
             if (field != value) {
                 field = value
@@ -43,7 +42,7 @@ class NewBook(
             }
         }
     @Bindable
-    var genre = _genre
+    var genres = _genres
         set(value) {
             if (field != value) {
                 field = value
@@ -97,9 +96,9 @@ class NewBook(
     fun toStoredBook(id: Long = 0) = StoredBook(
         bookId = id,
         coverUri = this.coverUri,
-        name = this.name,
-        authorName = this.authorName,
-        genre = this.genre,
+        title = this.title,
+        authors = this.authors,
+        genres = this.genres,
         startedDate = when (this.status) {
             Status.READ -> {
                 this.dateRange?.first

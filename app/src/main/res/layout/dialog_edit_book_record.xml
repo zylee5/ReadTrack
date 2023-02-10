@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
+
     <data>
+
         <import type="com.example.readtrack.types.Status" />
+
         <import type="android.view.View" />
-        <import type="com.example.readtrack.util.Converters" />
+
+        <import type="com.example.readtrack.util.BindingConverters" />
+
         <variable
             name="vm"
             type="com.example.readtrack.viewmodels.AddBookViewModel" />
@@ -26,7 +31,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <RelativeLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -39,18 +44,26 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:padding="8dp"
                     android:src="@drawable/close"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:tint="@color/md_theme_light_onSurface" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/update_record_title"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="8dp"
                     android:layout_toEndOf="@id/edit_dialog_close"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
                     android:text="@string/update_book_record"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
                     android:textColor="@color/md_theme_light_onSurface"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/edit_dialog_action"
+                    app:layout_constraintStart_toEndOf="@id/edit_dialog_close"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/edit_dialog_action"
@@ -64,21 +77,24 @@
                     android:padding="8dp"
                     android:text="@string/save"
                     android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-                    android:textColor="@color/edit_save_btn_color" />
-            </RelativeLayout>
+                    android:textColor="@color/edit_save_btn_color"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
         <include
-            layout="@layout/book_record_layout"
             android:id="@+id/bookRecordLayout"
-            app:coverImg="@{vm.editBook.hasCoverImg ? Converters.uriToBitmap(vm.editBook.coverUri) : @drawable/custom_add_img_area}"
+            layout="@layout/book_record_layout"
+            app:author="@={vm.editBook.authors}"
+            app:coverImg="@{vm.editBook.hasCoverImg ? BindingConverters.uriToBitmap(vm.editBook.coverUri) : @drawable/custom_add_img_area}"
             app:coverTxt="@{vm.editBook.hasCoverImg ? `` : @string/add_a_book_cover}"
-            app:name="@={vm.editBook.name}"
-            app:author="@={vm.editBook.authorName}"
-            app:genre="@={vm.editBook.genre}"
-            app:status="@={vm.editBook.status}"
-            app:dateRange="@={Converters.dateRangeToString(vm.editBook.dateRange)}"
-            app:startedDate="@={Converters.dateToString(vm.editBook.startedDate)}"
-            app:rating="@={vm.editBook.rating}" />
+            app:dateRange="@={BindingConverters.dateRangeToString(vm.editBook.dateRange)}"
+            app:genre="@={vm.editBook.genres}"
+            app:name="@={vm.editBook.title}"
+            app:rating="@={vm.editBook.rating}"
+            app:startedDate="@={BindingConverters.startedDateToString(vm.editBook.startedDate)}"
+            app:status="@={vm.editBook.status}" />
     </LinearLayout>
 </layout>

@@ -38,9 +38,9 @@ class AddBookViewModel : ViewModel() {
 
     private fun isNewBookValid(
         newBook: NewBook
-    ): Boolean = !isTextEmpty(newBook.name)
-            && !isTextEmpty(newBook.authorName)
-            && !isTextEmpty(newBook.genre)
+    ): Boolean = !isTextEmpty(newBook.title)
+            && !isTextEmpty(newBook.authors)
+            && !isTextEmpty(newBook.genres)
             && when(newBook.status) {
                 Status.READ -> {
                     newBook.dateRange != null

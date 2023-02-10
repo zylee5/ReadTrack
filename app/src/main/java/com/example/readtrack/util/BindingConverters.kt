@@ -3,7 +3,6 @@ package com.example.readtrack.util
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.util.Log
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.databinding.InverseMethod
 import com.example.readtrack.MainActivity
 import com.example.readtrack.R
@@ -12,16 +11,17 @@ import java.time.format.DateTimeFormatter
 
 private const val TAG = "Converter"
 
-object Converters {
+object BindingConverters {
     private val dateFormatter = DateTimeFormatter.ofPattern("d MMM yyyy")
+    private val apiYearOnlyFormatter = DateTimeFormatter.ofPattern("yyyy") // Can't be used in parsing
 
     /***
      * Convert LocalDate to string
      * Direction: view model to view
      */
-    @InverseMethod("stringToDate") // Specify this function is the inverse method of "stringToDate"
+    @InverseMethod("stringToStartedDate") // Specify this function is the inverse method of "stringToDate"
     @JvmStatic
-    fun dateToString(
+    fun startedDateToString(
         newValue: LocalDate?
      ): String? = newValue?.format(dateFormatter)
 
@@ -30,7 +30,7 @@ object Converters {
      * Direction: view to view model
      */
     @JvmStatic
-    fun stringToDate(
+    fun stringToStartedDate(
         newValue: String?
     ): LocalDate? {
         Log.d(TAG, "Started Date String: $newValue")
@@ -40,6 +40,12 @@ object Converters {
             null
         }
     }
+
+    // Publication date shows only year
+    @JvmStatic
+    fun publishedDateToString(
+        publishedDate: LocalDate?
+    ) = publishedDate?.format(apiYearOnlyFormatter)
 
     /***
      * Convert a date range to string

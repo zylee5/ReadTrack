@@ -6,6 +6,14 @@ buildscript {
         lifecycle_version = '2.5.1'
         room_version = '2.4.3'
         recyclerview_version = '1.2.1'
+        retrofit_version = '2.9.0'
+        moshi_version = '1.14.0'
+        paging_version = '3.1.1'
+        gradle_secrets_version = '2.0.1'
+    }
+    dependencies {
+        // Gradle secrets plugin
+        classpath "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:$gradle_secrets_version"
     }
 }
 

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="com.example.readtrack.util.BindingConverters" />
+
+        <variable
+            name="bookFromService"
+            type="com.example.readtrack.types.BookFromService" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/bookCover"
+            android:layout_width="@dimen/list_bk_cover_width"
+            android:layout_height="@dimen/list_bk_cover_height"
+            android:layout_margin="16dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            app:imageUrl="@{bookFromService.url}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/mdi_bookshelf" />
+
+        <LinearLayout
+            android:id="@+id/mainInfo"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/bookCover"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/bookTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{bookFromService.title}"
+                android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                tools:text="The Hunger Games" />
+
+            <TextView
+                android:id="@+id/bookSubTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{bookFromService.subtitle}"
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                android:visibility="@{bookFromService.subtitle == null ? View.GONE : View.VISIBLE}"
+                tools:text="The Hunger Games #1" />
+
+            <TextView
+                android:id="@+id/bookAuthor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{bookFromService.authors}"
+                android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                android:visibility="@{bookFromService.authors == null ? View.GONE : View.VISIBLE}"
+                tools:text="Suzanne Collins" />
+
+            <TextView
+                android:id="@+id/bookPageCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{bookFromService.pageCount != null ? bookFromService.pageCount + ` pages` : ``}"
+                android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                android:visibility="@{bookFromService.pageCount == null || bookFromService.pageCount == 0 ? View.GONE : View.VISIBLE}"
+                tools:text="356 pages" />
+
+            <TextView
+                android:id="@+id/bookGenre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{bookFromService.genres}"
+                android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                android:visibility="@{bookFromService.genres == null ? View.GONE : View.VISIBLE}"
+                tools:text="Dystopian" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/additionalInfo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/bookCover"
+            app:layout_constraintTop_toBottomOf="@id/mainInfo">
+
+            <TextView
+                android:id="@+id/bookPublisher"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{bookFromService.publisher}"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                android:visibility="@{bookFromService.publisher == null ? View.GONE : View.VISIBLE}"
+                tools:text="Scholastic Press" />
+
+            <TextView
+                android:id="@+id/bookPublicationDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{BindingConverters.publishedDateToString(bookFromService.publishedDate)}"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                android:visibility="@{bookFromService.publishedDate == null ? View.GONE : View.VISIBLE}"
+                tools:text="2008" />
+
+            <TextView
+                android:id="@+id/bookLanguage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{bookFromService.language}"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                android:visibility="@{bookFromService.language == null ? View.GONE : View.VISIBLE}"
+                tools:text="English" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
