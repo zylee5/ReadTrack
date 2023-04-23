@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:tools="http://schemas.android.com/tools">
     <data>
         <import type="android.view.View" />
         <variable
@@ -7,11 +7,10 @@
             type="com.example.readtrack.types.BookFromService" />
     </data>
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -29,12 +28,14 @@
 
                 <ImageView
                     android:id="@+id/bookImg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="150dp"
+                    android:layout_height="200dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:layout_height="130dp"
-                    tools:layout_width="100dp"
+                    app:layout_constraintEnd_toStartOf="@id/bookTitle"
+                    app:imageUrl="@{bookFromService.url}"
+                    tools:layout_height="200dp"
+                    tools:layout_width="150dp"
                     tools:src="@drawable/mdi_bookshelf" />
 
                 <TextView
@@ -56,7 +57,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/bookImg"
                     app:layout_constraintTop_toBottomOf="@id/bookTitle"
-                    android:text="@{bookFromService.subtitle}"
+                    android:text="@{bookFromService.subtitle != null ? bookFromService.subtitle : `No subtitle found`}"
                     tools:text="Sub#1" />
 
                 <TextView
@@ -67,7 +68,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/bookImg"
                     app:layout_constraintTop_toBottomOf="@id/bookSubTitle"
-                    android:text="@{bookFromService.authors}"
+                    android:text="@{bookFromService.authors != null ? bookFromService.authors : `No authors found`}"
                     tools:text="Authors" />
 
                 <TextView
@@ -78,7 +79,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/bookImg"
                     app:layout_constraintTop_toBottomOf="@id/bookAuthors"
-                    android:text="@{bookFromService.pageCount + ` pages`}"
+                    android:text="@{bookFromService.pageCount != null &amp;&amp; bookFromService.pageCount != 0 ? bookFromService.pageCount + ` pages` : `No page count found`}"
                     tools:text="Page Count" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -205,7 +206,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     tools:text="This is a book"
-                    android:text="@{bookFromService.description}"/>
+                    android:text="@{bookFromService.description != null ? bookFromService.description : `No descriptions found`}"/>
             </LinearLayout>
 
             <TextView
@@ -216,7 +217,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/bookDescriptionLayout"
                 tools:text="Fiction, Fantasy"
-                android:text="@{bookFromService.genres}"/>
+                android:text="@{bookFromService.genres != null ? bookFromService.genres : `No genres found`}" />
 
             <LinearLayout
                 android:id="@+id/bookDetailsLayout"
@@ -226,7 +227,7 @@
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/bookGenre">
+                app:layout_constraintTop_toBottomOf="@id/bookGenre" >
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -237,29 +238,29 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@{`ISBN: ` + bookFromService.isbn}"
+                    android:text="@{bookFromService.isbn != null ? `ISBN: ` + bookFromService.isbn : `No ISBN found`}"
                     tools:text="ISBN: $ISBN" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@{`Publisher: ` + bookFromService.publisher}"
+                    android:text="@{bookFromService.publisher != null ? `Publisher: ` + bookFromService.publisher : `No publishers found`}"
                     tools:text="Publisher: $Publisher" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@{`Publication Date: ` + bookFromService.publishedDate}"
+                    android:text="@{bookFromService.publishedDate != null ? `Publication Date: ` + bookFromService.publishedDate : `No published date found`}"
                     tools:text="Publication Date: $Date" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@{`Language: ` + bookFromService.language}"
+                    android:text="@{bookFromService.language != null ? bookFromService.language : `No language found`}"
                     tools:text="Language: $Language" />
 
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </layout>

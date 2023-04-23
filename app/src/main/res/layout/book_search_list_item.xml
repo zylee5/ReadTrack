@@ -55,36 +55,32 @@
                 android:id="@+id/bookSubTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{bookFromService.subtitle}"
+                android:text="@{bookFromService.subtitle != null ? bookFromService.subtitle : `No subtitle found`}"
                 android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-                android:visibility="@{bookFromService.subtitle == null ? View.GONE : View.VISIBLE}"
                 tools:text="The Hunger Games #1" />
 
             <TextView
                 android:id="@+id/bookAuthor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{bookFromService.authors}"
+                android:text="@{bookFromService.authors != null ? bookFromService.authors : `No authors found`}"
                 android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
-                android:visibility="@{bookFromService.authors == null ? View.GONE : View.VISIBLE}"
                 tools:text="Suzanne Collins" />
 
             <TextView
                 android:id="@+id/bookPageCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{bookFromService.pageCount != null ? bookFromService.pageCount + ` pages` : ``}"
+                android:text="@{bookFromService.pageCount != null &amp;&amp; bookFromService.pageCount != 0 ? bookFromService.pageCount + ` pages` : `No page count found`}"
                 android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
-                android:visibility="@{bookFromService.pageCount == null || bookFromService.pageCount == 0 ? View.GONE : View.VISIBLE}"
                 tools:text="356 pages" />
 
             <TextView
                 android:id="@+id/bookGenre"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{bookFromService.genres}"
+                android:text="@{bookFromService.genres != null ? bookFromService.genres : `No genres found`}"
                 android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
-                android:visibility="@{bookFromService.genres == null ? View.GONE : View.VISIBLE}"
                 tools:text="Dystopian" />
 
         </LinearLayout>
@@ -107,27 +103,24 @@
                 android:id="@+id/bookPublisher"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{bookFromService.publisher}"
+                android:text="@{bookFromService.publisher != null ? bookFromService.publisher : `No publishers found`}"
                 android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                android:visibility="@{bookFromService.publisher == null ? View.GONE : View.VISIBLE}"
                 tools:text="Scholastic Press" />
 
             <TextView
                 android:id="@+id/bookPublicationDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{BindingConverters.publishedDateToString(bookFromService.publishedDate)}"
+                android:text="@{bookFromService.publishedDate != null ? BindingConverters.publishedDateToString(bookFromService.publishedDate) : `No published date found`}"
                 android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                android:visibility="@{bookFromService.publishedDate == null ? View.GONE : View.VISIBLE}"
                 tools:text="2008" />
 
             <TextView
                 android:id="@+id/bookLanguage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{bookFromService.language}"
+                android:text="@{bookFromService.language != null ? bookFromService.language : `No language found`}"
                 android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                android:visibility="@{bookFromService.language == null ? View.GONE : View.VISIBLE}"
                 tools:text="English" />
 
         </LinearLayout>
