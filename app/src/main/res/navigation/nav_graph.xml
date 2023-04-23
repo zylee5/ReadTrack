@@ -54,8 +54,8 @@
         android:label="fragment_book_info"
         tools:layout="@layout/fragment_book_info" >
         <argument
-            android:name="bookId"
-            app:argType="string"/>
+            android:name="bookFromService"
+            app:argType="com.example.readtrack.types.BookFromService"/>
 
     </fragment>
 

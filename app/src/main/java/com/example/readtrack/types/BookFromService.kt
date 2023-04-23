@@ -1,7 +1,10 @@
 package com.example.readtrack.types
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import java.time.LocalDate
 
+@Parcelize
 data class BookFromService(
     val id: String,
     val title: String? = null,
@@ -15,4 +18,4 @@ data class BookFromService(
     val genres: String? = null, // from mainCategory and categories
     val url: String? = null, // from imageLinks
     val language: String? = null
-)
+): Parcelable

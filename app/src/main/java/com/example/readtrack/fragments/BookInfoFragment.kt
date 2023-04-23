@@ -11,14 +11,14 @@ import com.example.readtrack.databinding.FragmentBookInfoBinding
 
 class BookInfoFragment : Fragment() {
     private lateinit var binding: FragmentBookInfoBinding
-    val args: BookInfoFragmentArgs by navArgs()
+    private val args: BookInfoFragmentArgs by navArgs()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentBookInfoBinding.inflate(inflater, container, false)
-        val clickedId = args.bookId
-        println(clickedId)
+        val clickedBook = args.bookFromService
+        println(clickedBook.toString())
 
         return binding.root
     }

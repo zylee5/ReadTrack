@@ -124,7 +124,7 @@ class SearchBookFragment : Fragment(), OnBookFromServiceClickedListener {
 
     override fun onItemClicked(bookClicked: BookFromService) {
 //        Log.d(TAG, bookClicked.toString())
-        val action = SearchBookFragmentDirections.actionSearchBookFragmentToBookInfoFragment(bookClicked.id)
+        val action = SearchBookFragmentDirections.actionSearchBookFragmentToBookInfoFragment(bookClicked)
         findNavController().navigate(action)
 
 
