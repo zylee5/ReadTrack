@@ -11,7 +11,7 @@ import com.example.readtrack.databinding.BookListItemBinding
 import com.example.readtrack.types.StoredBook
 
 class BookShelfListAdapter(
-    private val onItemClickedListener: OnItemClickedListener
+    private val onItemClickedListener: OnStoredBookClickedListener
 ) : ListAdapter<StoredBook, BookShelfListAdapter.BookShelfListViewHolder>(
     BookShelfListDiffCallback()
 ) {
@@ -58,7 +58,7 @@ class BookShelfListAdapter(
     }
 }
 
-interface OnItemClickedListener {
+interface OnStoredBookClickedListener {
     fun onItemClicked(bookClicked: StoredBook)
 }
 

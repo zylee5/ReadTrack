@@ -16,7 +16,9 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.readtrack.R
 import com.example.readtrack.adapters.BookSearchResultListAdapter
+import com.example.readtrack.adapters.OnBookFromServiceClickedListener
 import com.example.readtrack.databinding.FragmentSearchBookBinding
+import com.example.readtrack.types.BookFromService
 import com.example.readtrack.util.getApiErrorMessage
 import com.example.readtrack.viewmodels.SearchBookViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -27,10 +29,10 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
-class SearchBookFragment : Fragment() {
+class SearchBookFragment : Fragment(), OnBookFromServiceClickedListener {
     private lateinit var binding: FragmentSearchBookBinding
     private val searchBookViewModel by activityViewModels<SearchBookViewModel>()
-    private val bookSearchResultListAdapter = BookSearchResultListAdapter()
+    private val bookSearchResultListAdapter = BookSearchResultListAdapter(this)
     private var queryTextChangeJob: Job? = null
     private var shouldSearch: Boolean = false
 
@@ -118,5 +120,9 @@ class SearchBookFragment : Fragment() {
             binding.bookSearchResultList.smoothScrollToPosition(0)
         }
         return true
+    }
+
+    override fun onItemClicked(bookClicked: BookFromService) {
+        println("Hello")
     }
 }

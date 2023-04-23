@@ -5,7 +5,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.Gravity.apply
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.readtrack.R
 import com.example.readtrack.adapters.BookShelfListAdapter
-import com.example.readtrack.adapters.OnItemClickedListener
+import com.example.readtrack.adapters.OnStoredBookClickedListener
 import com.example.readtrack.databinding.FragmentBookShelfBinding
 import com.example.readtrack.dialogs.SortBooksDialog
 import com.example.readtrack.types.StoredBook
@@ -32,7 +31,7 @@ import java.util.*
 
 private const val TAG = "BookShelfFragment"
 
-class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener, OnItemClickedListener {
+class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener, OnStoredBookClickedListener {
     private lateinit var binding: FragmentBookShelfBinding
     private lateinit var preferences: SharedPreferences
     private val bookShelfViewModel by activityViewModels<BookShelfViewModel>()

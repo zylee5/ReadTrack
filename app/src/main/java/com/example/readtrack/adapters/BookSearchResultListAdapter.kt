@@ -11,13 +11,26 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.readtrack.R
 import com.example.readtrack.databinding.BookSearchListItemBinding
 import com.example.readtrack.types.BookFromService
+import com.example.readtrack.types.StoredBook
 
-class BookSearchResultListAdapter: PagingDataAdapter<BookFromService, BookSearchResultListAdapter.BookSearchResultListViewHolder>(
+class BookSearchResultListAdapter(
+    private val onItemClickedListener: OnBookFromServiceClickedListener
+): PagingDataAdapter<BookFromService, BookSearchResultListAdapter.BookSearchResultListViewHolder>(
     BookSearchResultListDiffCallback()
 ) {
     inner class BookSearchResultListViewHolder(
         private val binding: BookSearchListItemBinding
     ): RecyclerView.ViewHolder(binding.root) {
+        init {
+            binding.root.setOnClickListener {
+                val position = bindingAdapterPosition
+                // Prevent deleted item gets clicked before animation completed
+                if (position != RecyclerView.NO_POSITION) {
+                    getItem(position)?.let { item -> onItemClickedListener.onItemClicked(item) }
+                }
+            }
+        }
+
         fun bind(item: BookFromService) {
             binding.apply {
                 bookFromService = item
@@ -43,6 +56,10 @@ class BookSearchResultListAdapter: PagingDataAdapter<BookFromService, BookSearch
     override fun onBindViewHolder(holder: BookSearchResultListViewHolder, position: Int) {
         this.getItem(position)?.let { holder.bind(it) }
     }
+}
+
+interface OnBookFromServiceClickedListener {
+    fun onItemClicked(bookClicked: BookFromService)
 }
 
 private class BookSearchResultListDiffCallback: DiffUtil.ItemCallback<BookFromService>() {
