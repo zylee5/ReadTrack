@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
-
-
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="bookFromService"
+            type="com.example.readtrack.types.BookFromService" />
+    </data>
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -41,6 +45,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/bookImg"
                     app:layout_constraintTop_toTopOf="parent"
+                    android:text="@{bookFromService.title}"
                     tools:text="Title" />
 
                 <TextView
@@ -51,6 +56,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/bookImg"
                     app:layout_constraintTop_toBottomOf="@id/bookTitle"
+                    android:text="@{bookFromService.subtitle}"
                     tools:text="Sub#1" />
 
                 <TextView
@@ -61,6 +67,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/bookImg"
                     app:layout_constraintTop_toBottomOf="@id/bookSubTitle"
+                    android:text="@{bookFromService.authors}"
                     tools:text="Authors" />
 
                 <TextView
@@ -71,6 +78,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/bookImg"
                     app:layout_constraintTop_toBottomOf="@id/bookAuthors"
+                    android:text="@{bookFromService.pageCount + ` pages`}"
                     tools:text="Page Count" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -196,7 +204,8 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:text="This is a book" />
+                    tools:text="This is a book"
+                    android:text="@{bookFromService.description}"/>
             </LinearLayout>
 
             <TextView
@@ -206,7 +215,8 @@
                 android:layout_margin="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/bookDescriptionLayout"
-                tools:text="Fiction, Fantasy" />
+                tools:text="Fiction, Fantasy"
+                android:text="@{bookFromService.genres}"/>
 
             <LinearLayout
                 android:id="@+id/bookDetailsLayout"
@@ -227,25 +237,25 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="ISBN"
+                    android:text="@{`ISBN: ` + bookFromService.isbn}"
                     tools:text="ISBN: $ISBN" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Publisher"
+                    android:text="@{`Publisher: ` + bookFromService.publisher}"
                     tools:text="Publisher: $Publisher" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Publication Date"
+                    android:text="@{`Publication Date: ` + bookFromService.publishedDate}"
                     tools:text="Publication Date: $Date" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Language"
+                    android:text="@{`Language: ` + bookFromService.language}"
                     tools:text="Language: $Language" />
 
             </LinearLayout>

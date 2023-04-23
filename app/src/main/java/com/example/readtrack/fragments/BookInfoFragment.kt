@@ -18,7 +18,10 @@ class BookInfoFragment : Fragment() {
     ): View? {
         binding = FragmentBookInfoBinding.inflate(inflater, container, false)
         val clickedBook = args.bookFromService
-        println(clickedBook.toString())
+
+        binding.apply {
+            bookFromService = clickedBook
+        }
 
         return binding.root
     }
