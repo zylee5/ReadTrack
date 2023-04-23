@@ -28,7 +28,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-
+private const val TAG = "SearchBookFragment"
 class SearchBookFragment : Fragment(), OnBookFromServiceClickedListener {
     private lateinit var binding: FragmentSearchBookBinding
     private val searchBookViewModel by activityViewModels<SearchBookViewModel>()
@@ -123,6 +123,7 @@ class SearchBookFragment : Fragment(), OnBookFromServiceClickedListener {
     }
 
     override fun onItemClicked(bookClicked: BookFromService) {
-        println("Hello")
+//        Log.d(TAG, bookClicked.toString())
+
     }
 }

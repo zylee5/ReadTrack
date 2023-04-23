@@ -6,12 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.readtrack.R
+import com.example.readtrack.databinding.FragmentBookInfoBinding
 
 class BookInfoFragment : Fragment() {
+    private lateinit var binding: FragmentBookInfoBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_book_info, container, false)
+        binding = FragmentBookInfoBinding.inflate(inflater, container, false)
+
+
+        return binding.root
     }
 }
