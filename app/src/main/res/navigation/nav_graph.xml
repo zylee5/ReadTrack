@@ -21,6 +21,9 @@
         <action
             android:id="@+id/action_searchBookFragment_to_addBookFragment"
             app:destination="@id/addBookFragment" />
+        <action
+            android:id="@+id/action_searchBookFragment_to_bookInfoFragment"
+            app:destination="@id/bookInfoFragment" />
     </fragment>
 
     <fragment
@@ -43,6 +46,17 @@
         <action
             android:id="@+id/action_bookShelfFragment_to_addBookFragment"
             app:destination="@id/addBookFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/bookInfoFragment"
+        android:name="com.example.readtrack.fragments.BookInfoFragment"
+        android:label="fragment_book_info"
+        tools:layout="@layout/fragment_book_info" >
+        <argument
+            android:name="bookId"
+            app:argType="string"/>
+
     </fragment>
 
 </navigation>
