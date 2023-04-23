@@ -5,7 +5,7 @@ This Android application is designed to track personal reading activities, displ
 ## Overview
 The application allows users to insert book records through a search via **Google Books API** or manual input of all essential book information. Once added to the bookshelf, books can be searched via title or author and can be modified or deleted at any time. The bookshelf can also be sorted according to user preferences.
 
-Apart from its practical usage, the application is also created to implement standard Android development practices using Kotlin and MVVM architecture. Key Android Jetpack libraries and their components such as **Paging 3, Flow, Room, RecyclerView, Two-way Data Binding, View Binding, LiveData, and Navigation components (navigation graph, NavHost, actions, etc.)** are utilized. HTTP clients and converters, **Retrofit** and **Moshi**, and key Kotlin concepts, such as **coroutines**, are also incorporated.
+Apart from its practical usage, the application is also created to implement standard Android development practices using **Kotlin** and **MVVM** architecture. Key Android Jetpack libraries and their components such as **Paging 3, Flow, Room, RecyclerView, Two-way Data Binding, View Binding, LiveData, and Navigation components (navigation graph, NavHost, actions, etc.)** are utilized. HTTP clients and converters, **Retrofit** and **Moshi**, and key Kotlin concepts, such as **coroutines**, are also incorporated.
 
 ## Key Technical Features
 - [x] Custom book record creation in Room database
