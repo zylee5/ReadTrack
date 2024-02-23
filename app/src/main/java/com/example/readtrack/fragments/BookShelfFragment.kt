@@ -12,6 +12,7 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,6 +46,10 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener, O
         preferences = requireActivity().getSharedPreferences("pref", Context.MODE_PRIVATE)
         binding = FragmentBookShelfBinding.inflate(inflater, container, false)
             .apply {
+                addCustomBookBtn.setOnClickListener {
+                    findNavController().navigate(R.id.action_bookShelfFragment_to_addBookFragment)
+                }
+
                 with(bookSearchResultList) {
                     adapter = bookListAdapter
                     addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))

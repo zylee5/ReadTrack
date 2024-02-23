@@ -19,9 +19,6 @@
         tools:layout="@layout/fragment_search_book" >
 
         <action
-            android:id="@+id/action_searchBookFragment_to_addBookFragment"
-            app:destination="@id/addBookFragment" />
-        <action
             android:id="@+id/action_searchBookFragment_to_bookInfoFragment"
             app:destination="@id/bookInfoFragment" />
     </fragment>

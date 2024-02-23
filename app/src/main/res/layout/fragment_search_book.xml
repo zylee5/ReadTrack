@@ -50,17 +50,28 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/addCustomBookBtn"
+<!--        <Button-->
+<!--            android:id="@+id/addCustomBookBtn"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="16dp"-->
+<!--            android:layout_marginTop="16dp"-->
+<!--            android:text="@string/add_custom_book"-->
+<!--            app:icon="@drawable/mdi_plus_circle"-->
+<!--            app:layout_constraintBottom_toTopOf="@id/bookSearchResultList"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/searchView" />-->
+
+        <TextView
+            android:id="@+id/searchResultsTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/add_custom_book"
-            app:icon="@drawable/mdi_plus_circle"
-            app:layout_constraintBottom_toTopOf="@id/bookSearchResultList"
+            android:layout_margin="16dp"
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            tools:text="Search results for 'XXX'"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/searchView" />
+            app:layout_constraintTop_toBottomOf="@id/searchView"/>
+
 
         <ProgressBar
             android:id="@+id/refreshProgressBar"
@@ -70,14 +81,14 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/addCustomBookBtn" />
+            app:layout_constraintTop_toBottomOf="@id/searchResultsTxt" />
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/prependProgressBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="invisible"
-            app:layout_constraintTop_toBottomOf="@id/addCustomBookBtn"
+            app:layout_constraintTop_toBottomOf="@id/searchResultsTxt"
             app:layout_constraintBottom_toTopOf="@id/bookSearchResultList"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -90,7 +101,7 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/addCustomBookBtn"
+            app:layout_constraintTop_toBottomOf="@id/searchResultsTxt"
             tools:listitem="@layout/book_search_list_item" />
 
         <com.google.android.material.progressindicator.LinearProgressIndicator

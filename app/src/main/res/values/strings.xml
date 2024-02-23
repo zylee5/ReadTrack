@@ -31,7 +31,7 @@
     <string name="non_zero_rating">You must rate the book from one to five</string>
     <string name="add_a_book_cover">Add a book cover</string>
     <string name="my_bookshelf">My Bookshelf</string>
-    <string name="add_custom_book">Add Custom Book</string>
+    <string name="add_custom_book">Add a book</string>
     <string name="author_name">Author Name</string>
     <string name="order">Order</string>
     <string name="ascending">Ascending</string>

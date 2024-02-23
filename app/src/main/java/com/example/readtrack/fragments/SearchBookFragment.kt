@@ -42,9 +42,9 @@ class SearchBookFragment : Fragment(), OnBookFromServiceClickedListener {
     ): View {
         binding = FragmentSearchBookBinding.inflate(inflater, container, false)
         binding.apply {
-            addCustomBookBtn.setOnClickListener {
-                findNavController().navigate(R.id.action_searchBookFragment_to_addBookFragment)
-            }
+//            addCustomBookBtn.setOnClickListener {
+//                findNavController().navigate(R.id.action_searchBookFragment_to_addBookFragment)
+//            }
             with(bookSearchResultList) {
                 adapter = bookSearchResultListAdapter
                 addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
