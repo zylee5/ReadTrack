@@ -57,13 +57,11 @@
                     android:layout_marginStart="8dp"
                     android:layout_toEndOf="@id/edit_dialog_close"
                     android:text="@string/update_book_record"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-                    android:textColor="@color/md_theme_light_onSurface"
-                    android:textSize="20sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/edit_dialog_action"
                     app:layout_constraintStart_toEndOf="@id/edit_dialog_close"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    style="@style/dialog_title_style" />
 
                 <TextView
                     android:id="@+id/edit_dialog_action"
@@ -76,6 +74,7 @@
                     android:enabled="@{vm.isEditBookFormValid}"
                     android:padding="8dp"
                     android:text="@string/save"
+                    android:fontFamily="@font/barlow_semi_bold"
                     android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                     android:textColor="@color/edit_save_btn_color"
                     app:layout_constraintBottom_toBottomOf="parent"

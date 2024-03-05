@@ -1,7 +1,6 @@
 package com.example.readtrack.util
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -10,9 +9,11 @@ import android.util.Log
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
+import java.net.MalformedURLException
+import java.net.URISyntaxException
+import java.net.URL
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.jvm.Throws
 import kotlin.math.sqrt
 
 private const val TAG = "ImageUtils"
@@ -21,7 +22,7 @@ object ImageUtils {
      * Read an image from a Uri stream as Bitmap object
      */
     fun decodeUriStreamToBitmap(
-        uri: Uri,
+        uri: String,
         width: Int,
         height: Int,
         context: Context
@@ -29,8 +30,7 @@ object ImageUtils {
         var uriStream: InputStream? = null
         try {
             // Open an input stream for uri
-            // Important: make sure that the uri is accessible
-            uriStream = context.contentResolver.openInputStream(uri)
+            uriStream = context.contentResolver.openInputStream(Uri.parse(uri))
 
             uriStream?.let { stream ->
                 val options = BitmapFactory.Options()
@@ -42,8 +42,7 @@ object ImageUtils {
                 // Important: Reopen the stream
                 // as the stream position has reached its end
                 stream.close()
-                uriStream = context.contentResolver.openInputStream(uri)
-
+                uriStream = context.contentResolver.openInputStream(Uri.parse(uri))
                 uriStream?.let { newStream ->
                     // E.g. inSampleSize = 2 -->
                     // 1/2 width & height (1/4 num. of pixels)
@@ -80,7 +79,6 @@ object ImageUtils {
             }
             return null
         } catch (e: Exception) {
-            Log.e(TAG, "decodeUriStreamToBitmap: $e")
             return null
         } finally {
             // Important: Close the stream under whatever circumstances
@@ -133,7 +131,7 @@ object ImageUtils {
      * in the power of 2 based on the required width and height
      * https://developer.android.com/reference/android/graphics/BitmapFactory.Options#inSampleSize
      */
-    private fun calculateInSampleSize(
+    fun calculateInSampleSize(
         width: Int,
         height: Int,
         reqWidth: Int,
@@ -150,5 +148,16 @@ object ImageUtils {
             }
         }
         return inSampleSize
+    }
+
+    fun isValidURL(url: String): Boolean {
+        return try {
+            URL(url).toURI()
+            true
+        } catch (e: MalformedURLException) {
+            false
+        } catch (e: URISyntaxException) {
+            false
+        }
     }
 }

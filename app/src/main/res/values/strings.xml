@@ -37,14 +37,20 @@
     <string name="ascending">Ascending</string>
     <string name="descending">Descending</string>
     <string name="attributes">Attributes</string>
-    <string name="update_book_record">Update Book Record</string>
+    <string name="update_book_record">Update book record</string>
     <string name="save">Save</string>
-    <string name="status_required">Status*</string>
-    <string name="rating_required">Rating*</string>
+    <string name="status_required">Status</string>
+    <string name="rating_required">Rating</string>
     <string name="general_exception_error">An error has occurred. Please try again.</string>
     <string name="network_exception_error">A network error has occurred. Please check your network connection and try again.</string>
     <string name="request_exception_error">Failed to retrieve data. Please try again.</string>
     <string name="no_result_found">No results found.</string>
     <string name="search">Search</string>
     <string name="book_search">Book Search</string>
+    <string name="middle_dot">·</string>
+    <string name="details">Details</string>
+    <string name="add_to_my_bookshelf">Add to my bookshelf</string>
+    <string name="added_to_my_bookshelf">Added to my bookshelf</string>
+    <string name="a_tag_icon_besides_book_genre">A tag icon besides book genre</string>
+    <string name="description">Description</string>
 </resources>

@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     <data>
         <import type="android.view.View" />
+        <import type="com.example.readtrack.types.Status" />
+        <import type="com.example.readtrack.util.BindingConverters" />
         <variable
-            name="bookFromService"
-            type="com.example.readtrack.types.BookFromService" />
+            name="vm"
+            type="com.example.readtrack.viewmodels.BookInfoViewModel" />
     </data>
 
-    <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -23,169 +26,245 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent" >
 
                 <ImageView
                     android:id="@+id/bookImg"
                     android:layout_width="150dp"
                     android:layout_height="200dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:imageUri="@{vm.bookFromService.url}"
+                    app:layout_constraintBottom_toBottomOf="@id/addToBookShelfBtn"
                     app:layout_constraintEnd_toStartOf="@id/bookTitle"
-                    app:imageUrl="@{bookFromService.url}"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/bookTitle"
                     tools:layout_height="200dp"
                     tools:layout_width="150dp"
                     tools:src="@drawable/mdi_bookshelf" />
 
                 <TextView
                     android:id="@+id/bookTitle"
+                    style="@style/book_title_style"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:text="@{vm.bookFromService.title}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/bookImg"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:text="@{bookFromService.title}"
                     tools:text="Title" />
 
                 <TextView
                     android:id="@+id/bookSubTitle"
+                    style="@style/book_sub_info_style"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:text="@{vm.bookFromService.subtitle != null ? vm.bookFromService.subtitle : `No subtitle found`}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/bookImg"
                     app:layout_constraintTop_toBottomOf="@id/bookTitle"
-                    android:text="@{bookFromService.subtitle != null ? bookFromService.subtitle : `No subtitle found`}"
                     tools:text="Sub#1" />
 
                 <TextView
                     android:id="@+id/bookAuthors"
+                    style="@style/book_other_info_style"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:text="@{vm.bookFromService.authors != null ? vm.bookFromService.authors : `No authors found`}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/bookImg"
                     app:layout_constraintTop_toBottomOf="@id/bookSubTitle"
-                    android:text="@{bookFromService.authors != null ? bookFromService.authors : `No authors found`}"
                     tools:text="Authors" />
 
                 <TextView
                     android:id="@+id/bookPageCount"
+                    style="@style/book_other_info_style"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:text="@{vm.bookFromService.pageCount != null &amp;&amp; vm.bookFromService.pageCount != 0 ? vm.bookFromService.pageCount + ` pages` : `No page count found`}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/bookImg"
                     app:layout_constraintTop_toBottomOf="@id/bookAuthors"
-                    android:text="@{bookFromService.pageCount != null &amp;&amp; bookFromService.pageCount != 0 ? bookFromService.pageCount + ` pages` : `No page count found`}"
                     tools:text="Page Count" />
+
+                <Button
+                    android:id="@+id/addToBookShelfBtn"
+                    style="@style/button_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="60dp"
+                    android:backgroundTint="@{vm.isBookLocallyStored ? @color/my_green : @color/md_theme_light_primary}"
+                    android:clickable="@{!vm.isBookLocallyStored}"
+                    android:text="@{vm.isBookLocallyStored ? @string/added_to_my_bookshelf : @string/add_to_my_bookshelf}"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/confirmAddBtn"
+                    app:layout_constraintStart_toStartOf="@id/bookPageCount"
+                    app:layout_constraintTop_toBottomOf="@id/bookPageCount"
+                    tools:text="@string/add_to_my_bookshelf" />
+
+                <ImageButton
+                    android:id="@+id/confirmAddBtn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="3dp"
+                    android:adjustViewBounds="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="@{vm.isBookReadyToAdd}"
+                    android:enabled="@{vm.isBookReadyToAdd}"
+                    android:padding="0dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/mdi_plus_circle"
+                    android:visibility="@{vm.isAddToShelfBtnClicked ? View.VISIBLE : View.GONE}"
+                    app:layout_constraintBottom_toBottomOf="@id/addToBookShelfBtn"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/addToBookShelfBtn"
+                    app:layout_constraintTop_toTopOf="@id/addToBookShelfBtn"
+                    app:tint="@color/confirm_add_btn_tint"
+                    tools:visibility="visible" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/statusChipGroup"
+            <LinearLayout
+                android:id="@+id/reading_status_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/button_shape"
+                android:orientation="vertical"
+                android:padding="8dp"
+                android:theme="@style/book_additional_info_style"
+                android:visibility="@{vm.isAddToShelfBtnClicked ? View.VISIBLE : View.GONE}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/bookMainInfo"
-                app:selectionRequired="true"
-                app:singleLine="true"
-                app:singleSelection="true">
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/readChip"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:text="@string/read" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/readingChip"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:text="@string/reading" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/wtrChip"
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:text="@string/want_to_read" />
-
-            </com.google.android.material.chip.ChipGroup>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/startedToFinishedDateLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:hint="@string/started_date_finished_date"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/statusChipGroup"
-                app:startIconDrawable="@drawable/mdi_calendar_range"
                 tools:visibility="visible">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/startedToFinishedDateTextField"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/status_required"/>
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/statusChipGroup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:focusable="false"
-                    android:longClickable="false" />
+                    android:layout_marginHorizontal="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/bookMainInfo"
+                    app:selectionRequired="true"
+                    app:singleLine="true"
+                    app:singleSelection="true"
+                    app:status="@={vm.bookFromService.status}">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/readChip"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:text="@string/read" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/startedDateLayout"
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/readingChip"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:text="@string/reading" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/wtrChip"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:text="@string/want_to_read" />
+
+                </com.google.android.material.chip.ChipGroup>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/startedToFinishedDateLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:hint="@string/started_date_finished_date"
+                    android:visibility="@{vm.bookFromService.status == Status.READ ? View.VISIBLE : View.GONE}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/statusChipGroup"
+                    app:startIconDrawable="@drawable/mdi_calendar_range"
+                    tools:visibility="visible">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/startedToFinishedDateTextField"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:longClickable="false"
+                        android:text="@={BindingConverters.dateRangeToString(vm.bookFromService.dateRange)}" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/startedDateLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:hint="@string/started_date"
+                    android:visibility="@{vm.bookFromService.status == Status.READING ? View.VISIBLE : View.GONE}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/startedToFinishedDateLayout"
+                    app:startIconDrawable="@drawable/mdi_calendar_start"
+                    tools:visibility="visible">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/startedDateTextField"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:longClickable="false"
+                        android:text="@={BindingConverters.startedDateToString(vm.bookFromService.startedDate)}" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:id="@+id/ratingLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:hint="@string/started_date"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/startedToFinishedDateLayout"
-                app:startIconDrawable="@drawable/mdi_calendar_start"
-                tools:visibility="visible">
+                android:orientation="vertical"
+                android:visibility="@{vm.bookFromService.status == Status.WANT_TO_READ || vm.bookFromService.status == Status.NONE ? View.GONE : View.VISIBLE}"
+                tools:visibility="visible" >
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/startedDateTextField"
+                <TextView
+                    android:id="@+id/ratingText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:focusable="false"
-                    android:longClickable="false" />
+                    android:layout_marginHorizontal="8dp"
+                    android:text="@string/rating_required" />
 
-            </com.google.android.material.textfield.TextInputLayout>
+                <RatingBar
+                    android:id="@+id/ratingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:max="5"
+                    android:numStars="5"
+                    android:rating="@={vm.bookFromService.rating}"
+                    android:stepSize="1"
+                    tools:visibility="visible" />
 
+            </LinearLayout>
 
-            <RatingBar
-                android:id="@+id/ratingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:max="5"
-                android:numStars="5"
-                android:stepSize="1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/startedDateLayout"
-                tools:visibility="visible" />
-
-            <Button
-                android:id="@+id/addToBookShelfBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:text="Add To My Bookshelf"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ratingBar" />
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/bookDescriptionLayout"
@@ -195,29 +274,46 @@
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/addToBookShelfBtn">
+                app:layout_constraintTop_toBottomOf="@id/reading_status_container">
 
                 <TextView
+                    style="@style/book_info_section_title_style"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@string/description"
                     tools:text="Description" />
 
                 <TextView
+                    style="@style/book_info_txt_style"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:text="This is a book"
-                    android:text="@{bookFromService.description != null ? bookFromService.description : `No descriptions found`}"/>
+                    android:text="@{vm.bookFromService.description != null ? vm.bookFromService.description : `No descriptions found`}"
+                    tools:text="This is a book" />
             </LinearLayout>
+
+            <ImageView
+                android:id="@+id/tag_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:contentDescription="@string/a_tag_icon_besides_book_genre"
+                android:src="@drawable/tag"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/bookDescriptionLayout"
+                app:tint="@color/my_green" />
 
             <TextView
                 android:id="@+id/bookGenre"
-                android:layout_width="match_parent"
+                style="@style/book_info_txt_style"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                app:layout_constraintStart_toStartOf="parent"
+                android:text="@{vm.bookFromService.genres != null ? vm.bookFromService.genres : `No genres found`}"
+                android:textColor="@color/my_green"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tag_icon"
                 app:layout_constraintTop_toBottomOf="@id/bookDescriptionLayout"
-                tools:text="Fiction, Fantasy"
-                android:text="@{bookFromService.genres != null ? bookFromService.genres : `No genres found`}" />
+                tools:text="Fiction, Fantasy" />
 
             <LinearLayout
                 android:id="@+id/bookDetailsLayout"
@@ -230,33 +326,38 @@
                 app:layout_constraintTop_toBottomOf="@id/bookGenre" >
 
                 <TextView
+                    style="@style/book_info_section_title_style"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Details"
+                    android:text="@string/details"
                     tools:text="Details" />
 
                 <TextView
+                    style="@style/book_info_txt_style"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@{bookFromService.isbn != null ? `ISBN: ` + bookFromService.isbn : `No ISBN found`}"
+                    android:text="@{vm.bookFromService.isbn != null ? `ISBN: ` + vm.bookFromService.isbn : `No ISBN found`}"
                     tools:text="ISBN: $ISBN" />
 
                 <TextView
+                    style="@style/book_info_txt_style"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@{bookFromService.publisher != null ? `Publisher: ` + bookFromService.publisher : `No publishers found`}"
+                    android:text="@{vm.bookFromService.publisher != null ? `Publisher: ` + vm.bookFromService.publisher : `No publishers found`}"
                     tools:text="Publisher: $Publisher" />
 
                 <TextView
+                    style="@style/book_info_txt_style"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@{bookFromService.publishedDate != null ? `Publication Date: ` + bookFromService.publishedDate : `No published date found`}"
+                    android:text="@{vm.bookFromService.publishedDate != null ? `Publication Date: ` + vm.bookFromService.publishedDate : `No published date found`}"
                     tools:text="Publication Date: $Date" />
 
                 <TextView
+                    style="@style/book_info_txt_style"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@{bookFromService.language != null ? bookFromService.language : `No language found`}"
+                    android:text="@{vm.bookFromService.language != null ? vm.bookFromService.language : `No language found`}"
                     tools:text="Language: $Language" />
 
             </LinearLayout>

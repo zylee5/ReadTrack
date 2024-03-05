@@ -29,8 +29,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/add_custom_book"
                 android:layout_margin="16dp"
-                android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-                android:textColor="@color/md_theme_light_onPrimary"
+                style="@style/fragment_title_style"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />

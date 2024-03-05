@@ -1,23 +1,22 @@
 package com.example.readtrack.fragments
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
-import android.icu.lang.UCharacter.GraphemeClusterBreak.L
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ScrollView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
-import androidx.databinding.BindingMethod
-import androidx.databinding.BindingMethods
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
@@ -29,25 +28,18 @@ import com.example.readtrack.databinding.DialogEditBookRecordBinding
 import com.example.readtrack.databinding.FragmentAddBookBinding
 import com.example.readtrack.dialogs.AddBookCoverDialog
 import com.example.readtrack.types.NewBook
-import com.example.readtrack.types.Status
+import com.example.readtrack.util.DateUtils
 import com.example.readtrack.util.ImageUtils
-import com.example.readtrack.util.findParentViewWithType
+import com.example.readtrack.util.ImageUtils.isValidURL
 import com.example.readtrack.viewmodels.AddBookViewModel
 import com.example.readtrack.viewmodels.BookShelfViewModel
-import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
-import com.google.android.material.datepicker.CalendarConstraints
-import com.google.android.material.datepicker.DateValidatorPointBackward
-import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.IOException
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.*
+import java.io.InputStream
+import java.net.URL
+import kotlin.math.sqrt
 
 
 private const val TAG = "AddBookFragment"
@@ -85,7 +77,6 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                         liveDataObserved.value?.let { newBook ->
                             val newStoredBook = newBook.toStoredBook()
 
-                            Log.d(TAG, "New StoredBook instance: $newStoredBook")
                             // addBook contains database modifying operation
                             // and thus a suspend function
                             // and thus has to be run inside a coroutine block
@@ -100,9 +91,6 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                     }
                 }
             bookRecordLayoutBinding = addBookBinding.bookRecordLayout
-//            addBookViewModel.isAddBookFormValid.observe(viewLifecycleOwner) {
-//                Log.d(TAG, "isAddBookFormValid mediator observed changes - value: $it")
-//            }
         }
         // Edit book
         else {
@@ -133,19 +121,22 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
                     }
                 }
             bookRecordLayoutBinding = editBookRecordBinding.bookRecordLayout
-//            addBookViewModel.isEditBookFormValid.observe(viewLifecycleOwner) {
-//                Log.d(TAG, "isEditBookFormValid mediator observed changes - value: $it")
-//            }
+        }
+
+        // If cover uri is url, fetch the image from network using coroutine
+        val coverUri = liveDataObserved.value?.coverUri ?: ""
+        if (isValidURL(coverUri)) {
+            updateCoverImg(coverUri)
         }
 
         bookRecordLayoutBinding
             .apply {
                 startedToFinishedDateTextField.setOnClickListener {
-                    createDateRangePicker(startedToFinishedDateTextField)
+                    DateUtils.createDateRangePicker(startedToFinishedDateTextField, "Started Date - Finished Date", childFragmentManager)
                 }
 
                 startedDateTextField.setOnClickListener {
-                    createDatePicker(startedDateTextField)
+                    DateUtils.createDatePicker(startedDateTextField, "Started Date", childFragmentManager)
                 }
 
                 // When error has been set, and then focus on the text field moved to another text field
@@ -361,146 +352,65 @@ class AddBookFragment : DialogFragment(), AddBookCoverDialog.AddBookCoverDialogL
         }
     }
 
-    /***
-     * Texts of TextInputEditText have to be trimmed
-     * before being checked if empty
-     */
-    private fun isTxtFieldEmpty(
-        textField: TextInputEditText
-    ): Boolean = textField.text?.trim()?.isEmpty() ?: false
+    private fun updateCoverImg(coverUri: String) {
+        val width = requireContext().resources.getDimensionPixelSize(R.dimen.bk_cover_img_width)
+        val height = requireContext().resources.getDimensionPixelSize(R.dimen.bk_cover_img_height)
 
-    private fun createDatePicker(
-        textField: TextInputEditText
-    ) {
-        val title = "Started Date"
+        var uriStream: InputStream? = null
+        viewLifecycleOwner.lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                uriStream = URL(coverUri).openStream()
+                uriStream?.let { stream ->
+                    val options = BitmapFactory.Options()
+                    options.inJustDecodeBounds = true // Get the image size only (set outXXX fields)
 
-        // Only date today or before can be selected
-        val noLaterThanTodayConstraint =
-            CalendarConstraints.Builder()
-                .setValidator(DateValidatorPointBackward.now())
+                    // Decode the uri stream to get the original image size
+                    BitmapFactory.decodeStream(stream, null, options)
 
-        // Initialize date picker from material design library
-        val builder = MaterialDatePicker.Builder.datePicker()
-            .setTitleText(title)
-            .setCalendarConstraints(noLaterThanTodayConstraint.build())
+                    // Important: Reopen the stream
+                    // as the stream position has reached its end
+                    stream.close()
 
-        val picker = builder.build()
+                    uriStream = URL(coverUri).openStream()
 
-        // Inside this fragment host another child fragment
-        picker.show(childFragmentManager, picker.toString())
+                    uriStream?.let { newStream ->
+                        // E.g. inSampleSize = 2 -->
+                        // 1/2 width & height (1/4 num. of pixels)
+                        options.inSampleSize = ImageUtils.calculateInSampleSize(
+                            options.outWidth, // original width and height
+                            options.outHeight,
+                            width,
+                            height
+                        )
 
-        // Set the action for when save button is clicked
-        picker.addOnPositiveButtonClickListener {
-            // it = selected date in Long!
-            val dateFormatter = DateTimeFormatter.ofPattern("d MMM yyyy")
-            // DateTimeFormatter converts LocalTime and not milliseconds
-            val localDate: LocalDate = Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
+                        // Output the down-sampled image
+                        options.inJustDecodeBounds = false
+                        val roughBitmap = BitmapFactory.decodeStream(
+                            newStream,
+                            null,
+                            options
+                        )
 
-            val formattedDate = localDate.format(dateFormatter)
-            textField.setText(formattedDate)
-        }
-    }
+                        roughBitmap?.let { bitmap ->
+                            val dstHeight = sqrt(width * height / (bitmap.width.toDouble() / bitmap.height))
+                            val dstWidth = (dstHeight / bitmap.height) * bitmap.width
 
-    @SuppressLint("SetTextI18n")
-    private fun createDateRangePicker(
-        textField: TextInputEditText
-    ) {
-        val title = "Started Date - Finished Date"
+                            val resizedBitmap = Bitmap.createScaledBitmap(
+                                bitmap,
+                                dstWidth.toInt(),
+                                dstHeight.toInt(),
+                                true
+                            )
 
-        // Only date today or before can be selected
-        val noLaterThanTodayConstraint =
-            CalendarConstraints.Builder()
-                .setValidator(DateValidatorPointBackward.now())
+                            withContext(Dispatchers.Main) {
+                                bookRecordLayoutBinding.addBookCoverBtn.background = BitmapDrawable(requireContext().resources, resizedBitmap)
+                            }
 
-        // Initialize date range picker from material design library
-        val builder = MaterialDatePicker.Builder.dateRangePicker()
-            .setTitleText(title)
-            .setCalendarConstraints(noLaterThanTodayConstraint.build())
-
-        val picker = builder.build()
-
-        // Inside this fragment host another child fragment
-        picker.show(childFragmentManager, picker.toString())
-
-        // Set the action for when save button is clicked
-        picker.addOnPositiveButtonClickListener {
-            /***
-             * it = selected date in Pair<Long!, Long!>
-             * it.first = started date
-             * it.second = finished date
-             */
-            val dateFormatter = DateTimeFormatter.ofPattern("d MMM yyyy")
-            // DateTimeFormatter converts LocalTime and not milliseconds
-            val localStartedDate: LocalDate = Instant.ofEpochMilli(it.first).atZone(ZoneId.systemDefault()).toLocalDate()
-            val localFinishedDate: LocalDate = Instant.ofEpochMilli(it.second).atZone(ZoneId.systemDefault()).toLocalDate()
-
-            val startedDate = localStartedDate.format(dateFormatter)
-            val finishedDate = localFinishedDate.format(dateFormatter)
-            textField.setText("$startedDate - $finishedDate")
+                            newStream.close()
+                        }
+                    }
+                }
+            }
         }
     }
 }
-
-/***
- * Set warning TextView from 'binding' visible
- * when 'view' such as RatingBar and ChipGroup has no values selected
- */
-//    private fun setWarningTextVisibleIfNoSelectionFor(view: View) {
-//        bookRecordLayoutBinding.apply {
-//            when (view) {
-//                is RatingBar -> {
-//                    if (view.rating <= 0)
-//                        ratingBarWarningText.visibility = View.VISIBLE
-//                }
-//                is ChipGroup -> {
-//                    if (view.checkedChipId == -1)
-//                        statusChipWarningText.visibility = View.VISIBLE
-//                }
-//            }
-//        }
-//    }
-
-/***
- * Show warning messages based on non-valid parts of the add book form
- * Criteria:
- * (same as isAddBookFormValid)
- */
-//    private fun showWarningMsgWhenFormInputMissing() {
-//        bookRecordLayoutBinding.apply {
-//            val selectedStatus = statusChipGroup.checkedChipId
-//
-//            setTextLayoutErrorIfEmpty(bookNameLayout)
-//            setTextLayoutErrorIfEmpty(bookAuthorLayout)
-//            setTextLayoutErrorIfEmpty(bookGenreLayout)
-//
-//            when (selectedStatus) {
-//                R.id.readChip -> {
-//                    setTextLayoutErrorIfEmpty(startedToFinishedDateLayout)
-//                    // setWarningTextVisibleIfNoSelectionFor(ratingBar)
-//                }
-//                R.id.readingChip -> {
-//                    setTextLayoutErrorIfEmpty(startedDateLayout)
-//                    // setWarningTextVisibleIfNoSelectionFor(ratingBar)
-//                }
-//                R.id.wtrChip -> {
-//                    // nothing
-//                }
-//                else -> {
-//                    // setWarningTextVisibleIfNoSelectionFor(statusChipGroup)
-//                }
-//            }
-//        }
-//    }
-
-/***
- * Set TextInputLayout with error message
- * if its associated TextInputEditText is empty
- */
-//    private fun setTextLayoutErrorIfEmpty(layout: TextInputLayout) {
-//        val errorMsg = getString(R.string.must_fill)
-//        layout.error =
-//            if (isTxtFieldEmpty(layout.editText as TextInputEditText))
-//                errorMsg
-//            else
-//                null
-//    }

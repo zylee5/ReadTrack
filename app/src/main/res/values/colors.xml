@@ -58,4 +58,6 @@
     <color name="md_theme_dark_shadow">#000000</color>
     <color name="md_theme_dark_surfaceTint">#B3C5FF</color>
     <color name="md_theme_dark_surfaceTintColor">#B3C5FF</color>
+    <color name="my_green">#416D19</color>
+    <color name="light_purple_color">#98ABEE</color>
 </resources>

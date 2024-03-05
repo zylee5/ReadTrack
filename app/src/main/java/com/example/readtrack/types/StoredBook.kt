@@ -8,17 +8,18 @@ import java.time.LocalDate
 data class StoredBook(
     @PrimaryKey(autoGenerate = true)
     var bookId: Long = 0,
+    val bookIdFromService: String? = null,
     val coverUri: String,
     val title: String,
-    val volume: String = "", // TODO: no default
+    val volume: String = "",
     val authors: String,
-    val pageCount: Long = 0L, // TODO: no default
-    val description: String = "", // TODO: no default
+    val pageCount: Int = 0,
+    val description: String = "",
     val genres: String,
-    val isbn: String = "", // TODO: no default
-    val publisher: String = "", // TODO: no default
-    val publicationDate: LocalDate? = null, // TODO: no default
-    val language: String = "", // TODO: no default
+    val isbn: String = "",
+    val publisher: String = "",
+    val publicationDate: LocalDate? = null,
+    val language: String = "",
     val startedDate: LocalDate?,
     val finishedDate: LocalDate?,
     val status: Status,
@@ -26,21 +27,21 @@ data class StoredBook(
 ) {
     fun toNewBook() = NewBook(
         coverUri = this.coverUri,
-        _title = this.title,
-        _authors = this.authors,
-        _genres = this.genres,
-        _startedDate = if (this.status == Status.READING) {
+        title = this.title,
+        authors = this.authors,
+        genres = this.genres,
+        startedDate = if (this.status == Status.READING) {
             this.startedDate
         } else {
             null
         },
-        _dateRange = if (this.startedDate != null && this.finishedDate != null && this.status == Status.READ) {
+        dateRange = if (this.startedDate != null && this.finishedDate != null && this.status == Status.READ) {
             Pair(this.startedDate, this.finishedDate)
         } else {
             null
         },
-        _status = this.status,
-        _rating = this.rating ?: 0f
+        status = this.status,
+        rating = this.rating ?: 0f
     )
 
     class BookNameComparator: Comparator<StoredBook> {

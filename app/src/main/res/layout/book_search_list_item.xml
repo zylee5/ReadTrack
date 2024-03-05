@@ -14,116 +14,125 @@
             type="com.example.readtrack.types.BookFromService" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginVertical="5dp"
+        app:cardCornerRadius="15dp"
+        app:cardElevation="5dp">
 
-        <ImageView
-            android:id="@+id/bookCover"
-            android:layout_width="@dimen/list_bk_cover_width"
-            android:layout_height="@dimen/list_bk_cover_height"
-            android:layout_margin="16dp"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            app:imageUrl="@{bookFromService.url}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/mdi_bookshelf" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:id="@+id/mainInfo"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:orientation="vertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/bookCover"
-            app:layout_constraintTop_toTopOf="parent">
+            <ImageView
+                android:id="@+id/bookCover"
+                android:layout_width="@dimen/list_bk_cover_width"
+                android:layout_height="@dimen/list_bk_cover_height"
+                android:layout_margin="16dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                app:imageUri="@{bookFromService.url}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/mdi_bookshelf" />
 
-            <TextView
-                android:id="@+id/bookTitle"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/mainInfo"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@{bookFromService.title}"
-                android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-                tools:text="The Hunger Games" />
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/bookCover"
+                app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/bookSubTitle"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/bookTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{bookFromService.title}"
+                    style="@style/book_title_style"
+                    tools:text="The Hunger Games" />
+
+                <TextView
+                    android:id="@+id/bookSubTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{bookFromService.subtitle != null ? bookFromService.subtitle : `No subtitle found`}"
+                    style="@style/book_sub_info_style"
+                    tools:text="The Hunger Games #1" />
+
+                <TextView
+                    android:id="@+id/bookAuthor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{bookFromService.authors != null ? bookFromService.authors : `No authors found`}"
+                    tools:text="Suzanne Collins"
+                    style="@style/book_other_info_style" />
+
+                <TextView
+                    android:id="@+id/bookGenre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{bookFromService.genres != null ? bookFromService.genres : `No genres found`}"
+                    tools:text="Dystopian"
+                    style="@style/book_other_info_style" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/additionalInfo"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@{bookFromService.subtitle != null ? bookFromService.subtitle : `No subtitle found`}"
-                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-                tools:text="The Hunger Games #1" />
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="60dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/bookCover"
+                app:layout_constraintTop_toBottomOf="@id/mainInfo">
 
-            <TextView
-                android:id="@+id/bookAuthor"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{bookFromService.authors != null ? bookFromService.authors : `No authors found`}"
-                android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
-                tools:text="Suzanne Collins" />
+                <TextView
+                    android:id="@+id/bookPageCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{bookFromService.pageCount != null &amp;&amp; bookFromService.pageCount != 0 ? bookFromService.pageCount + ` pages` : `No page count found`}"
+                    tools:text="356 pages"
+                    style="@style/book_additional_info_colored_style" />
 
-            <TextView
-                android:id="@+id/bookPageCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{bookFromService.pageCount != null &amp;&amp; bookFromService.pageCount != 0 ? bookFromService.pageCount + ` pages` : `No page count found`}"
-                android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
-                tools:text="356 pages" />
+                <TextView
+                    android:id="@+id/bookPublisher"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{bookFromService.publisher != null ? bookFromService.publisher : `No publishers found`}"
+                    style="@style/book_additional_info_colored_style"
+                    tools:text="Scholastic Press" />
 
-            <TextView
-                android:id="@+id/bookGenre"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{bookFromService.genres != null ? bookFromService.genres : `No genres found`}"
-                android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
-                tools:text="Dystopian" />
+                <TextView
+                    android:id="@+id/bookPublicationDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{bookFromService.publishedDate != null ? BindingConverters.publishedDateToString(bookFromService.publishedDate) : `No published date found`}"
+                    style="@style/book_additional_info_colored_style"
+                    tools:text="2008" />
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/bookLanguage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{bookFromService.language != null ? bookFromService.language : `No language found`}"
+                    style="@style/book_additional_info_colored_style"
+                    tools:text="English" />
 
-        <LinearLayout
-            android:id="@+id/additionalInfo"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/bookCover"
-            app:layout_constraintTop_toBottomOf="@id/mainInfo">
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/bookPublisher"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{bookFromService.publisher != null ? bookFromService.publisher : `No publishers found`}"
-                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                tools:text="Scholastic Press" />
-
-            <TextView
-                android:id="@+id/bookPublicationDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{bookFromService.publishedDate != null ? BindingConverters.publishedDateToString(bookFromService.publishedDate) : `No published date found`}"
-                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                tools:text="2008" />
-
-            <TextView
-                android:id="@+id/bookLanguage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{bookFromService.language != null ? bookFromService.language : `No language found`}"
-                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                tools:text="English" />
-
-        </LinearLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 </layout>

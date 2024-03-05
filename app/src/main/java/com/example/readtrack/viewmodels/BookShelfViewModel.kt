@@ -4,9 +4,7 @@ import android.app.Application
 import androidx.lifecycle.*
 import com.example.readtrack.data.ReadTrackDatabase
 import com.example.readtrack.data.ReadTrackRepository
-import com.example.readtrack.types.NewBook
 import com.example.readtrack.types.StoredBook
-import kotlinx.coroutines.delay
 import java.util.*
 import kotlin.Comparator
 
@@ -38,8 +36,8 @@ class BookShelfViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    suspend fun addBook(book: StoredBook) {
-        repository.insertBook(book)
+    suspend fun addBook(book: StoredBook): Long {
+        return repository.insertBook(book)
     }
 
     suspend fun deleteBook(book: StoredBook) {
@@ -64,5 +62,9 @@ class BookShelfViewModel(application: Application) : AndroidViewModel(applicatio
 
     suspend fun updateBook(updatedBook: StoredBook) {
         repository.updateBook(updatedBook)
+    }
+
+    suspend fun getBookByIdFromService(idFromService: String): StoredBook? {
+        return repository.getBookByIdFromService(idFromService)
     }
 }

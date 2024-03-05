@@ -1,6 +1,5 @@
 package com.example.readtrack.util
 
-import android.util.Log
 import androidx.databinding.BaseObservable
 import androidx.databinding.Observable
 import androidx.lifecycle.MutableLiveData
@@ -11,13 +10,11 @@ import androidx.lifecycle.MutableLiveData
 class PropertyAwareMutableLiveData<T : BaseObservable> : MutableLiveData<T>() {
     private val callback = object : Observable.OnPropertyChangedCallback() {
         override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-            Log.d("Custom MutableLiveData", "onPropertyChanged is called")
             value = value
         }
     }
 
     override fun setValue(value: T?) {
-        Log.d("Custom MutableLiveData", "setValue is called")
         super.setValue(value)
         value?.addOnPropertyChangedCallback(callback)
     }

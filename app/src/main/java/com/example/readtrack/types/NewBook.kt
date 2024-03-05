@@ -15,17 +15,17 @@ class NewBook(
     var coverUri: String = "",
     @Bindable
     var coverImgFiles: MutableList<File?> = ArrayList(),
-    _title: String = "",
-    _authors: String = "",
-    _genres: String = "",
-    _startedDate: LocalDate? = null,
-    _dateRange: Pair<LocalDate, LocalDate>? = null,
-    _status: Status = Status.NONE,
-    _rating: Float = 0f,
-    _hasCoverImg: ObservableBoolean = ObservableBoolean(coverUri.isNotEmpty())
+    title: String = "",
+    authors: String = "",
+    genres: String = "",
+    startedDate: LocalDate? = null,
+    dateRange: Pair<LocalDate, LocalDate>? = null,
+    status: Status = Status.NONE,
+    rating: Float = 0f,
+    hasCoverImg: ObservableBoolean = ObservableBoolean(coverUri.isNotEmpty())
 ): BaseObservable() {
     @Bindable
-    var title = _title
+    var title = title
         set(value) {
             // Important: Only notify observer when the value changes
             if (field != value) {
@@ -34,7 +34,7 @@ class NewBook(
             }
         }
     @Bindable
-    var authors = _authors
+    var authors = authors
         set(value) {
             if (field != value) {
                 field = value
@@ -42,7 +42,7 @@ class NewBook(
             }
         }
     @Bindable
-    var genres = _genres
+    var genres = genres
         set(value) {
             if (field != value) {
                 field = value
@@ -50,7 +50,7 @@ class NewBook(
             }
         }
     @Bindable
-    var startedDate = _startedDate
+    var startedDate = startedDate
         set(value) {
             if (field != value) {
                 field = value
@@ -58,7 +58,7 @@ class NewBook(
             }
         }
     @Bindable
-    var dateRange = _dateRange
+    var dateRange = dateRange
         set(value) {
             if (field != value) {
                 field = value
@@ -66,7 +66,7 @@ class NewBook(
             }
         }
     @Bindable
-    var status = _status
+    var status = status
         set(value) {
             if (field != value) {
                 field = value
@@ -74,7 +74,7 @@ class NewBook(
             }
         }
     @Bindable
-    var rating = _rating // android:rating receives float
+    var rating = rating // android:rating receives float
         set(value) {
             if (field != value) {
                 field = value
@@ -82,7 +82,7 @@ class NewBook(
             }
         }
     @Bindable
-    var hasCoverImg = _hasCoverImg
+    var hasCoverImg = hasCoverImg
         set(value) {
             if (field != value) {
                 field = value

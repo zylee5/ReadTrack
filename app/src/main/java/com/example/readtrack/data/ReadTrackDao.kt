@@ -23,4 +23,7 @@ abstract class ReadTrackDao {
 
     @Update
     abstract suspend fun updateBook(updatedBook: StoredBook)
+
+    @Query("SELECT * FROM books WHERE bookIdFromService = :idFromService")
+    abstract suspend fun getBookByIdFromService(idFromService: String): StoredBook?
 }

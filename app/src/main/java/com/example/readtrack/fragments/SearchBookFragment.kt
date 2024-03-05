@@ -1,20 +1,18 @@
 package com.example.readtrack.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
+import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.readtrack.R
 import com.example.readtrack.adapters.BookSearchResultListAdapter
 import com.example.readtrack.adapters.OnBookFromServiceClickedListener
@@ -42,18 +40,20 @@ class SearchBookFragment : Fragment(), OnBookFromServiceClickedListener {
     ): View {
         binding = FragmentSearchBookBinding.inflate(inflater, container, false)
         binding.apply {
-//            addCustomBookBtn.setOnClickListener {
-//                findNavController().navigate(R.id.action_searchBookFragment_to_addBookFragment)
-//            }
             with(bookSearchResultList) {
                 adapter = bookSearchResultListAdapter
-                addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
             }
 
             // No focus no search
             searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
                 shouldSearch = hasFocus
             }
+
+            val id =
+                searchView.context.resources.getIdentifier("android:id/search_src_text", null, null)
+            val searchText = searchView.findViewById(id) as TextView
+            val myCustomFont = ResourcesCompat.getFont(requireContext(), R.font.barlow_semi_bold)
+            searchText.typeface = myCustomFont
 
             searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(str: String?): Boolean {
@@ -123,10 +123,7 @@ class SearchBookFragment : Fragment(), OnBookFromServiceClickedListener {
     }
 
     override fun onItemClicked(bookClicked: BookFromService) {
-//        Log.d(TAG, bookClicked.toString())
         val action = SearchBookFragmentDirections.actionSearchBookFragmentToBookInfoFragment(bookClicked)
         findNavController().navigate(action)
-
-
     }
 }

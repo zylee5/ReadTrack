@@ -1,6 +1,5 @@
 package com.example.readtrack.services
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.readtrack.api_models.VolumeApiModel
@@ -23,7 +22,7 @@ class VolumePagingSource(
         return try {
             val response = service.getVolumesForQuery(query, range.first, params.loadSize)
             val volumes = response.items
-            Log.d("paging", "prevKey : ${(range.first - params.loadSize).coerceAtLeast(STARTING_INDEX)}, nextKey: ${range.last + 1}")
+            // Log.d("paging", "prevKey : ${(range.first - params.loadSize).coerceAtLeast(STARTING_INDEX)}, nextKey: ${range.last + 1}")
 
             volumes?.let { volumeList ->
                 LoadResult.Page(
@@ -37,7 +36,7 @@ class VolumePagingSource(
         } catch (ex: IOException) {
             LoadResult.Error(ex)
         } catch (ex: HttpException) {
-            Log.d("paging", "$ex")
+            // Log.d("paging", "$ex")
             LoadResult.Error(ex)
         } catch (ex: Exception) {
             LoadResult.Error(ex)

@@ -1,16 +1,11 @@
 package com.example.readtrack.data
 
-import android.nfc.tech.MifareUltralight.PAGE_SIZE
-import androidx.lifecycle.Transformations.map
 import androidx.paging.*
-import com.example.readtrack.api_models.VolumeListApiModel
 import com.example.readtrack.services.*
-import com.example.readtrack.types.ApiResultStatus
 import com.example.readtrack.types.BookFromService
 import com.example.readtrack.types.StoredBook
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.transform
 
 class ReadTrackRepository(private val readTrackDao: ReadTrackDao) {
     suspend fun insertBook(book: StoredBook) = readTrackDao.insertBook(book)
@@ -19,6 +14,7 @@ class ReadTrackRepository(private val readTrackDao: ReadTrackDao) {
     fun getBooksForQuery(query: String) = readTrackDao.getBooksForQuery(query)
     suspend fun getBookById(id: Long): StoredBook = readTrackDao.getBookById(id)
     suspend fun updateBook(updatedBook: StoredBook) = readTrackDao.updateBook(updatedBook)
+    suspend fun getBookByIdFromService(idFromService: String) = readTrackDao.getBookByIdFromService(idFromService)
 
     /***
      * Get Flow<PagingData<VolumeApiModel>> and convert it into

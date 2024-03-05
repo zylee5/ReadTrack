@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -52,7 +53,6 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener, O
 
                 with(bookSearchResultList) {
                     adapter = bookListAdapter
-                    addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
                     createSwipeAction(requireContext(), this)
                 }
 
@@ -70,6 +70,12 @@ class BookShelfFragment : Fragment(), SortBooksDialog.SortBooksDialogListener, O
                     // Log.d(TAG, "Focus? $hasFocus")
                     shouldSearch = hasFocus
                 }
+
+                val id =
+                    searchView.context.resources.getIdentifier("android:id/search_src_text", null, null)
+                val searchText = searchView.findViewById(id) as TextView
+                val myCustomFont = ResourcesCompat.getFont(requireContext(), R.font.barlow_semi_bold)
+                searchText.typeface = myCustomFont
 
                 // One exception is when clear button of searchView is pressed
                 // searchView remains unfocused if it was already unfocused

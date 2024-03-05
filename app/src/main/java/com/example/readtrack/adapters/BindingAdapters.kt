@@ -1,9 +1,5 @@
 package com.example.readtrack.adapters
 
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
-import android.net.Uri
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.ScrollView
@@ -11,14 +7,11 @@ import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.example.readtrack.R
 import com.example.readtrack.types.Status
 import com.example.readtrack.util.findParentViewWithType
 import com.example.readtrack.util.scrollToBottom
 import com.google.android.material.chip.ChipGroup
-import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import java.util.*
 import kotlin.concurrent.schedule
@@ -30,18 +23,6 @@ fun loadImageUri(view: ImageView, uri: String?) {
         Glide
             .with(view.context)
             .load(uri)
-            .into(view)
-    } else {
-        view.setImageResource(R.drawable.default_book_cover)
-    }
-}
-
-@BindingAdapter("imageUrl")
-fun loadImageUrl(view: ImageView, url: String?) {
-    if (!url.isNullOrEmpty()) {
-        Glide
-            .with(view.context)
-            .load(url)
             .into(view)
     } else {
         view.setImageResource(R.drawable.default_book_cover)

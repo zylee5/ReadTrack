@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="book_title_style">
+        <item name="android:fontFamily">@font/ubuntu</item>
+        <item name="android:textAppearance">@style/TextAppearance.Material3.TitleLarge</item>
+    </style>
+
+    <style name="book_sub_info_style">
+        <item name="android:fontFamily">@font/barlow_semi_bold</item>
+        <item name="android:textAppearance">@style/TextAppearance.Material3.LabelLarge</item>
+    </style>
+
+    <style name="book_other_info_style">
+        <item name="android:fontFamily">@font/jost_medium</item>
+        <item name="android:textAppearance">@style/TextAppearance.Material3.LabelMedium</item>
+    </style>
+
+    <style name="book_additional_info_style">
+        <item name="android:textAppearance">@style/TextAppearance.Material3.LabelSmall</item>
+        <item name="android:fontFamily">@font/jost_medium</item>
+    </style>
+
+    <style name="book_additional_info_colored_style">
+        <item name="android:fontFamily">@font/jost_medium</item>
+        <item name="android:textColor">@color/my_green</item>
+        <item name="android:textAppearance">@style/TextAppearance.Material3.LabelMedium</item>
+    </style>
+
+    <style name="fragment_title_style">
+        <item name="android:fontFamily">@font/ubuntu</item>
+        <item name="android:textAppearance">@style/TextAppearance.Material3.TitleLarge</item>
+        <item name="android:textColor">@color/md_theme_light_onPrimary</item>
+    </style>
+
+    <style name="bottom_nav_style" parent="Widget.Material3.BottomNavigationView">
+        <item name="android:fontFamily">@font/barlow_semi_bold</item>
+        <item name="android:textAppearance">@style/TextAppearance.Material3.LabelLarge</item>
+    </style>
+
+    <style name="dialog_title_style">
+        <item name="android:fontFamily">@font/jost_medium</item>
+        <item name="android:textAppearance">@style/TextAppearance.Material3.TitleLarge</item>
+        <item name="android:textColor">@color/md_theme_light_onSurface</item>
+        <item name="android:textSize">20sp</item>
+
+    </style>
+
+    <style name="book_info_section_title_style">
+        <item name="android:textAllCaps">true</item>
+        <item name="android:fontFamily">@font/jost_medium</item>
+        <item name="android:textAppearance">@style/TextAppearance.Material3.TitleMedium</item>
+    </style>
+
+    <style name="book_info_txt_style">
+        <item name="android:fontFamily">@font/jost</item>
+        <item name="android:textAppearance">@style/TextAppearance.Material3.LabelLarge</item>
+    </style>
+
+    <style name="button_style">
+        <item name="android:background">@drawable/button_shape</item>
+        <item name="android:fontFamily">@font/jost</item>
+    </style>
+
+</resources>

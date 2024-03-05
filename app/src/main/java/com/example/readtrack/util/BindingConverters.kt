@@ -1,8 +1,6 @@
 package com.example.readtrack.util
 
 import android.graphics.drawable.BitmapDrawable
-import android.net.Uri
-import android.util.Log
 import androidx.databinding.InverseMethod
 import com.example.readtrack.MainActivity
 import com.example.readtrack.R
@@ -33,7 +31,6 @@ object BindingConverters {
     fun stringToStartedDate(
         newValue: String?
     ): LocalDate? {
-        Log.d(TAG, "Started Date String: $newValue")
         return if (newValue?.isNotEmpty() == true){
             LocalDate.parse(newValue, dateFormatter)
         } else {
@@ -78,7 +75,6 @@ object BindingConverters {
     fun dateRangeStrToDate(
         dateRangeStr: String?
     ): Pair<LocalDate, LocalDate>? {
-        Log.d(TAG, "Date Range String: $dateRangeStr")
         if (dateRangeStr?.isNotEmpty() == true) {
             val parts = dateRangeStr.split(" - ")
             val startedDateStr = parts[0]
@@ -109,7 +105,7 @@ object BindingConverters {
         val context = MainActivity.applicationContext()
         // Moved from AddBookFragment
         val bitmap = ImageUtils.decodeUriStreamToBitmap(
-            Uri.parse(uri),
+            uri,
             // Convert the dimension values (dp) to pixels (px) in integers
             context.resources.getDimensionPixelSize(R.dimen.bk_cover_img_width),
             context.resources.getDimensionPixelSize(R.dimen.bk_cover_img_height),
